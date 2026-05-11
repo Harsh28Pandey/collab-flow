@@ -1,6 +1,5 @@
-export const VITE_BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:8000";
+// export const VITE_BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:8000";
 
-//* utils/apiPaths.js
 export const API_PATHS = {
     AUTH: {
         REGISTER: "/api/auth/register",  //* register a new user (admin or member)
