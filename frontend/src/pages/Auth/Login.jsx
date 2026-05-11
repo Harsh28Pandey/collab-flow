@@ -1,5 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 import { ArrowLeft } from "lucide-react";
 import AuthLayout from '../../components/layouts/AuthLayout.jsx';
 import Input from '../../components/inputs/Input.jsx';
@@ -17,6 +19,20 @@ const Login = () => {
 
     const { updateUser } = useContext(UserContext);
     const navigate = useNavigate();
+
+    const handleEmailChange = (e) => {
+
+        setEmail(e.target.value);
+
+        if (error) setError("");
+    };
+
+    const handlePasswordChange = (e) => {
+
+        setPassword(e.target.value);
+
+        if (error) setError("");
+    };
 
     //* handle login form submit
     const handleLogin = async (e) => {
@@ -44,8 +60,12 @@ const Login = () => {
             const { token, role } = response.data;
 
             if (token) {
+
                 localStorage.setItem("token", token);
+
                 updateUser(response.data);
+
+                toast.success("Login successful");
 
                 if (role === "admin") {
                     navigate("/admin/dashboard");
@@ -55,49 +75,61 @@ const Login = () => {
             }
 
         } catch (error) {
-            if (error.message) {
-                setError(error.message);
-            } else if (error.response && error.response.data.message) {
-                setError(error.response.data.message);
-            } else {
-                setError("Network issue. Please try again.");
-            }
+            const message =
+                error.response?.data?.message ||
+                "Login failed";
+
+            setError(message);
+
+            // toast.error(message);
+
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     }
 
     return (
         <AuthLayout>
-            <div className='lg:w-[70%] h-3/4 md:h-full flex flex-col justify-center px-6 sm:px-10 relative'>
+            <div className='w-full max-w-lg mx-auto flex flex-col justify-center relative px-1 sm:px-2 md:px-0 py-1'>
 
                 {/* 🔙 BACK BUTTON */}
-                <div className="mb-6">
+                <div className="mb-4">
+
                     <button
                         onClick={() => navigate(-1) || navigate("/")}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 text-blue-600 font-medium shadow-sm hover:bg-blue-100 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer group"
+                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-600 font-semibold border border-blue-100 hover:border-blue-200 shadow-sm hover:shadow-[0_8px_24px_rgba(59,130,246,0.12)] hover:bg-blue-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer group"
                     >
                         <ArrowLeft
                             size={18}
                             className="group-hover:-translate-x-1 transition-transform duration-300"
                         />
-                        <span className="text-sm">Back</span>
+
+                        <span className="text-sm tracking-wide">
+                            Back
+                        </span>
+
                     </button>
                 </div>
 
-                <h3 className='text-2xl font-bold text-gray-900 tracking-tight'>
-                    Welcome Back 👋
-                </h3>
+                {/* heading */}
+                <div className='mb-6'>
 
-                <p className='text-sm text-gray-500 mt-2 mb-8'>
-                    Please enter your details to log in
-                </p>
+                    <h3 className='text-2xl sm:text-2xl font-extrabold text-gray-900 tracking-tight leading-tight'>
+                        Welcome Back 👋
+                    </h3>
 
+                    <p className='text-sm sm:text-base text-gray-500 mt-2 leading-relaxed'>
+                        Please enter your details to log in
+                    </p>
+
+                </div>
+
+                {/* form */}
                 <form onSubmit={handleLogin} className='space-y-5'>
 
                     <Input
                         value={email}
-                        onChange={({ target }) => setEmail(target.value)}
+                        onChange={handleEmailChange}
                         label="Email Address"
                         placeholder="Enter your email address"
                         type="email"
@@ -105,37 +137,67 @@ const Login = () => {
 
                     <Input
                         value={password}
-                        onChange={({ target }) => setPassword(target.value)}
+                        onChange={handlePasswordChange}
                         label="Password"
                         placeholder="Enter your password"
                         type="password"
                     />
 
+                    {/* forgot password */}
+                    <div className="flex justify-end -mt-1">
+
+                        <Link
+                            to="/forgot-password"
+                            className="text-sm text-blue-600 hover:text-blue-800 hover:underline underline-offset-4 font-semibold transition-all duration-300"
+                        >
+                            Forgot Password?
+                        </Link>
+
+                    </div>
+
+                    {/* error */}
                     {error && (
-                        <p className='flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-lg animate-fade-in'>
+                        <p className='flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 px-4 py-3 rounded-2xl shadow-sm leading-relaxed animate-fade-in'>
                             {error}
                         </p>
                     )}
 
+                    {/* button */}
                     <button
                         type='submit'
-                        className='btn-primary'
                         disabled={loading}
+                        className="w-full bg-gradient-to-r from-blue-600 via-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-semibold py-3.5 rounded-2xl shadow-[0_10px_30px_rgba(59,130,246,0.22)] hover:shadow-[0_14px_40px_rgba(59,130,246,0.32)] hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 disabled:opacity-70 disabled:hover:translate-y-0 flex items-center justify-center gap-2 cursor-pointer tracking-wide"
                     >
-                        {loading ? "Logging in..." : "Login"}
+
+                        {
+                            loading ? (
+                                <>
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    Logging in...
+                                </>
+                            ) : (
+                                "Login"
+                            )
+                        }
+
                     </button>
 
-                    <p className='text-sm text-gray-600 text-center mt-4'>
+                    {/* footer */}
+                    <p className='text-sm text-gray-600 text-center leading-relaxed'>
+
                         Don't have an account?{" "}
+
                         <Link
-                            className='font-semibold text-indigo-600 hover:text-indigo-800 underline transition-colors duration-200'
+                            className="font-semibold text-blue-600 hover:text-blue-800 underline-offset-4 hover:underline transition-all duration-300"
                             to="/signup"
                         >
                             Sign Up
                         </Link>
+
                     </p>
 
                 </form>
+
             </div>
         </AuthLayout>
     )

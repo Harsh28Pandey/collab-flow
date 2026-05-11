@@ -37,7 +37,7 @@ export const SIDE_MENU_DATA = [
         icon: LuListTodo,
         path: "/admin/polls",
     },
-    {
+    { 
         id: "07",
         label: "Logout",
         icon: LuLogOut,

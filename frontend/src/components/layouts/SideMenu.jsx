@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../../context/userContext.jsx';
 import { SIDE_MENU_DATA, SIDE_MENU_USER_DATA } from '../../utils/data.js';
 import { useNavigate } from "react-router-dom";
+import axiosInstance from '../../utils/axiosInstance.js';
 
 const SideMenu = ({ activeMenu }) => {
 
@@ -18,11 +19,16 @@ const SideMenu = ({ activeMenu }) => {
         navigate(route);
     }
 
-    const handleLogout = () => {
-        localStorage.clear();
-        clearUser();
-        navigate("/", { replace: true });
-    }
+    const handleLogout = async () => {
+        try {
+            await axiosInstance.post("/api/auth/logout");
+        } catch (error) {
+            console.error("Logout error:", error);
+        } finally {
+            window.location.href = "/"; // ✅ Hard redirect — 100% kaam karega
+            clearUser();
+        }
+    };
 
     useEffect(() => {
         if (user) {

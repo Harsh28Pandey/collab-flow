@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/userContext.jsx";
+import axiosInstance from "../../utils/axiosInstance.js";
 
 const Navbar = () => {
 
@@ -34,6 +35,19 @@ const Navbar = () => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    const handleLogout = async () => {
+        setIsDropdownOpen(false);
+
+        try {
+            await axiosInstance.post("/api/auth/logout");
+        } catch (error) {
+            console.error("Logout error:", error);
+        } finally {
+            localStorage.removeItem("token");
+            window.location.reload();
+        }
+    };
 
     return (
         <>
@@ -175,13 +189,18 @@ const Navbar = () => {
                                             navigate(user.role === "admin" ? "/admin/tasks" : "/user/tasks");
                                         }} />
 
+                                        <DropdownItem label="Change Password" onClick={() => {
+                                            setIsDropdownOpen(false);
+                                            navigate("/forgot-password");
+                                        }} />
+
                                         <div className="h-px bg-gray-100 my-1" />
 
-                                        <DropdownItem label="Logout" danger onClick={() => {
-                                            setIsDropdownOpen(false);
-                                            localStorage.removeItem("token");
-                                            window.location.reload();
-                                        }} />
+                                        <DropdownItem
+                                            label="Logout"
+                                            danger
+                                            onClick={handleLogout}  // ✅ Direct function pass karo
+                                        />
                                     </div>
                                 )}
                             </div>

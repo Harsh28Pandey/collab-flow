@@ -22,6 +22,12 @@ import MyGroups from './pages/User/MyGroups.jsx'
 import AdminGroups from './pages/Admin/AdminGroups.jsx'
 import CreatePolls from './pages/Admin/CreatePolls.jsx'
 import MyPolls from './pages/User/MyPolls.jsx'
+import VerifyEmail from './pages/Auth/VerifyEmail.jsx'
+import Verify from './pages/Auth/Verify.jsx'
+import ForgotPassword from './pages/Auth/ForgotPassword.jsx'
+import VerifyOTP from './pages/Auth/VerifyOTP.jsx'
+import ChangePassword from './pages/Auth/ChangePassword.jsx'
+
 
 const App = () => {
     return (
@@ -39,6 +45,15 @@ const App = () => {
                         {/* Auth Routes */}
                         <Route path='/login' element={<Login />} />
                         <Route path='/signup' element={<SignUp />} />
+
+                        <Route path='/verify-email' element={<VerifyEmail />} />
+                        {/* <Route path='/verify/:token' element={<Verify />} /> */}
+
+                        <Route path='/verify' element={<Verify />} />
+
+                        <Route path='/forgot-password' element={<ForgotPassword />} />
+                        <Route path='/verify-otp/:email' element={<VerifyOTP />} />
+                        <Route path='/change-password/:email' element={<ChangePassword />} />
 
                         {/* Admin Routes */}
                         <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
