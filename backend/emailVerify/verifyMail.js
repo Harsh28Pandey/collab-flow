@@ -1,52 +1,63 @@
-const nodemailer = require("nodemailer")
+const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 dotenv.config();
 
 const fs = require("fs");
 const path = require("path");
 const handlebars = require("handlebars");
-const { fileURLToPath } = require("url");
-
-// const __filename = path.basename(__filename);
-// const __dirname = path.dirname(__filename)
 
 const verifyMail = async (token, email) => {
 
-    const emailTemplateSource = fs.readFileSync(
-        path.join(__dirname, "template.hbs"),
-        "utf-8"
-    )
+    try {
 
-    const template = handlebars.compile(emailTemplateSource)
-    // const htmlToSend = template({ token: encodeURIComponent(token) })
+        const templatePath = path.resolve(__dirname, "template.hbs");
 
-    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173"
-    const htmlToSend = template({ token: encodeURIComponent(token), clientUrl })
+        const emailTemplateSource = fs.readFileSync(
+            templatePath,
+            "utf-8"
+        );
 
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: process.env.MAIL_USER,
-            pass: process.env.MAIL_PASSWORD
-        }
-    })
-    const mailConfigurations = {
-        from: process.env.MAIL_USER,
-        to: email,
-        subject: "Email Verification",
-        html: htmlToSend,
+        const template = handlebars.compile(emailTemplateSource);
+
+        const clientUrl =
+            process.env.CLIENT_URL || "http://localhost:5173";
+
+        const htmlToSend = template({
+            token: encodeURIComponent(token),
+            clientUrl
+        });
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASSWORD
+            }
+        });
+
+        await transporter.verify();
+
+        console.log("SMTP server is ready");
+
+        const mailConfigurations = {
+            from: process.env.MAIL_USER,
+            to: email,
+            subject: "Email Verification",
+            html: htmlToSend,
+        };
+
+        const info = await transporter.sendMail(mailConfigurations);
+
+        console.log("Email sent successfully");
+        console.log(info);
+
+    } catch (error) {
+
+        console.error("Email sending failed:");
+        console.error(error);
+
+        throw error;
     }
+};
 
-    // await transporter.sendMail(mailConfigurations, function (error, info) {
-    //     if (error) {
-    //         throw new Error(error)
-    //     }
-    //     console.log("Email sent successfully")
-    //     console.log(info)
-    // })
-
-    await transporter.sendMail(mailConfigurations)
-    console.log("Email sent successfully")
-}
-
-module.exports = { verifyMail }
+module.exports = { verifyMail };
