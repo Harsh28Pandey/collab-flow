@@ -22,6 +22,26 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["admin", "member"],
         default: "member"
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    isLoggedIn: {
+        type: Boolean,
+        default: false
+    },
+    otp: {
+        type: String,
+        default: null
+    },
+    otpExpiry: {
+        type: Date,
+        default: null
+    },
+    verificationToken: {
+        type: String,
+        default: null
     }
 }, { timestamps: true });
 

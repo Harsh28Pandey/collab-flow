@@ -1,15 +1,20 @@
 const express = require("express");
-const { registerUser, loginUser, getUserProfile, updateUserProfile } = require("../controllers/auth.controller.js");
+const { registerUser, loginUser, getUserProfile, updateUserProfile, changePassword, forgotPassword, logoutUser, verification, verifyOTP } = require("../controllers/auth.controller.js");
 const { protect } = require("../middlewares/auth.middleware.js");
 const upload = require("../middlewares/upload.middleware.js");
 
 const router = express.Router();
 
 //* auth routes
-router.post("/register", registerUser);  //* register a user
+router.post("/register", registerUser);  //* register a 
+router.post("/verify", verification); //* verify the user email
 router.post("/login", loginUser);  //* login user
 router.get("/profile", protect, getUserProfile);  //* get the user profile
 router.put("/profile", protect, updateUserProfile);  //* update the user profile
+router.post("/logout", protect, logoutUser)
+router.post("/forgot-password", forgotPassword)
+router.post("/verify-otp/:email", verifyOTP)
+router.post("/change-password/:email", changePassword)
 
 router.post("/upload-image", upload.single("image"), (req, res) => {  //* upload the image and get the uploaded image link
     if (!req.file) {

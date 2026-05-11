@@ -1,0 +1,46 @@
+const nodemailer = require("nodemailer")
+const dotenv = require("dotenv");
+dotenv.config();
+
+const fs = require("fs");
+const path = require("path");
+const handlebars = require("handlebars");
+const { fileURLToPath } = require("url");
+
+// const __filename = path.basename(__filename);
+// const __dirname = path.dirname(__filename)
+
+const verifyMail = async (token, email) => {
+
+    const emailTemplateSource = fs.readFileSync(
+        path.join(__dirname, "template.hbs"),
+        "utf-8"
+    )
+
+    const template = handlebars.compile(emailTemplateSource)
+    const htmlToSend = template({ token: encodeURIComponent(token) })
+
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: process.env.MAIL_USER,
+            pass: process.env.MAIL_PASSWORD
+        }
+    })
+    const mailConfigurations = {
+        from: process.env.MAIL_USER,
+        to: email,
+        subject: "Email Verification",
+        html: htmlToSend,
+    }
+
+    await transporter.sendMail(mailConfigurations, function (error, info) {
+        if (error) {
+            throw new Error(error)
+        }
+        console.log("Email sent successfully")
+        // console.log(info)
+    })
+}
+
+module.exports = { verifyMail }

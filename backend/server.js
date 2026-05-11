@@ -26,7 +26,7 @@ app.use(cors({
         "https://collaspace.netlify.app",
         "http://localhost:5173"
     ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }))
 
@@ -94,7 +94,7 @@ app.get("/", (req, res) => {
 });
 
 //* start server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {
     console.log(`Server running on port: ${PORT}`);
 })
