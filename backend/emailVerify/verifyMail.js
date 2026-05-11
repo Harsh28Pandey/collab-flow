@@ -24,9 +24,7 @@ const verifyMail = async (token, email) => {
     const htmlToSend = template({ token: encodeURIComponent(token), clientUrl })
 
     const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false, // 587 ke liye false
+        service: "gmail",
         auth: {
             user: process.env.MAIL_USER,
             pass: process.env.MAIL_PASSWORD
