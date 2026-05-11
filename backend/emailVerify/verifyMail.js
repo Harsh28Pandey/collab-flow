@@ -35,7 +35,7 @@ const verifyMail = async (token, email) => {
         //* gmail smtp transporter
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
-            port: 465,
+            port: 587,
             secure: true,
             auth: {
                 user: process.env.MAIL_USER,
@@ -60,11 +60,14 @@ const verifyMail = async (token, email) => {
         };
 
         //* send mail
+        // const info = await transporter.sendMail(mailConfigurations);
+        console.log("Sending email now...");
+
         const info =
             await transporter.sendMail(mailConfigurations);
 
         console.log("Email sent successfully");
-        console.log(info.response);
+        console.log(info);
 
         return info;
 
