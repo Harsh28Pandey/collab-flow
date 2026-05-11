@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
-const http = require("http");
-const https = require("https");
+// const http = require("http");
+// const https = require("https");
 const cors = require("cors");
 const path = require("path");
 const connectDB = require("./config/db.js");
@@ -22,24 +22,15 @@ const app = express();
 
 //* middleware to handle CORS
 app.use(cors({
-    origin: function (origin, callback) {
-        const allowedOrigins = [
-            "https://collaspace.netlify.app",
-            "http://localhost:5173"
-        ];
-
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
+    origin: [
+        "https://collaspace.netlify.app",
+        "http://localhost:5173"
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-// app.options("*", cors());
 app.options(/.*/, cors());
 
 //* connect to database
@@ -106,10 +97,12 @@ app.get("/", (req, res) => {
 });
 
 //* start server
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-    console.log(`Server running on port: ${PORT}`);
-})
+// const PORT = process.env.PORT || 8000;
+// app.listen(PORT, () => {
+//     console.log(`Server running on port: ${PORT}`);
+// })
+
+module.exports = app;
 
 // setInterval(() => {
 //     https.get(process.env.RENDER_URL, (res) => {
