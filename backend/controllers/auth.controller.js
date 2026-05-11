@@ -58,8 +58,9 @@ const registerUser = async (req, res) => {
         });
 
         //* send verification mail
-        await verifyMail(verificationToken, email);
-
+        verifyMail(verificationToken, email).catch((err) => {
+            console.error("Email send failed:", err.message)
+        });
         //* return user data with JWT
         res.status(201).json({
             message: "User registered successfully",
