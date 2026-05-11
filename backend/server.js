@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const http = require("http");
+const https = require("https");
 const cors = require("cors");
 const path = require("path");
 const connectDB = require("./config/db.js");
@@ -98,3 +99,11 @@ const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {
     console.log(`Server running on port: ${PORT}`);
 })
+
+setInterval(() => {
+    https.get(process.env.RENDER_URL, (res) => {
+        console.log("Server pinged — status:", res.statusCode)
+    }).on("error", (err) => {
+        console.error("Ping error:", err.message)
+    })
+}, 14 * 60 * 1000)
