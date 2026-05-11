@@ -18,7 +18,10 @@ const verifyMail = async (token, email) => {
     )
 
     const template = handlebars.compile(emailTemplateSource)
-    const htmlToSend = template({ token: encodeURIComponent(token) })
+    // const htmlToSend = template({ token: encodeURIComponent(token) })
+
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173"
+    const htmlToSend = template({ token: encodeURIComponent(token), clientUrl })
 
     const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -34,13 +37,16 @@ const verifyMail = async (token, email) => {
         html: htmlToSend,
     }
 
-    await transporter.sendMail(mailConfigurations, function (error, info) {
-        if (error) {
-            throw new Error(error)
-        }
-        console.log("Email sent successfully")
-        // console.log(info)
-    })
+    // await transporter.sendMail(mailConfigurations, function (error, info) {
+    //     if (error) {
+    //         throw new Error(error)
+    //     }
+    //     console.log("Email sent successfully")
+    //     console.log(info)
+    // })
+
+    await transporter.sendMail(mailConfigurations)
+    console.log("Email sent successfully")
 }
 
 module.exports = { verifyMail }
