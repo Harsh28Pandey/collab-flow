@@ -1,9 +1,11 @@
 import axios from "axios";
-import { VITE_BASE_URL } from "./apiPaths.js";
+// import { VITE_BASE_URL } from "./apiPaths.js";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:8000";
 
 const axiosInstance = axios.create({
-    baseURL: VITE_BASE_URL || "http://localhost:8000",
-    timeout: 15000,
+    baseURL: BASE_URL,
+    timeout: 60000, // ✅ 15000 → 60000
     headers: {
         "Content-Type": "application/json",
         Accept: "application/json"
