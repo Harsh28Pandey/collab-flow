@@ -14,22 +14,33 @@ const groupRoutes = require("./routes/group.route.js");
 const messageRoutes = require("./routes/message.route.js");
 const pollRoutes = require("./routes/poll.routes.js");
 
-const { Server } = require("socket.io");
-const Message = require("./models/message.model.js");
+// const { Server } = require("socket.io");
+// const Message = require("./models/message.model.js");
 
 const app = express();
-const server = http.createServer(app);
+// const server = http.createServer(app);
 
 //* middleware to handle CORS
 app.use(cors({
-    origin: [
-        // process.env.CLIENT_URL,
-        "https://collaspace.netlify.app",
-        "http://localhost:5173"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-}))
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            "https://collaspace.netlify.app",
+            "http://localhost:5173"
+        ];
+
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+// app.options("*", cors());
+app.options(/.*/, cors());
 
 //* connect to database
 connectDB();
@@ -47,45 +58,45 @@ app.use("/api/groups", groupRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/polls", pollRoutes);
 
-const io = new Server(server, {
-    cors: {
-        origin: [
-            "https://collaspace.netlify.app",
-            "http://localhost:5173"
-        ]
-    }
-});
+// const io = new Server(server, {
+//     cors: {
+//         origin: [
+//             "https://collaspace.netlify.app",
+//             "http://localhost:5173"
+//         ]
+//     }
+// });
 
-io.on("connection", (socket) => {
-    console.log("User connected:", socket.id);
+// io.on("connection", (socket) => {
+//     console.log("User connected:", socket.id);
 
-    socket.on("join_group", (groupId) => {
-        socket.join(groupId);
-    });
+//     socket.on("join_group", (groupId) => {
+//         socket.join(groupId);
+//     });
 
-    socket.on("send_message", async (data) => {
-        try {
-            const message = await Message.create({
-                group: data.groupId,
-                sender: data.senderId,
-                text: data.text
-            });
+//     socket.on("send_message", async (data) => {
+//         try {
+//             const message = await Message.create({
+//                 group: data.groupId,
+//                 sender: data.senderId,
+//                 text: data.text
+//             });
 
-            io.to(data.groupId).emit("receive_message", message);
+//             io.to(data.groupId).emit("receive_message", message);
 
-            io.to(data.groupId).emit("notification", {
-                text: "New message"
-            });
+//             io.to(data.groupId).emit("notification", {
+//                 text: "New message"
+//             });
 
-        } catch (err) {
-            console.error(err);
-        }
-    });
+//         } catch (err) {
+//             console.error(err);
+//         }
+//     });
 
-    socket.on("disconnect", () => {
-        console.log("User disconnected");
-    });
-});
+//     socket.on("disconnect", () => {
+//         console.log("User disconnected");
+//     });
+// });
 
 //* serve uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -96,14 +107,14 @@ app.get("/", (req, res) => {
 
 //* start server
 const PORT = process.env.PORT || 8000;
-server.listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`Server running on port: ${PORT}`);
 })
 
-setInterval(() => {
-    https.get(process.env.RENDER_URL, (res) => {
-        console.log("Server pinged — status:", res.statusCode)
-    }).on("error", (err) => {
-        console.error("Ping error:", err.message)
-    })
-}, 14 * 60 * 1000)
+// setInterval(() => {
+//     https.get(process.env.RENDER_URL, (res) => {
+//         console.log("Server pinged — status:", res.statusCode)
+//     }).on("error", (err) => {
+//         console.error("Ping error:", err.message)
+//     })
+// }, 14 * 60 * 1000)
