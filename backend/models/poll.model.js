@@ -18,6 +18,11 @@ const pollSchema = new mongoose.Schema({
         type: String,
         enum: ["active", "expired"],
         default: "active"
+    },
+    teamCode: {
+        type: String,
+        required: true,
+        index: true
     }
 }, { timestamps: true });
 

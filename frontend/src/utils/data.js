@@ -33,7 +33,7 @@ export const SIDE_MENU_DATA = [
     },
     {
         id: "06",
-        label: "Create Polls",
+        label: "Manage Polls",
         icon: LuListTodo,
         path: "/admin/polls",
     },

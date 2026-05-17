@@ -16,20 +16,47 @@ const generateToken = (userId) => {
 */
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password, profileImageUrl, adminInviteToken } = req.body;
+        const { name, email, password, profileImageUrl, role, teamName, teamCode } = req.body;
 
         //* check if user already exists
         const userExists = await User.findOne({ email });
         if (userExists) {
-            return res.status(400).json({
-                message: "User already exists"
-            });
+            return res.status(400).json({ message: "User already exists" });
         }
 
-        //* determine user role: Admin if correct token is provided, otherwise member
-        let role = "member";
-        if (adminInviteToken && adminInviteToken == process.env.ADMIN_INVITE_TOKEN) {
-            role = "admin";
+        let adminTeamName = null;
+
+        //* role validation
+        if (!role || !["admin", "member"].includes(role)) {
+            return res.status(400).json({ message: "Invalid role" });
+        }
+
+        //* Admin: teamName aur teamCode dono zaroori hain
+        if (role === "admin") {
+            if (!teamName || !teamCode) {
+                return res.status(400).json({ message: "Team name and team code are required for admin" });
+            }
+
+            //* check karo ki teamCode already kisi aur admin ne use na kiya ho
+            const codeExists = await User.findOne({ teamCode });
+            if (codeExists) {
+                return res.status(400).json({ message: "Team code already taken, choose another" });
+            }
+        }
+
+        //* Member: teamCode se admin dhundho
+        if (role === "member") {
+            if (!teamCode) {
+                return res.status(400).json({ message: "Team code is required to join a team" });
+            }
+
+            //* teamCode valid hai ya nahi
+            const adminUser = await User.findOne({ teamCode, role: "admin" });
+            if (!adminUser) {
+                return res.status(400).json({ message: "Invalid team code, no team found" });
+            }
+
+            adminTeamName = adminUser.teamName;
         }
 
         //* hash password
@@ -43,13 +70,15 @@ const registerUser = async (req, res) => {
             { expiresIn: "10m" }
         );
 
-        //* create a new user
+        //* create user
         const user = await User.create({
             name,
             email,
             password: hashedPassword,
             profileImageUrl,
             role,
+            teamName: role === "admin" ? teamName : adminTeamName,
+            teamCode,   // admin apna banata hai, member admin ka use karta hai
             verificationToken,
             isVerified: false,
             isLoggedIn: false,
@@ -59,15 +88,18 @@ const registerUser = async (req, res) => {
 
         //* send verification mail
         verifyMail(verificationToken, email).catch((err) => {
-            console.error("Email send failed:", err.message)
+            console.error("Email send failed:", err.message);
         });
-        //* return user data with JWT
+
+        //* return response
         res.status(201).json({
             message: "User registered successfully",
             _id: user._id,
             name: user.name,
             email: user.email,
             role: user.role,
+            teamName: user.teamName,
+            teamCode: user.teamCode,
             profileImageUrl: user.profileImageUrl,
             token: generateToken(user._id)
         });
@@ -231,6 +263,8 @@ const loginUser = async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            teamName: user.teamName,
+            teamCode: user.teamCode,
             profileImageUrl: user.profileImageUrl,
             token: generateToken(user._id)
         })
@@ -471,4 +505,35 @@ const logoutUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, verification, loginUser, getUserProfile, updateUserProfile, changePassword, forgotPassword, verifyOTP, logoutUser };
+/**
+ * @desc Get team name by team code
+ * @route GET /api/auth/team/:teamCode
+ * @access Public
+*/
+const getTeamByCode = async (req, res) => {
+    try {
+        const { teamCode } = req.params;
+
+        const admin = await User.findOne({ teamCode, role: "admin" });
+
+        if (!admin) {
+            return res.status(404).json({
+                success: false,
+                message: "No team found with this code"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            teamName: admin.teamName
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+module.exports = { registerUser, verification, loginUser, getUserProfile, updateUserProfile, changePassword, forgotPassword, verifyOTP, logoutUser, getTeamByCode };

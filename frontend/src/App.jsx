@@ -20,7 +20,7 @@ import About from './pages/Landing/About.jsx'
 import ScrollToTop from './components/ScrollToTop.jsx'
 import MyGroups from './pages/User/MyGroups.jsx'
 import AdminGroups from './pages/Admin/AdminGroups.jsx'
-import CreatePolls from './pages/Admin/CreatePolls.jsx'
+import ManagePolls from './pages/Admin/ManagePolls.jsx'
 import MyPolls from './pages/User/MyPolls.jsx'
 import VerifyEmail from './pages/Auth/VerifyEmail.jsx'
 import Verify from './pages/Auth/Verify.jsx'
@@ -62,7 +62,7 @@ const App = () => {
                             <Route path='/admin/create-task' element={<CreateTask />} />
                             <Route path='/admin/users' element={<ManageUsers />} />
                             <Route path='/admin/groups' element={<AdminGroups />} />
-                            <Route path='/admin/polls' element={<CreatePolls />} />
+                            <Route path='/admin/polls' element={<ManagePolls />} />
                         </Route>
 
                         {/* User Routes */}

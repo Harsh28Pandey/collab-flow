@@ -108,11 +108,11 @@ const CreatePollModal = ({ onClose, onSuccess }) => {
     const completedSteps = [filledQuestion, filledOptions, filledExpiry].filter(Boolean).length;
     const progressPercent = Math.round((completedSteps / 3) * 100);
 
-    const optionLabels = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+    const optionLabels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
     const baseColors = [
-        "bg-blue-500","bg-violet-500","bg-emerald-500","bg-amber-500",
-        "bg-rose-500","bg-cyan-500","bg-orange-500","bg-pink-500",
-        "bg-teal-500","bg-indigo-500",
+        "bg-blue-500", "bg-violet-500", "bg-emerald-500", "bg-amber-500",
+        "bg-rose-500", "bg-cyan-500", "bg-orange-500", "bg-pink-500",
+        "bg-teal-500", "bg-indigo-500",
     ];
     const optionColors = optionLabels.map((_, i) => baseColors[i % baseColors.length]);
 

@@ -41,6 +41,11 @@ const taskSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }],
+    teamCode: {
+        type: String,
+        required: true,
+        index: true
+    },
     attachments: [{
         type: String
     }],

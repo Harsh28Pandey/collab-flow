@@ -9,13 +9,14 @@ const bcrypt = require("bcryptjs");
 */
 const getUsers = async (req, res) => {
     try {
-        const users = await User.find({ role: "member" }).select("-password");
+        const teamCode = req.user.teamCode;
+        const users = await User.find({ role: "member", teamCode }).select("-password");
 
         //* add task counts to each user
         const usersWithTaskCounts = await Promise.all(users.map(async (user) => {
-            const pendingTasks = await Task.countDocuments({ assignedTo: user._id, status: "Pending" });
-            const inProgressTasks = await Task.countDocuments({ assignedTo: user._id, status: "In Progress" });
-            const completedTasks = await Task.countDocuments({ assignedTo: user._id, status: "Completed" });
+            const pendingTasks = await Task.countDocuments({ teamCode, assignedTo: user._id, status: "Pending" });
+            const inProgressTasks = await Task.countDocuments({ teamCode, assignedTo: user._id, status: "In Progress" });
+            const completedTasks = await Task.countDocuments({ teamCode, assignedTo: user._id, status: "Completed" });
 
             return {
                 ...user._doc,  //* include all existing user data

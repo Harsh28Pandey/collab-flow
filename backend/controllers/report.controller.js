@@ -9,7 +9,9 @@ const excelJS = require("exceljs");
 */
 const exportTasksReport = async (req, res) => {
     try {
-        const tasks = await Task.find().populate("assignedTo", "name email");
+        const teamCode = req.user.teamCode;
+        const tasks = await Task.find({ teamCode }).populate("assignedTo", "name email");
+
         const workbook = new excelJS.Workbook();
         const worksheet = workbook.addWorksheet("Tasks Report");
 
@@ -67,11 +69,9 @@ const exportTasksReport = async (req, res) => {
 */
 const exportUsersReport = async (req, res) => {
     try {
-        const users = await User.find().select("name email _id").lean();
-        const userTasks = await Task.find().populate(
-            "assignedTo",
-            "name email _id"
-        );
+        const teamCode = req.user.teamCode;
+        const users = await User.find({ teamCode, role: "member" }).select("name email _id").lean();
+        const userTasks = await Task.find({ teamCode }).populate("assignedTo", "name email _id");
 
         const userTaskMap = {};
         users.forEach((user) => {

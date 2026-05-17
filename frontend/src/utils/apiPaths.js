@@ -5,6 +5,8 @@ export const API_PATHS = {
         REGISTER: "/api/auth/register",  //* register a new user (admin or member)
         LOGIN: "/api/auth/login",  //* authenticate user & return JWT token
         GET_PROFILE: "/api/auth/profile",  //* get logged-in user details
+        GET_TEAM_BY_CODE: (teamCode) => `/api/auth/team/${teamCode}`,  //* get team name by team code
+        UPDATE_PROFILE: "/api/auth/profile", //* update user profile details
     },
 
     USERS: {
@@ -12,7 +14,7 @@ export const API_PATHS = {
         GET_USER_BY_ID: (userId) => `/api/users/${userId}`,  //* get user by id
         CREATE_USER: "/api/users",  //* create a new user (admin only)
         UPDATE_USER: (userId) => `/api/users/${userId}`,  //* update user details
-        DELETE_USER: (userId) => `/api/users/${userId}`,  //* delete a user
+        DELETE_USER: (userId) => `/api/users/${userId}`,  //* delete a user (admin only)
     },
 
     TASKS: {
@@ -23,6 +25,7 @@ export const API_PATHS = {
         CREATE_TASK: "/api/tasks",  //* create a new task (admin only)
         UPDATE_TASK: (taskId) => `/api/tasks/${taskId}`,  //* update task details
         DELETE_TASK: (taskId) => `/api/tasks/${taskId}`,  //* delete a task (admin only)
+        BULK_DELETE_TASKS: "/api/tasks/bulk-delete",  //* bulk delete tasks (admin only)
         UPDATE_TASK_STATUS: (taskId) => `/api/tasks/${taskId}`,  //* update task status
         UPDATE_TODO_CHECKLIST: (taskId) => `/api/tasks/${taskId}/todo`,  //* update todo checklist
     },
@@ -54,6 +57,7 @@ export const API_PATHS = {
         GET_ALL_POLLS: "/api/polls",  //* get all polls (logged-in users)
         CREATE_POLL: "/api/polls/create",  //* create poll (admin only)
         VOTE_POLL: "/api/polls/vote",  //* vote on poll (logged-in users)
+        DELETE_POLL: "/api/polls/delete",  //* delete poll (admin only)
 
         // GET_POLL_BY_ID: (pollId) => `/api/polls/${pollId}`,  //* optional (future use)
     },

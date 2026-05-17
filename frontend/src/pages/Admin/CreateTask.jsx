@@ -193,81 +193,121 @@ const CreateTask = () => {
 
     return (
         <DashboardLayout activeMenu="Create Task">
-            <div className='mt-5'>
-                <div className='grid grid-cols-1 md:grid-cols-4 mt-4'>
-                    <div className='form-card col-span-3'>
-                        <div className='flex items-center justify-between'>
-                            <h2 className='text-xl md:text-xl font-bold'>
-                                {taskId ? "Update Task" : "Create Task"}
-                            </h2>
 
-                            {taskId && (
-                                <button
-                                    className='flex items-center gap-1.5 text-[13px] font-medium text-rose-600 bg-rose-100 rounded-2xl px-2 py-1 border border-rose-200 hover:border-rose-400 cursor-pointer'
-                                    onClick={() => setOpenDeleteAlert(true)}
-                                >
-                                    <LuTrash className='text-base' /> Delete
-                                </button>
-                            )}
+            <div className='py-4 md:py-6'>
+
+                <div className='max-w-7xl mx-auto'>
+
+                    {/* Header */}
+
+                    <div className='flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6'>
+
+                        <div>
+                            <h1 className='text-2xl md:text-3xl font-bold text-gray-900'>
+                                {taskId ? "Update Task" : "Create Task"}
+                            </h1>
+
+                            <p className='text-sm text-gray-600 mt-1'>
+                                {taskId
+                                    ? "Update task details, members and progress."
+                                    : "Create and assign tasks to your team members."
+                                }
+                            </p>
                         </div>
 
-                        <div className='mt-4'>
-                            <label className='text-xs font-medium text-slate-700'>
+                        {taskId && (
+                            <button
+                                className='w-fit flex items-center gap-2 text-sm font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-300 hover:border-rose-400 px-4 py-2.5 rounded-2xl transition-all duration-200 cursor-pointer'
+                                onClick={() => setOpenDeleteAlert(true)}
+                            >
+                                <LuTrash className='text-lg' />
+                                Delete Task
+                            </button>
+                        )}
+
+                    </div>
+
+                    {/* Main Card */}
+
+                    <div className='bg-white border border-gray-200 rounded-[28px] shadow-sm p-4 sm:p-6 md:p-8'>
+
+                        {/* Task Title */}
+
+                        <div>
+                            <label className='text-sm font-semibold text-gray-800 mb-2 block'>
                                 Task Title
                             </label>
 
                             <input
                                 placeholder='Create App UI'
-                                className='form-input'
+                                className='w-full h-12 md:h-14 px-4 rounded-2xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-sm md:text-[15px] text-gray-800 placeholder:text-gray-400'
                                 value={taskData.title}
-                                onChange={({ target }) => handleValueChange("title", target.value)}
+                                onChange={({ target }) =>
+                                    handleValueChange("title", target.value)
+                                }
                             />
                         </div>
 
-                        <div className='mt-3'>
-                            <label className='text-xs font-medium text-slate-700'>
+                        {/* Description */}
+
+                        <div className='mt-5'>
+                            <label className='text-sm font-semibold text-gray-800 mb-2 block'>
                                 Description
                             </label>
 
                             <textarea
                                 placeholder='Describe the task'
-                                className='form-input'
-                                rows={4}
+                                rows={5}
+                                className='w-full px-4 py-3 rounded-2xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all resize-none text-sm md:text-[15px] text-gray-800 placeholder:text-gray-400'
                                 value={taskData.description}
-                                onChange={({ target }) => handleValueChange("description", target.value)}
+                                onChange={({ target }) =>
+                                    handleValueChange("description", target.value)
+                                }
                             />
                         </div>
 
-                        <div className='grid grid-cols-12 gap-4 mt-2'>
-                            <div className='col-span-6 md:col-span-4'>
-                                <label className='text-xs font-medium text-slate-700'>
+                        {/* Grid Fields */}
+
+                        <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mt-5'>
+
+                            {/* Priority */}
+
+                            <div>
+                                <label className='text-sm font-semibold text-gray-800 mb-2 block'>
                                     Priority
                                 </label>
 
                                 <SelectDropdown
                                     options={PRIORITY_DATA}
                                     value={taskData.priority}
-                                    onChange={(value) => handleValueChange("priority", value)}
+                                    onChange={(value) =>
+                                        handleValueChange("priority", value)
+                                    }
                                     placeholder="Select Priority"
                                 />
                             </div>
 
-                            <div className='col-span-6 md:col-span-4'>
-                                <label className='text-xs font-medium text-slate-700'>
+                            {/* Due Date */}
+
+                            <div>
+                                <label className='text-sm font-semibold text-gray-800 mb-2 block'>
                                     Due Date
                                 </label>
 
                                 <input
-                                    placeholder='Select Date'
-                                    className='form-input'
-                                    value={taskData.dueDate}
-                                    onChange={({ target }) => handleValueChange("dueDate", target.value)}
                                     type="date"
+                                    className='custom-date-input w-full h-12 md:h-14 px-4 rounded-2xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-sm md:text-[15px] text-gray-800 cursor-pointer'
+                                    value={taskData.dueDate}
+                                    onChange={({ target }) =>
+                                        handleValueChange("dueDate", target.value)
+                                    }
                                 />
                             </div>
 
-                            <div className='col-span-12 md:col-span-3'>
-                                <label className='text-xs font-medium text-slate-700'>
+                            {/* Assign Users */}
+
+                            <div className='sm:col-span-2 xl:col-span-1'>
+                                <label className='text-sm font-semibold text-gray-800 mb-2 block'>
                                     Assign To
                                 </label>
 
@@ -278,42 +318,87 @@ const CreateTask = () => {
                                     }}
                                 />
                             </div>
+
                         </div>
 
-                        <div className='mt-3'>
-                            <label className='text-xs font-medium text-slate-700'>
+                        {/* Todo Checklist */}
+
+                        <div className='mt-6'>
+                            <label className='text-sm font-semibold text-gray-800 mb-3 block'>
                                 TODO Checklist
                             </label>
 
-                            <TodoListInput
-                                todoList={taskData?.todoChecklist}
-                                setTodoList={(value) => handleValueChange("todoChecklist", value)}
-                            />
+                            <div className='bg-gray-50 border border-gray-200 rounded-3xl p-4 md:p-5'>
+                                <TodoListInput
+                                    todoList={taskData?.todoChecklist}
+                                    setTodoList={(value) =>
+                                        handleValueChange("todoChecklist", value)
+                                    }
+                                />
+                            </div>
                         </div>
 
-                        <div className='mt-3'>
-                            <label className='text-xs font-medium text-slate-700'>
+                        {/* Attachments */}
+
+                        <div className='mt-6'>
+                            <label className='text-sm font-semibold text-gray-800 mb-3 block'>
                                 Add Attachments
                             </label>
 
-                            <AddAttachmentsInput
-                                attachments={taskData?.attachments}
-                                setAttachments={(value) => handleValueChange("attachments", value)}
-                            />
+                            <div className='bg-gray-50 border border-gray-200 rounded-3xl p-4 md:p-5'>
+                                <AddAttachmentsInput
+                                    attachments={taskData?.attachments}
+                                    setAttachments={(value) =>
+                                        handleValueChange("attachments", value)
+                                    }
+                                />
+                            </div>
                         </div>
+
+                        {/* Error */}
 
                         {error && (
-                            <p className='text-xs font-medium text-red-600 mt-5'>{error}</p>
+                            <div className='mt-5 bg-rose-50 border border-rose-300 text-rose-700 text-sm font-medium px-4 py-3 rounded-2xl'>
+                                {error}
+                            </div>
                         )}
 
-                        <div className='flex justify-end mt-7'>
-                            <button className='add-btn' onClick={handleSubmit} disabled={loading}>
-                                {taskId ? "UPDATE TASK" : "CREATE TASK"}
+                        {/* Buttons */}
+
+                        <div className='flex flex-col-reverse sm:flex-row items-center justify-end gap-3 mt-8'>
+
+                            <button
+                                type='button'
+                                onClick={() => navigate("/admin/tasks")}
+                                className='w-full sm:w-auto h-12 px-6 rounded-2xl border border-gray-500 hover:bg-gray-100 hover:border-gray-600 text-gray-700 text-sm font-medium transition-all cursor-pointer'
+                            >
+                                Cancel
                             </button>
+
+                            <button
+                                className='w-full sm:w-auto h-12 px-7 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
+                                onClick={handleSubmit}
+                                disabled={loading}
+                            >
+                                {loading
+                                    ? taskId
+                                        ? "UPDATING..."
+                                        : "CREATING..."
+                                    : taskId
+                                        ? "UPDATE TASK"
+                                        : "CREATE TASK"
+                                }
+                            </button>
+
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
+
+            {/* Delete Modal */}
 
             <Model
                 isOpen={openDeleteAlert}
@@ -325,8 +410,9 @@ const CreateTask = () => {
                     onDelete={() => deleteTask()}
                 />
             </Model>
-        </DashboardLayout >
+
+        </DashboardLayout>
     )
 }
 
-export default CreateTask
+export default CreateTask;

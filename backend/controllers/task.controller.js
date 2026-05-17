@@ -7,22 +7,37 @@ const Task = require("../models/task.model.js");
 */
 const getTasks = async (req, res) => {
     try {
-        const { status } = req.query;
-        let filter = {};
+        // ✅ search, sortBy, sortOrder add karo
+        const { status, search, sortBy, sortOrder } = req.query;
+        const teamCode = req.user.teamCode;
+        let filter = { teamCode };
 
         if (status) {
             filter.status = status;
         }
 
+        // ✅ Search filter add karo
+        if (search) {
+            filter.title = { $regex: search, $options: "i" };
+        }
+
+        // ✅ Sort logic add karo
+        let sort = { createdAt: -1 };  // default — newest first
+        if (sortBy === "dueDate") sort = { dueDate: sortOrder === "asc" ? 1 : -1 };
+        if (sortBy === "priority") sort = { priority: sortOrder === "asc" ? 1 : -1 };
+        if (sortBy === "status") sort = { status: sortOrder === "asc" ? 1 : -1 };
+
         let tasks;
 
         if (req.user.role === "admin") {
-            tasks = await Task.find(filter).populate(
+            // ✅ .sort(sort) add karo
+            tasks = await Task.find(filter).sort(sort).populate(
                 "assignedTo",
                 "name email profileImageUrl"
             );
         } else {
-            tasks = await Task.find({ ...filter, assignedTo: req.user._id }).populate(
+            // ✅ .sort(sort) add karo
+            tasks = await Task.find({ ...filter, assignedTo: req.user._id }).sort(sort).populate(
                 "assignedTo",
                 "name email profileImageUrl"
             );
@@ -34,30 +49,28 @@ const getTasks = async (req, res) => {
                 const completedCount = task.todoChecklist.filter(
                     (item) => item.completed
                 ).length;
-
                 return { ...task._doc, completedTodoCount: completedCount };
             })
         );
 
         //* status summary counts
         const allTasks = await Task.countDocuments(
-            req.user.role === "admin" ? {} : { assignedTo: req.user._id }
+            req.user.role === "admin"
+                ? { teamCode }
+                : { teamCode, assignedTo: req.user._id }
         );
-
         const pendingTasks = await Task.countDocuments({
-            ...filter,
+            teamCode,
             status: "Pending",
             ...(req.user.role !== "admin" && { assignedTo: req.user._id })
         });
-
         const inProgressTasks = await Task.countDocuments({
-            ...filter,
+            teamCode,
             status: "In Progress",
             ...(req.user.role !== "admin" && { assignedTo: req.user._id })
         });
-
         const completedTasks = await Task.countDocuments({
-            ...filter,
+            teamCode,
             status: "Completed",
             ...(req.user.role !== "admin" && { assignedTo: req.user._id })
         });
@@ -98,6 +111,11 @@ const getTaskById = async (req, res) => {
             });
         }
 
+        // ✅ teamCode authorization check add karo
+        if (task.teamCode !== req.user.teamCode) {
+            return res.status(403).json({ message: "Not authorized" });
+        }
+
         res.json(task);
 
     } catch (error) {
@@ -130,6 +148,7 @@ const createTask = async (req, res) => {
             dueDate,
             assignedTo,
             createdBy: req.user._id,
+            teamCode: req.user.teamCode,
             todoChecklist,
             attachments
         });
@@ -217,6 +236,33 @@ const deleteTask = async (req, res) => {
             message: "Server error",
             error: error.message
         });
+    }
+};
+
+/**
+ * @desc Bulk delete tasks (admin only)
+ * @route DELETE /api/tasks/bulk-delete
+ * @access Private (admin)
+*/
+// ✅ Ye poora naya function add karo getTaskById ke baad
+const bulkDeleteTasks = async (req, res) => {
+    try {
+        const { taskIds } = req.body;
+        const teamCode = req.user.teamCode;
+
+        if (!Array.isArray(taskIds) || taskIds.length === 0) {
+            return res.status(400).json({ message: "taskIds array is required" });
+        }
+
+        await Task.deleteMany({
+            _id: { $in: taskIds },
+            teamCode  // sirf usi team ke tasks delete honge
+        });
+
+        res.json({ message: `${taskIds.length} tasks deleted successfully` });
+
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 };
 
@@ -333,11 +379,14 @@ const updateTaskChecklist = async (req, res) => {
 */
 const getDashboardData = async (req, res) => {
     try {
+        const teamCode = req.user.teamCode;
+
         //* fetch statistics
-        const totalTasks = await Task.countDocuments();
-        const pendingTasks = await Task.countDocuments({ status: "Pending" });
-        const completedTasks = await Task.countDocuments({ status: "Completed" });
+        const totalTasks = await Task.countDocuments({ teamCode });
+        const pendingTasks = await Task.countDocuments({ teamCode, status: "Pending" });
+        const completedTasks = await Task.countDocuments({ teamCode, status: "Completed" });
         const overdueTasks = await Task.countDocuments({
+            teamCode,
             status: { $ne: "Completed" },
             dueDate: { $lt: new Date() },
         });
@@ -345,6 +394,7 @@ const getDashboardData = async (req, res) => {
         //* ensure all possible statuses are included
         const taskStatuses = ["Pending", "In Progress", "Completed"];
         const taskDistributionRaw = await Task.aggregate([
+            { $match: { teamCode } },
             {
                 $group: {
                     _id: "$status",
@@ -363,6 +413,7 @@ const getDashboardData = async (req, res) => {
         //* ensure all priority levels are included
         const taskPriorities = ["Low", "Medium", "High"];
         const taskPriorityLevelsRaw = await Task.aggregate([
+            { $match: { teamCode } },
             {
                 $group: {
                     _id: "$priority",
@@ -376,7 +427,7 @@ const getDashboardData = async (req, res) => {
         }, {});
 
         //* fetch recent 10 tasks
-        const recentTasks = await Task.find()
+        const recentTasks = await Task.find({ teamCode })
             .sort({ createdAt: -1 })
             .limit(10)
             .select("title status priority dueDate createdAt");
@@ -411,12 +462,14 @@ const getDashboardData = async (req, res) => {
 const getUserDashboardData = async (req, res) => {
     try {
         const userId = req.user._id;  //* only fetch data for the logged-in user
+        const teamCode = req.user.teamCode;
 
         //* fetch statistics for user-specific tasks
-        const totalTasks = await Task.countDocuments({ assignedTo: userId });
-        const pendingTasks = await Task.countDocuments({ assignedTo: userId, status: "Pending" });
-        const completedTasks = await Task.countDocuments({ assignedTo: userId, status: "Completed" });
+        const totalTasks = await Task.countDocuments({ teamCode, assignedTo: userId });
+        const pendingTasks = await Task.countDocuments({ teamCode, assignedTo: userId, status: "Pending" });
+        const completedTasks = await Task.countDocuments({ teamCode, assignedTo: userId, status: "Completed" });
         const overdueTasks = await Task.countDocuments({
+            teamCode,
             assignedTo: userId,
             status: { $ne: "Completed" },
             dueDate: { $lt: new Date() },
@@ -425,7 +478,7 @@ const getUserDashboardData = async (req, res) => {
         //* task distribution by status
         const taskStatuses = ["Pending", "In Progress", "Completed"];
         const taskDistributionRaw = await Task.aggregate([
-            { $match: { assignedTo: userId } },
+            { $match: { teamCode, assignedTo: userId } },
             { $group: { _id: "$status", count: { $sum: 1 } } },
         ]);
 
@@ -439,7 +492,7 @@ const getUserDashboardData = async (req, res) => {
         //* task distribution by priority
         const taskPriorities = ["Low", "Medium", "High"];
         const taskPriorityLevelsRaw = await Task.aggregate([
-            { $match: { assignedTo: userId } },
+            { $match: { teamCode, assignedTo: userId } },
             { $group: { _id: "$priority", count: { $sum: 1 } } },
         ]);
 
@@ -449,7 +502,7 @@ const getUserDashboardData = async (req, res) => {
         }, {});
 
         //* fetch recent 10 tasks for the logged-in user
-        const recentTasks = await Task.find({ assignedTo: userId })
+        const recentTasks = await Task.find({ teamCode, assignedTo: userId })
             .sort({ createdAt: -1 })
             .limit(10)
             .select("title status priority dueDate createdAt");
@@ -476,4 +529,4 @@ const getUserDashboardData = async (req, res) => {
     }
 };
 
-module.exports = { getTasks, getTaskById, createTask, updateTask, deleteTask, updateTaskStatus, updateTaskChecklist, getDashboardData, getUserDashboardData };
+module.exports = { getTasks, getTaskById, createTask, updateTask, deleteTask, bulkDeleteTasks, updateTaskStatus, updateTaskChecklist, getDashboardData, getUserDashboardData };

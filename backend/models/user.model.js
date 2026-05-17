@@ -23,6 +23,14 @@ const userSchema = new mongoose.Schema({
         enum: ["admin", "member"],
         default: "member"
     },
+    teamName: {
+        type: String,
+        default: null
+    },
+    teamCode: {
+        type: String,
+        default: null
+    },
     isVerified: {
         type: Boolean,
         default: false

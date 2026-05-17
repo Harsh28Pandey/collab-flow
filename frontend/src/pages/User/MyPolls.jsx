@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
     BarChart3,
     CalendarClock,
@@ -8,26 +8,21 @@ import {
     RefreshCw,
     Vote,
     TrendingUp,
-    AlertCircle,
+    Search,
 } from "lucide-react";
 import axiosInstance from "../../utils/axiosInstance.js";
 import { API_PATHS } from "../../utils/apiPaths.js";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
+import TaskStatusTabs from "../../components/TaskStatusTabs.jsx";
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 const formatExpiry = (dateValue) => {
     if (!dateValue) return "No expiry set";
     const d = new Date(dateValue);
     if (isNaN(d.getTime())) return "Invalid date";
     return d.toLocaleString("en-IN", {
-        weekday: "short",
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
+        weekday: "short", day: "2-digit", month: "short",
+        year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,
     });
 };
 
@@ -49,130 +44,141 @@ const optionColors = [
     { bg: "bg-amber-500", light: "bg-amber-50", text: "text-amber-600", border: "border-amber-300", bar: "bg-amber-500" },
     { bg: "bg-rose-500", light: "bg-rose-50", text: "text-rose-600", border: "border-rose-300", bar: "bg-rose-500" },
     { bg: "bg-cyan-500", light: "bg-cyan-50", text: "text-cyan-600", border: "border-cyan-300", bar: "bg-cyan-500" },
-    { bg: "bg-orange-500", light: "bg-orange-50", text: "text-orange-600", border: "border-orange-300", bar: "bg-orange-500" },
-    { bg: "bg-pink-500", light: "bg-pink-50", text: "text-pink-600", border: "border-pink-300", bar: "bg-pink-500" },
-    { bg: "bg-teal-500", light: "bg-teal-50", text: "text-teal-600", border: "border-teal-300", bar: "bg-teal-500" },
-    { bg: "bg-indigo-500", light: "bg-indigo-50", text: "text-indigo-600", border: "border-indigo-300", bar: "bg-indigo-500" },
 ];
 const optionLabels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const getColor = (i) => optionColors[i % optionColors.length];
 
-// ─── Poll Card ───────────────────────────────────────────────────────────────
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+const SkeletonBlock = ({ className }) => (
+    <div className={`bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:200%_100%] animate-shimmer rounded-xl ${className}`} />
+);
 
+const PollSkeleton = () => (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="h-24 bg-gradient-to-r from-blue-100 to-violet-100" />
+        <div className="p-5 space-y-3">
+            {[1, 2, 3].map((i) => (
+                <SkeletonBlock key={i} className="h-11 w-full" />
+            ))}
+        </div>
+        <div className="h-10 bg-gray-50 border-t border-gray-100" />
+    </div>
+);
+
+const MyPollsSkeleton = () => (
+    <div className="py-4 md:py-5 space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="space-y-2">
+                <SkeletonBlock className="h-8 w-32" />
+                <SkeletonBlock className="h-4 w-64" />
+            </div>
+            <SkeletonBlock className="h-11 w-28 rounded-2xl" />
+        </div>
+        <div className="flex flex-col xl:flex-row xl:items-center gap-4">
+            <SkeletonBlock className="h-12 flex-1 rounded-2xl" />
+            <SkeletonBlock className="h-11 w-64 rounded-xl" />
+        </div>
+        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {[1, 2, 3, 4].map((i) => <PollSkeleton key={i} />)}
+        </div>
+    </div>
+);
+
+// ─── Poll Card ────────────────────────────────────────────────────────────────
 const PollCard = ({ poll, currentUserId, onVote }) => {
     const [voting, setVoting] = useState(false);
     const [localPoll, setLocalPoll] = useState(poll);
     const [showResults, setShowResults] = useState(false);
-    const [justVoted, setJustVoted] = useState(null); // index of option just voted
+    const [justVoted, setJustVoted] = useState(null);
 
     const expiryDate = localPoll?.expiry || null;
-    const expired = localPoll?.status === "expired";
+    const expired = isExpired(localPoll?.expiry);
     const options = localPoll?.options || [];
     const totalVotes = getTotalVotes(options);
 
-    // Check if current user has already voted
     const userVotedIndex = options.findIndex((opt) =>
         Array.isArray(opt?.votes) &&
-        opt.votes.some(
-            (v) => v?.userId === currentUserId || v === currentUserId
-        )
+        opt.votes.some((v) => {
+            if (typeof v === "object") {
+                return String(v.userId) === String(currentUserId);
+            }
+            return String(v) === String(currentUserId);
+        })
     );
-    const hasVoted = userVotedIndex !== -1;
 
-    // Show results automatically if voted or expired
+    const hasVoted = userVotedIndex !== -1;
     const showResultsView = showResults || hasVoted || expired;
 
     const handleVote = async (optionIndex) => {
         if (voting || expired) return;
 
-        // 🔒 Check: user already voted anywhere in poll
         const alreadyVoted = localPoll.options.some((opt) =>
-            (opt.votes || []).some(
-                (v) => v?.userId === currentUserId || v === currentUserId
-            )
+            (opt.votes || []).some((v) => {
+                if (typeof v === "object") {
+                    return String(v.userId) === String(currentUserId);
+                }
+                return String(v) === String(currentUserId);
+            })
         );
 
         if (alreadyVoted) return;
 
-        let previousPoll = localPoll; // rollback ke liye
-
+        let previousPoll = localPoll;
         try {
             setVoting(true);
             setJustVoted(optionIndex);
 
-            // ✅ OPTIMISTIC UPDATE
             const updatedLocal = {
                 ...localPoll,
                 options: localPoll.options.map((opt, i) => {
                     if (i === optionIndex) {
-                        return {
-                            ...opt,
-                            votes: [
-                                ...(opt.votes || []),
-                                { userId: currentUserId }
-                            ]
-                        };
+                        return { ...opt, votes: [...(opt.votes || []), { userId: currentUserId }] };
                     }
                     return opt;
                 }),
             };
-
             setLocalPoll(updatedLocal);
             setShowResults(true);
             onVote && onVote(updatedLocal);
 
-            // ✅ API CALL
-            const res = await axiosInstance.post(
-                API_PATHS.POLLS.VOTE_POLL,
-                {
-                    pollId: localPoll._id,
-                    optionIndex
-                }
-            );
+            const res = await axiosInstance.post(API_PATHS.POLLS.VOTE_POLL, {
+                pollId: localPoll._id,
+                optionIndex: Number(optionIndex),
+            });
 
-            // ✅ SERVER SYNC (important for refresh issue)
             if (res?.data) {
                 const serverPoll = res.data.poll || res.data;
-
                 const normalized = {
                     ...serverPoll,
                     options: Array.isArray(serverPoll?.options)
                         ? serverPoll.options.map((opt) =>
-                            typeof opt === "string"
-                                ? { text: opt, votes: [] }
-                                : opt
+                            typeof opt === "string" ? { text: opt, votes: [] } : opt
                         )
                         : [],
                 };
-
                 setLocalPoll(normalized);
                 onVote && onVote(normalized);
             }
-
         } catch (err) {
+            // console.log("Backend Error:", err.response?.data);
             console.error("Vote Error:", err);
 
-            // ❌ ROLLBACK if API fails
             setLocalPoll(previousPoll);
         } finally {
             setVoting(false);
         }
     };
 
-    // Leading option
     const leadingIndex = options.reduce(
         (maxIdx, opt, i, arr) =>
-            (opt?.votes?.length || 0) > (arr[maxIdx]?.votes?.length || 0)
-                ? i
-                : maxIdx,
+            (opt?.votes?.length || 0) > (arr[maxIdx]?.votes?.length || 0) ? i : maxIdx,
         0
     );
 
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden poll-card">
-
-            {/* ── Card Header ── */}
-            <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-violet-600 px-5 pt-4 pb-3">
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden relative">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-5 pt-5 pb-4">
                 <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-2 shrink-0">
                         <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
@@ -182,145 +188,205 @@ const PollCard = ({ poll, currentUserId, onVote }) => {
                             {expired ? "Closed" : "Active"}
                         </span>
                     </div>
-
                     <div className="flex items-center gap-1.5 text-xs text-blue-100 shrink-0">
                         <Vote size={12} />
                         <span>{totalVotes} vote{totalVotes !== 1 ? "s" : ""}</span>
                     </div>
                 </div>
-
-                {/* Question */}
                 <h2 className="text-white font-bold text-base mt-2 leading-snug">
                     {localPoll?.question || "No question"}
                 </h2>
             </div>
 
-            {/* ── Body ── */}
-            <div className="px-5 py-4">
+            {/* Body */}
+            <div className="p-5">
 
-                {/* ── Voting View ── */}
                 {!showResultsView ? (
-                    <div className="space-y-2.5">
-                        <p className="text-xs text-gray-400 font-medium mb-3">
-                            Choose one option to vote
+
+                    <div className="space-y-3">
+
+                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                            Choose one option
                         </p>
+
                         {options.map((opt, i) => {
+
                             const color = getColor(i);
+
                             return (
                                 <button
                                     key={i}
                                     type="button"
                                     disabled={voting}
                                     onClick={() => handleVote(i)}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer group
-                                        ${voting && justVoted === i
+                                    className={`w-full flex items-center gap-3 rounded-2xl px-4 py-3 border transition-all duration-200 text-left cursor-pointer
+                            
+                            ${voting && justVoted === i
                                             ? `${color.light} ${color.border}`
-                                            : `border-gray-200 hover:${color.border} hover:${color.light} bg-gray-50 hover:bg-opacity-60`
+                                            : "bg-gray-50 border-gray-100 hover:border-blue-200 hover:bg-blue-50/40"
                                         }
-                                        active:scale-98 disabled:cursor-not-allowed`}
+                        `}
                                 >
-                                    <span className={`w-7 h-7 rounded-lg ${color.bg} flex items-center justify-center text-white text-xs font-bold shrink-0 transition-transform duration-200 group-hover:scale-110`}>
+
+                                    <div className={`w-8 h-8 rounded-xl ${color.bg} text-white flex items-center justify-center text-xs font-bold shrink-0`}>
                                         {optionLabels[i]}
+                                    </div>
+
+                                    <span className="flex-1 text-sm font-medium text-gray-700 truncate">
+                                        {opt?.text || "No option"}
                                     </span>
-                                    <span className="text-sm text-gray-700 font-medium flex-1">
-                                        {opt?.text || "—"}
-                                    </span>
+
                                     {voting && justVoted === i && (
-                                        <Loader2 size={15} className="animate-spin text-gray-400 shrink-0" />
+                                        <Loader2
+                                            size={15}
+                                            className="animate-spin text-gray-400 shrink-0"
+                                        />
                                     )}
+
                                 </button>
                             );
                         })}
+
                     </div>
+
                 ) : (
-                    /* ── Results View ── */
-                    <div className="space-y-2.5">
-                        <div className="flex items-center justify-between mb-3">
-                            <p className="text-xs text-gray-400 font-medium flex items-center gap-1.5">
+
+                    <div className="space-y-3">
+
+                        <div className="flex items-center justify-between">
+
+                            <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 flex items-center gap-1">
                                 <TrendingUp size={12} />
-                                Results — {totalVotes} total vote{totalVotes !== 1 ? "s" : ""}
+                                Poll Results
                             </p>
+
                             {hasVoted && (
-                                <span className="flex items-center gap-1 text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full">
-                                    <CheckCircle2 size={11} />
+                                <div className="flex items-center gap-1 text-xs font-semibold bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full">
+                                    <CheckCircle2 size={12} />
                                     Voted
-                                </span>
+                                </div>
                             )}
+
                         </div>
 
                         {options.map((opt, i) => {
+
                             const votes = opt?.votes?.length || 0;
+
                             const pct = getVotePercent(votes, totalVotes);
+
                             const color = getColor(i);
-                            const isLeading = i === leadingIndex && totalVotes > 0;
-                            const isMyVote = i === userVotedIndex;
+
+                            const isLeading =
+                                i === leadingIndex && totalVotes > 0;
+
+                            const isMyVote =
+                                i === userVotedIndex;
 
                             return (
-                                <div key={i} className={`rounded-xl overflow-hidden border transition-all duration-200 ${isMyVote ? `${color.border} border-2` : "border-gray-100"}`}>
-                                    <div className={`flex items-center gap-3 px-3 py-2.5 ${isMyVote ? color.light : "bg-gray-50"}`}>
-                                        {/* Label badge */}
-                                        <span className={`w-7 h-7 rounded-lg ${color.bg} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
+
+                                <div
+                                    key={i}
+                                    className={`rounded-2xl border overflow-hidden transition-all duration-200
+                            
+                            ${isMyVote
+                                            ? `${color.border} border-2`
+                                            : "border-gray-100"
+                                        }
+                        `}
+                                >
+
+                                    <div className={`px-4 py-3 flex items-center gap-3
+                            
+                            ${isMyVote
+                                            ? color.light
+                                            : "bg-gray-50"
+                                        }
+                        `}>
+
+                                        <div className={`w-8 h-8 rounded-xl ${color.bg} text-white text-xs font-bold flex items-center justify-center shrink-0`}>
                                             {optionLabels[i]}
+                                        </div>
+
+                                        <span className="flex-1 text-sm font-medium text-gray-700 truncate">
+                                            {opt?.text || "No option"}
                                         </span>
 
-                                        {/* Text + leading crown */}
-                                        <span className="text-sm text-gray-700 font-medium flex-1 truncate">
-                                            {opt?.text || "—"}
-                                        </span>
-
-                                        {isLeading && totalVotes > 0 && (
-                                            <span className="text-xs shrink-0">🏆</span>
+                                        {isLeading && (
+                                            <span className="text-xs">
+                                                🏆
+                                            </span>
                                         )}
+
                                         {isMyVote && (
-                                            <CheckCircle2 size={14} className={`${color.text} shrink-0`} />
+                                            <CheckCircle2
+                                                size={14}
+                                                className={color.text}
+                                            />
                                         )}
 
-                                        {/* Percent */}
-                                        <span className={`text-xs font-bold shrink-0 ${isMyVote ? color.text : "text-gray-500"}`}>
+                                        <span className={`text-xs font-bold ${isMyVote ? color.text : "text-gray-500"}`}>
                                             {pct}%
                                         </span>
+
                                     </div>
 
-                                    {/* Progress bar */}
+                                    {/* Progress */}
                                     <div className="h-1.5 bg-gray-100">
+
                                         <div
-                                            className={`h-full ${color.bar} transition-all duration-700 ease-out`}
+                                            className={`h-full ${color.bar} transition-all duration-700`}
                                             style={{ width: `${pct}%` }}
                                         />
+
                                     </div>
 
-                                    {/* Vote count */}
-                                    <div className={`px-3 py-1 text-xs ${isMyVote ? color.text : "text-gray-400"} font-medium flex justify-end ${isMyVote ? color.light : "bg-gray-50"}`}>
+                                    {/* Votes */}
+                                    <div className={`px-4 py-2 text-xs font-medium flex justify-end
+                            
+                            ${isMyVote
+                                            ? `${color.light} ${color.text}`
+                                            : "bg-gray-50 text-gray-400"
+                                        }
+                        `}>
                                         {votes} vote{votes !== 1 ? "s" : ""}
                                     </div>
+
                                 </div>
+
                             );
                         })}
 
-                        {/* Toggle back to vote view (only if not voted and not expired) */}
                         {!hasVoted && !expired && (
+
                             <button
                                 onClick={() => setShowResults(false)}
-                                className="text-xs text-blue-500 hover:text-blue-700 font-medium mt-1 flex items-center gap-1 cursor-pointer transition"
+                                className="text-xs font-medium text-blue-500 hover:text-blue-700 transition cursor-pointer"
                             >
                                 ← Back to voting
                             </button>
+
                         )}
+
                     </div>
+
                 )}
+
             </div>
 
-            {/* ── Footer ── */}
-            <div className={`px-5 py-3 border-t flex items-center justify-between gap-2 ${expired ? "bg-red-50 border-red-100" : "bg-gray-50 border-gray-100"}`}>
-                <div className={`flex items-center gap-1.5 text-xs font-medium ${expired ? "text-red-500" : "text-emerald-600"}`}>
+            {/* Footer */}
+            <div
+                className={`flex items-center justify-between gap-3 px-5 py-3 border-t
+        ${expired
+                        ? "bg-red-50 border-red-100"
+                        : "bg-green-50 border-green-100"
+                    }
+    `}
+            >
+                <div className={`flex items-center gap-1.5 text-xs font-medium ${expired ? "text-red-500" : "text-blue-600"}`}>
                     {expired ? <Clock size={12} /> : <CalendarClock size={12} />}
-                    <span>
-                        {expired ? "Closed " : "Closes "}
-                        {formatExpiry(expiryDate)}
-                    </span>
+                    <span>{expired ? "Closed " : "Closes "}{formatExpiry(expiryDate)}</span>
                 </div>
-
-                {/* Toggle results button */}
                 {!showResultsView && totalVotes > 0 && (
                     <button
                         onClick={() => setShowResults(true)}
@@ -335,29 +401,14 @@ const PollCard = ({ poll, currentUserId, onVote }) => {
     );
 };
 
-// ─── Skeleton Loader ─────────────────────────────────────────────────────────
-
-const PollSkeleton = () => (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden animate-pulse">
-        <div className="h-24 bg-gradient-to-r from-blue-100 to-violet-100" />
-        <div className="p-5 space-y-3">
-            {[1, 2, 3].map((i) => (
-                <div key={i} className="h-11 bg-gray-100 rounded-xl" />
-            ))}
-        </div>
-        <div className="px-5 py-3 border-t border-gray-100 bg-gray-50 h-10" />
-    </div>
-);
-
-// ─── Main Page ───────────────────────────────────────────────────────────────
-
+// ─── Main Page ────────────────────────────────────────────────────────────────
 const MyPolls = () => {
     const [polls, setPolls] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [filter, setFilter] = useState("all"); // "all" | "active" | "closed"
+    const [loading, setLoading] = useState(true);
+    const [filter, setFilter] = useState("All");
     const [refreshing, setRefreshing] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");  // ✅ search state
 
-    // Get current user id from localStorage / session (adjust as per your auth)
     const currentUserId =
         JSON.parse(localStorage.getItem("user") || "{}")?.id ||
         JSON.parse(localStorage.getItem("user") || "{}")?._id ||
@@ -366,18 +417,14 @@ const MyPolls = () => {
     const fetchPolls = async (isRefresh = false) => {
         try {
             isRefresh ? setRefreshing(true) : setLoading(true);
-
             const res = await axiosInstance.get(API_PATHS.POLLS.GET_ALL_POLLS);
             const data = res?.data?.polls;
-
             if (Array.isArray(data)) {
                 const normalized = data.map((poll) => ({
                     ...poll,
                     options: Array.isArray(poll?.options)
                         ? poll.options.map((opt) =>
-                            typeof opt === "string"
-                                ? { text: opt, votes: [] }
-                                : opt
+                            typeof opt === "string" ? { text: opt, votes: [] } : opt
                         )
                         : [],
                 }));
@@ -398,123 +445,163 @@ const MyPolls = () => {
         fetchPolls();
     }, []);
 
-    const filteredPolls = polls.filter((poll) => {
-        const expired = isExpired(poll?.expiry);
-        if (filter === "active") return !expired;
-        if (filter === "closed") return expired;
-        return true;
-    });
+    // ✅ Shimmer + animation inject
+    useEffect(() => {
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes shimmer {
+                0% { background-position: 200% 0; }
+                100% { background-position: -200% 0; }
+            }
+            .animate-shimmer { animation: shimmer 1.5s infinite linear; }
+            @keyframes fadeSlideUp {
+                from { opacity: 0; transform: translateY(16px); }
+                to   { opacity: 1; transform: translateY(0); }
+            }
+            .poll-animate { animation: fadeSlideUp 0.35s ease both; }
+        `;
+        document.head.appendChild(style);
+        return () => document.head.removeChild(style);
+    }, []);
 
     const activeCount = polls.filter((p) => !isExpired(p?.expiry)).length;
     const closedCount = polls.filter((p) => isExpired(p?.expiry)).length;
 
+    const TABS = [
+        { label: "All", count: polls.length },
+        { label: "Active", count: activeCount },
+        { label: "Closed", count: closedCount },
+    ];
+
+    // ✅ Filter + Search combined
+    const filteredPolls = useMemo(() => {
+        return polls.filter((poll) => {
+            const expired = isExpired(poll?.expiry);
+            const matchesFilter =
+                filter === "Active" ? !expired :
+                    filter === "Closed" ? expired : true;
+
+            const matchesSearch = poll?.question
+                ?.toLowerCase()
+                .includes(searchQuery.toLowerCase());
+
+            return matchesFilter && matchesSearch;
+        });
+    }, [polls, filter, searchQuery]);
+
     return (
         <DashboardLayout activeMenu="My Polls">
-            <div className="min-h-screen bg-gray-50">
 
-                {/* ── Page Header ── */}
-                <div className="bg-white border-b border-gray-100 px-4 sm:px-6 py-5">
-                    <div className="max-w-5xl mx-auto">
-                        <div className="flex items-center justify-between gap-4 flex-wrap">
+            {loading ? (
+                <MyPollsSkeleton />
+            ) : (
+                <div className="py-4 md:py-5 space-y-6">
 
-                            {/* Title */}
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center shadow-md shadow-blue-200">
-                                    <Vote size={20} className="text-white" />
-                                </div>
-                                <div>
-                                    <h1 className="text-xl font-bold text-gray-900">
-                                        My Polls
-                                    </h1>
-                                    <p className="text-xs text-gray-400 mt-0.5">
-                                        {polls.length} poll{polls.length !== 1 ? "s" : ""} available
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Refresh button */}
-                            <button
-                                onClick={() => fetchPolls(true)}
-                                disabled={refreshing}
-                                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-all duration-200 cursor-pointer active:scale-95 disabled:opacity-60"
-                            >
-                                <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
-                                {refreshing ? "Refreshing..." : "Refresh"}
-                            </button>
-                        </div>
-
-                        {/* ── Stats row ── */}
-                        <div className="flex items-center gap-3 mt-4 flex-wrap">
-                            <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full">
-                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                {activeCount} Active
-                            </div>
-                            <div className="flex items-center gap-2 bg-red-50 border border-red-100 text-red-500 text-xs font-semibold px-3 py-1.5 rounded-full">
-                                <Clock size={11} />
-                                {closedCount} Closed
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* ── Filter Tabs ── */}
-                <div className="px-4 sm:px-6 py-4 max-w-5xl mx-auto">
-                    <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl p-1 w-fit">
-                        {[
-                            { key: "all", label: "All Polls", count: polls.length },
-                            { key: "active", label: "Active", count: activeCount },
-                            { key: "closed", label: "Closed", count: closedCount },
-                        ].map((tab) => (
-                            <button
-                                key={tab.key}
-                                onClick={() => setFilter(tab.key)}
-                                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer
-                                    ${filter === tab.key
-                                        ? "bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-sm"
-                                        : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                                    }`}
-                            >
-                                {tab.label}
-                                <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold
-                                    ${filter === tab.key
-                                        ? "bg-white/25 text-white"
-                                        : "bg-gray-100 text-gray-500"
-                                    }`}>
-                                    {tab.count}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                {/* ── Poll Grid ── */}
-                <div className="px-4 sm:px-6 pb-10 max-w-5xl mx-auto">
-
-                    {loading ? (
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-                            {[1, 2, 3, 4].map((i) => <PollSkeleton key={i} />)}
-                        </div>
-                    ) : filteredPolls.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-24 text-center">
-                            <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
-                                <AlertCircle size={28} className="text-gray-300" />
-                            </div>
-                            <p className="text-gray-500 font-semibold">
-                                No {filter !== "all" ? filter : ""} polls found
+                    {/* ── Header ── */}
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                                My Polls
+                            </h1>
+                            <p className="text-sm text-gray-500 mt-1">
+                                Vote on active polls and view results from your team.
                             </p>
-                            <p className="text-gray-400 text-sm mt-1">
-                                {filter !== "all"
-                                    ? "Try switching to a different filter"
-                                    : "No polls have been created yet"
+                        </div>
+
+                        {/* Refresh */}
+                        <button
+                            onClick={() => fetchPolls(true)}
+                            disabled={refreshing}
+                            className="h-11 px-4 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 flex items-center gap-2 text-sm font-medium transition-all cursor-pointer disabled:opacity-60 self-start lg:self-auto"
+                        >
+                            <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
+                            {refreshing ? "Refreshing..." : "Refresh"}
+                        </button>
+                    </div>
+
+                    {/* ── Search + Tabs — MyTasks jaisa layout ── */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+
+                        {/* Search bar — left */}
+                        <div className="relative flex-1">
+                            <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Search polls by question..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full h-12 pl-11 pr-4 rounded-2xl border border-gray-200 bg-white outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-sm transition-all"
+                            />
+                        </div>
+
+                        {/* Tabs */}
+                        <div className="overflow-x-auto scrollbar-hide">
+                            <div className="min-w-max">
+                                <TaskStatusTabs
+                                    tabs={TABS}
+                                    activeTab={filter}
+                                    setActiveTab={setFilter}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ── Result count ── */}
+                    {filteredPolls.length > 0 && (
+                        <p className="text-sm text-gray-500">
+                            Showing{" "}
+                            <span className="font-semibold text-gray-900">{filteredPolls.length}</span>{" "}
+                            poll{filteredPolls.length !== 1 ? "s" : ""}
+                        </p>
+                    )}
+
+                    {/* ── Empty State ── */}
+                    {filteredPolls.length === 0 ? (
+                        <div className="bg-white border border-dashed border-gray-200 rounded-3xl py-20 px-6 flex flex-col items-center justify-center text-center">
+                            <div className="w-24 h-24 rounded-3xl bg-blue-50 flex items-center justify-center mb-6">
+                                <Vote size={40} className="text-blue-400" />
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-800">
+                                {searchQuery
+                                    ? "No Polls Found 🔍"
+                                    : filter === "Active" ? "No Active Polls 🗳️"
+                                        : filter === "Closed" ? "No Closed Polls 📋"
+                                            : filter !== "All" ? "No Polls Found" : "No Polls Created"
+                                }
+                            </h3>
+                            <p className="text-gray-500 max-w-md mt-3 leading-relaxed">
+                                {searchQuery
+                                    ? `No polls matched "${searchQuery}". Try different keywords.`
+                                    : filter === "active"
+                                        ? "There are no active polls right now. Check back later or switch to All Polls."
+                                        : filter === "closed"
+                                            ? "No polls have been closed yet. Active polls will appear here once they expire."
+                                            : "No polls have been created yet. Your admin will create polls for the team soon."
                                 }
                             </p>
+                            {searchQuery ? (
+                                <button
+                                    onClick={() => setSearchQuery("")}
+                                    className="mt-6 h-11 px-6 rounded-2xl border border-gray-200 text-sm font-medium text-gray-600 hover:border-blue-300 hover:text-blue-600 transition-all cursor-pointer"
+                                >
+                                    Clear Search
+                                </button>
+                            ) : filter !== "all" ? (
+                                <button
+                                    onClick={() => setFilter("All")}
+                                    className="mt-6 h-11 px-6 rounded-2xl border border-gray-200 text-sm font-medium text-gray-600 hover:border-blue-300 hover:text-blue-600 transition-all cursor-pointer"
+                                >
+                                    View All Polls
+                                </button>
+                            ) : null}
                         </div>
                     ) : (
-                        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                        /* ── Poll Grid ── */
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                             {filteredPolls.map((poll, idx) => (
                                 <div
                                     key={poll._id}
-                                    className="poll-card-wrapper"
+                                    className="poll-animate"
                                     style={{ animationDelay: `${idx * 60}ms` }}
                                 >
                                     <PollCard
@@ -522,9 +609,7 @@ const MyPolls = () => {
                                         currentUserId={currentUserId}
                                         onVote={(updated) => {
                                             setPolls((prev) =>
-                                                prev.map((p) =>
-                                                    p._id === updated._id ? updated : p
-                                                )
+                                                prev.map((p) => p._id === updated._id ? updated : p)
                                             );
                                         }}
                                     />
@@ -533,18 +618,7 @@ const MyPolls = () => {
                         </div>
                     )}
                 </div>
-            </div>
-
-            <style>{`
-                .poll-card-wrapper {
-                    animation: fadeSlideUp 0.35s ease both;
-                }
-                @keyframes fadeSlideUp {
-                    from { opacity: 0; transform: translateY(16px); }
-                    to   { opacity: 1; transform: translateY(0); }
-                }
-                .active\\:scale-98:active { transform: scale(0.98); }
-            `}</style>
+            )}
         </DashboardLayout>
     );
 };

@@ -5,6 +5,6 @@ const AdminGroups = () => {
     return (
         <DashboardLayout activeMenu="Manage Groups">AdminGroups</DashboardLayout>
     )
-}
+} 
 
 export default AdminGroups

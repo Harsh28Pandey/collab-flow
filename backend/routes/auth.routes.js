@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerUser, loginUser, getUserProfile, updateUserProfile, changePassword, forgotPassword, logoutUser, verification, verifyOTP } = require("../controllers/auth.controller.js");
+const { registerUser, loginUser, getUserProfile, updateUserProfile, changePassword, forgotPassword, logoutUser, verification, verifyOTP, getTeamByCode } = require("../controllers/auth.controller.js");
 const { protect } = require("../middlewares/auth.middleware.js");
 const upload = require("../middlewares/upload.middleware.js");
 
@@ -15,6 +15,7 @@ router.post("/logout", protect, logoutUser)
 router.post("/forgot-password", forgotPassword)
 router.post("/verify-otp/:email", verifyOTP)
 router.post("/change-password/:email", changePassword)
+router.get("/team/:teamCode", getTeamByCode);  //* get team name by team code
 
 router.post("/upload-image", upload.single("image"), (req, res) => {  //* upload the image and get the uploaded image link
     if (!req.file) {

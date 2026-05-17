@@ -15,16 +15,67 @@ import CustomBarChart from '../../components/Charts/CustomBarChart.jsx';
 
 const COLORS = ["#8D51FF", "#00B8DB", "#7BCE00"];
 
+// ─── Skeleton Components ──────────────────────────────────────────────────────
+const SkeletonBlock = ({ className }) => (
+    <div className={`bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:200%_100%] animate-shimmer rounded-xl ${className}`} />
+);
+
+const DashboardSkeleton = () => (
+    <div className='space-y-5 my-5'>
+        {/* Welcome card skeleton */}
+        <div className='card'>
+            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+                <div className='space-y-2.5'>
+                    <SkeletonBlock className='h-7 w-56' />
+                    <SkeletonBlock className='h-3.5 w-36' />
+                </div>
+                <SkeletonBlock className='h-9 w-40 rounded-2xl' />
+            </div>
+            <div className='grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mt-5'>
+                {[...Array(4)].map((_, i) => (
+                    <div key={i} className='rounded-2xl p-4 space-y-3 border border-gray-100'>
+                        <SkeletonBlock className='h-3 w-20' />
+                        <SkeletonBlock className='h-7 w-12' />
+                    </div>
+                ))}
+            </div>
+        </div>
+
+        {/* Charts skeleton */}
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            {[...Array(2)].map((_, i) => (
+                <div key={i} className='card space-y-4'>
+                    <SkeletonBlock className='h-4 w-36' />
+                    <SkeletonBlock className='h-52 w-full rounded-2xl' />
+                </div>
+            ))}
+        </div>
+
+        {/* Table skeleton */}
+        <div className='card space-y-3'>
+            <div className='flex items-center justify-between'>
+                <SkeletonBlock className='h-5 w-28' />
+                <SkeletonBlock className='h-5 w-16' />
+            </div>
+            <SkeletonBlock className='h-10 w-full rounded-xl' />
+            {[...Array(5)].map((_, i) => (
+                <SkeletonBlock key={i} className='h-12 w-full rounded-xl' />
+            ))}
+        </div>
+    </div>
+);
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 const UserDashboard = () => {
     useUserAuth();
 
     const { user } = useContext(UserContext);
-
     const navigate = useNavigate();
 
     const [dashboardData, setDashboardData] = useState(null);
     const [pieChartData, setPieChartData] = useState([]);
     const [barChartData, setBarChartData] = useState([]);
+    const [loading, setLoading] = useState(true);  // ✅
 
     //* prepare chart data
     const prepareChartData = (data) => {
@@ -36,7 +87,6 @@ const UserDashboard = () => {
             { status: "In Progress", count: taskDistribution?.InProgress || 0 },
             { status: "Completed", count: taskDistribution?.Completed || 0 },
         ];
-
         setPieChartData(taskDistributionData);
 
         const PriorityLevelData = [
@@ -44,7 +94,6 @@ const UserDashboard = () => {
             { priority: "Medium", count: taskPriorityLevels?.Medium || 0 },
             { priority: "High", count: taskPriorityLevels?.High || 0 },
         ];
-
         setBarChartData(PriorityLevelData);
     }
 
@@ -53,13 +102,14 @@ const UserDashboard = () => {
             const response = await axiosInstance.get(
                 API_PATHS.TASKS.GET_USER_DASHBOARD_DATA
             );
-
             if (response.data) {
                 setDashboardData(response.data);
                 prepareChartData(response.data?.charts || null);
             }
         } catch (error) {
             console.error("Error fetching users: ", error);
+        } finally {
+            setLoading(false);  // ✅
         }
     }
 
@@ -69,98 +119,139 @@ const UserDashboard = () => {
 
     useEffect(() => {
         getDashboardData();
-
         return () => { }
     }, [])
 
+    // ✅ Shimmer animation inject
+    useEffect(() => {
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes shimmer {
+                0% { background-position: 200% 0; }
+                100% { background-position: -200% 0; }
+            }
+            .animate-shimmer {
+                animation: shimmer 1.5s infinite linear;
+            }
+        `;
+        document.head.appendChild(style);
+        return () => document.head.removeChild(style);
+    }, []);
+
     return (
         <DashboardLayout activeMenu="Dashboard">
-            <div className='card my-5'>
-                <div>
-                    <div className='col-span-3'>
-                        <h2 className='text-xl md:text-2xl font-semibold'>Welcome Back! {user?.name}</h2>
-                        <p className='text-xs md:text-[13px] text-gray-500 mt-1.5'>
-                            {moment().format("dddd Do MMM YYYY")}
-                        </p>
-                    </div>
-                </div>
 
-                <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mt-5'>
-                    <InfoCard
-                        label="Total Tasks"
-                        value={addThousandSeparator(
-                            dashboardData?.charts?.taskDistribution?.All || 0
-                        )}
-                        color="bg-primary"
-                    />
+            {/* ✅ Loading skeleton */}
+            {loading ? (
+                <DashboardSkeleton />
+            ) : (
+                <>
+                    <div className='card my-5'>
+                        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+                            <div>
+                                <h2 className='text-xl md:text-2xl font-semibold'>
+                                    Welcome Back, {user?.name}! 👋
+                                </h2>
+                                <p className='text-xs md:text-[13px] text-gray-500 mt-1.5 font-semibold'>
+                                    {moment().format("dddd Do MMM YYYY")}
+                                </p>
+                            </div>
 
-                    <InfoCard
-                        label="Pending Tasks"
-                        value={addThousandSeparator(
-                            dashboardData?.charts?.taskDistribution?.Pending || 0
-                        )}
-                        color="bg-violet-600"
-                    />
-
-                    <InfoCard
-                        label="In Progress Tasks"
-                        value={addThousandSeparator(
-                            dashboardData?.charts?.taskDistribution?.InProgress || 0
-                        )}
-                        color="bg-cyan-600"
-                    />
-
-                    <InfoCard
-                        label="Completed Tasks"
-                        value={addThousandSeparator(
-                            dashboardData?.charts?.taskDistribution?.Completed || 0
-                        )}
-                        color="bg-lime-600"
-                    />
-                </div>
-            </div>
-
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 my-4 md:my-6'>
-
-                <div>
-                    <div className='card'>
-                        <div className='flex items-center justify-between'>
-                            <h5 className='font-medium'>Task Distribution</h5>
+                            {/* Team Badge */}
+                            {user?.teamName && (
+                                <div className='flex items-center gap-2 bg-blue-50 border border-blue-100 px-4 py-2 rounded-2xl self-start sm:self-auto'>
+                                    <div className='w-2 h-2 rounded-full bg-blue-500'></div>
+                                    <span className='text-xs font-semibold text-blue-600'>
+                                        {user.teamName}
+                                    </span>
+                                    <span className='text-xs text-gray-500'>
+                                        • {user.teamCode}
+                                    </span>
+                                </div>
+                            )}
                         </div>
 
-                        <CustomPieChart
-                            data={pieChartData}
-                            colors={COLORS}
-                        />
+                        {/* ✅ Info Cards — sirf tab dikhenge jab tasks hon */}
+                        {dashboardData?.charts?.taskDistribution?.All > 0 ? (
+                            <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mt-5'>
+                                <InfoCard
+                                    label="Total Tasks"
+                                    value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.All || 0)}
+                                    color="bg-primary"
+                                />
+                                <InfoCard
+                                    label="Pending Tasks"
+                                    value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.Pending || 0)}
+                                    color="bg-violet-600"
+                                />
+                                <InfoCard
+                                    label="In Progress Tasks"
+                                    value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.InProgress || 0)}
+                                    color="bg-cyan-600"
+                                />
+                                <InfoCard
+                                    label="Completed Tasks"
+                                    value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.Completed || 0)}
+                                    color="bg-lime-600"
+                                />
+                            </div>
+                        ) : (
+                            /* ✅ Empty State — jab koi task assign na hua ho */
+                            <div className='flex flex-col items-center justify-center py-12 px-4 mt-4'>
+                                <div className='w-20 h-20 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-6'>
+                                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                        <rect x="6" y="8" width="28" height="4" rx="2" fill="#BFDBFE" />
+                                        <rect x="6" y="16" width="20" height="4" rx="2" fill="#BFDBFE" />
+                                        <rect x="6" y="24" width="24" height="4" rx="2" fill="#BFDBFE" />
+                                        <circle cx="32" cy="28" r="8" fill="#3B82F6" />
+                                        <path d="M29 28L31 30L35 26" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </div>
+                                <h3 className='text-lg md:text-xl font-bold text-gray-800 text-center mb-2'>
+                                    No Tasks Assigned Yet 📋
+                                </h3>
+                                <p className='text-sm text-gray-400 text-center max-w-sm leading-relaxed'>
+                                    You don't have any tasks assigned yet. Your dashboard will show stats and progress once your admin assigns tasks to you.
+                                </p>
+                            </div>
+                        )}
                     </div>
-                </div>
 
-                <div>
-                    <div className='card'>
-                        <div className='flex items-center justify-between'>
-                            <h5 className='font-medium'>Task Priority Levels</h5>
+                    {/* ✅ Charts + Recent Tasks — sirf tab dikhenge jab tasks hon */}
+                    {dashboardData?.charts?.taskDistribution?.All > 0 && (
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-6 my-4 md:my-6'>
+                            <div>
+                                <div className='card'>
+                                    <div className='flex items-center justify-between'>
+                                        <h5 className='font-medium'>Task Distribution</h5>
+                                    </div>
+                                    <CustomPieChart data={pieChartData} colors={COLORS} />
+                                </div>
+                            </div>
+                            <div>
+                                <div className='card'>
+                                    <div className='flex items-center justify-between'>
+                                        <h5 className='font-medium'>Task Priority Levels</h5>
+                                    </div>
+                                    <CustomBarChart data={barChartData} />
+                                </div>
+                            </div>
+                            <div className='md:col-span-2'>
+                                <div className='card'>
+                                    <div className='flex items-center justify-between'>
+                                        <h5 className='text-lg'>Recent Tasks</h5>
+                                        <button className='card-btn cursor-pointer' onClick={onSeeMore}>
+                                            See All <LuArrowRight className='text-base cursor-pointer' />
+                                        </button>
+                                    </div>
+                                    <TaskListTable tableData={dashboardData?.recentTasks || []} />
+                                </div>
+                            </div>
                         </div>
+                    )}
+                </>
+            )}
 
-                        <CustomBarChart
-                            data={barChartData}
-                        />
-                    </div>
-                </div>
-
-                <div className='md:col-span-2'>
-                    <div className='card'>
-                        <div className='flex items-center justify-between'>
-                            <h5 className='text-lg'>Recent Tasks</h5>
-
-                            <button className='card-btn cursor-pointer' onClick={onSeeMore}>
-                                See All <LuArrowRight className='text-base cursor-pointer' />
-                            </button>
-                        </div>
-
-                        <TaskListTable tableData={dashboardData?.recentTasks || []} />
-                    </div>
-                </div>
-            </div>
         </DashboardLayout>
     )
 }

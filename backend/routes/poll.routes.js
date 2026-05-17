@@ -1,5 +1,5 @@
 const express = require("express");
-const { createPoll, getPolls, votePoll } = require("../controllers/poll.controller.js");
+const { createPoll, getPolls, votePoll, deletePoll } = require("../controllers/poll.controller.js");
 const { protect, adminOnly } = require("../middlewares/auth.middleware.js");
 
 const router = express.Router();
@@ -12,5 +12,8 @@ router.post("/vote", protect, votePoll);
 
 //* only ADMIN can create poll
 router.post("/create", protect, adminOnly, createPoll);
+
+//* only admin to delete poll
+router.delete("/delete/:pollId", protect, adminOnly, deletePoll);
 
 module.exports = router;
