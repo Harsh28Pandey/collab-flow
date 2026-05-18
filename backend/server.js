@@ -31,7 +31,8 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-app.options(/.*/, cors());
+// app.options(/.*/, cors());
+app.options("*", cors());
 
 //* connect to database
 connectDB();
@@ -97,10 +98,13 @@ app.get("/", (req, res) => {
 });
 
 //* start server
-// const PORT = process.env.PORT || 8000;
-// app.listen(PORT, () => {
-//     console.log(`Server running on port: ${PORT}`);
-// })
+if (process.env.NODE_ENV !== "production") {
+    const PORT = process.env.PORT || 8000;
+
+    app.listen(PORT, () => {
+        console.log(`Server running on port: ${PORT}`);
+    });
+}
 
 module.exports = app;
 
