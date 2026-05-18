@@ -34,21 +34,7 @@ app.use(cors({
 app.options(/(.*)/, cors());
 
 //* connect to database
-// connectDB();
-
-let isDBConnected = false;
-app.use(async (req, res, next) => {
-    if (!isDBConnected) {
-        try {
-            await connectDB();
-            isDBConnected = true;
-        } catch (err) {
-            console.error("DB Connection Failed:", err.message);
-            return res.status(500).json({ error: "Database connection failed" });
-        }
-    }
-    next();
-});
+connectDB();
 
 //* middleware to parse JSON bodies
 app.use(express.json());
