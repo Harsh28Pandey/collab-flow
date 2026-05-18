@@ -27,6 +27,7 @@ import Verify from './pages/Auth/Verify.jsx'
 import ForgotPassword from './pages/Auth/ForgotPassword.jsx'
 import VerifyOTP from './pages/Auth/VerifyOTP.jsx'
 import ChangePassword from './pages/Auth/ChangePassword.jsx'
+import NotFound from './pages/NotFound.jsx'
 
 
 const App = () => {
@@ -73,6 +74,8 @@ const App = () => {
                             <Route path='/user/groups' element={<MyGroups />} />
                             <Route path='/user/polls' element={<MyPolls />} />
                         </Route>
+
+                        <Route path="*" element={<NotFound />} />
 
                         {/* Default Route */}
                         {/* <Route path='/' element={<Home />} /> */}
