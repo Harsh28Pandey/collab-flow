@@ -31,8 +31,7 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-// app.options(/.*/, cors());
-app.options("*", cors());
+app.options(/(.*)/, cors());
 
 //* connect to database
 // connectDB();
