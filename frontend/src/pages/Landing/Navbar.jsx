@@ -75,33 +75,90 @@ const Navbar = () => {
                             </h1>
                         </div>
 
-                        {/* MOBILE PROFILE ICON (unchanged) */}
+                        {/* MOBILE PROFILE DROPDOWN */}
                         <div
                             className="md:hidden flex items-center relative"
                             ref={dropdownRef}
-                            onClick={(e) => e.stopPropagation()}
                         >
                             {user && (
-                                <div
-                                    className="cursor-pointer"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        navigate(user.role === "admin" ? "/admin/dashboard" : "/user/dashboard");
-                                    }}
-                                >
-                                    {user.profileImage ? (
-                                        <img
-                                            src={user.profileImage}
-                                            className="w-7 h-7 rounded-full object-cover border"
-                                        />
-                                    ) : (
-                                        <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold uppercase">
-                                            {user.name?.charAt(0)}
+                                <>
+                                    {/* PROFILE BUTTON */}
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setIsDropdownOpen(!isDropdownOpen);
+                                        }}
+                                        className="cursor-pointer"
+                                    >
+                                        {user.profileImage ? (
+                                            <img
+                                                src={user.profileImage}
+                                                className="w-8 h-8 rounded-full object-cover border border-gray-200"
+                                            />
+                                        ) : (
+                                            <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold uppercase">
+                                                {user.name?.charAt(0)}
+                                            </div>
+                                        )}
+                                    </button>
+
+                                    {/* MOBILE DROPDOWN */}
+                                    {isDropdownOpen && (
+                                        <div className="absolute right-0 top-12 w-56 z-[9999] bg-white/95 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-2xl overflow-hidden">
+
+                                            {/* Dashboard */}
+                                            <DropdownItem
+                                                label="Dashboard"
+                                                onClick={() => {
+                                                    setIsDropdownOpen(false);
+
+                                                    navigate(
+                                                        user.role === "admin"
+                                                            ? "/admin/dashboard"
+                                                            : "/user/dashboard"
+                                                    );
+                                                }}
+                                            />
+
+                                            {/* Tasks */}
+                                            <DropdownItem
+                                                label={
+                                                    user.role === "admin"
+                                                        ? "Manage Tasks"
+                                                        : "My Tasks"
+                                                }
+                                                onClick={() => {
+                                                    setIsDropdownOpen(false);
+
+                                                    navigate(
+                                                        user.role === "admin"
+                                                            ? "/admin/tasks"
+                                                            : "/user/tasks"
+                                                    );
+                                                }}
+                                            />
+
+                                            {/* Change Password */}
+                                            <DropdownItem
+                                                label="Change Password"
+                                                onClick={() => {
+                                                    setIsDropdownOpen(false);
+                                                    navigate("/forgot-password");
+                                                }}
+                                            />
+
+                                            <div className="h-px bg-gray-100 my-1" />
+
+                                            {/* Logout */}
+                                            <DropdownItem
+                                                label="Logout"
+                                                danger
+                                                onClick={handleLogout}
+                                            />
                                         </div>
                                     )}
-                                </div>
+                                </>
                             )}
-
                         </div>
                     </div>
 
@@ -294,17 +351,17 @@ export default Navbar;
 const DropdownItem = ({ label, onClick, danger }) => {
     return (
         <button
-            onClick={(e) => {
-                e.stopPropagation(); // keep this
-                onClick();
-            }}
+            type="button"
+            onClick={onClick}
             className={`
                 w-full text-left px-5 py-3 text-[15px] font-medium
                 transition-all duration-200 cursor-pointer
-                hover:pl-6 hover:scale-[1.02]
+                hover:bg-blue-50
+                active:scale-[0.98]
+                
                 ${danger
                     ? "text-red-500 hover:bg-red-50"
-                    : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                    : "text-gray-700 hover:text-blue-600"
                 }
             `}
         >

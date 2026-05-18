@@ -1,6 +1,9 @@
 import React, { useContext } from 'react';
+
 import { UserContext } from '../../context/userContext.jsx';
+
 import Navbar from './Navbar.jsx';
+
 import SideMenu from './SideMenu.jsx';
 
 const DashboardLayout = ({ children, activeMenu }) => {
@@ -8,24 +11,60 @@ const DashboardLayout = ({ children, activeMenu }) => {
     const { user } = useContext(UserContext);
 
     return (
-        <div className="w-full min-h-screen overflow-x-hidden">
+
+        <div className="w-full min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-white overflow-x-hidden">
+
+            {/* Navbar */}
+
             <Navbar activeMenu={activeMenu} />
 
             {user && (
-                <div className="flex flex-col lg:flex-row w-full">
 
-                    {/* Sidebar */}
-                    <div className="hidden lg:block">
+                <div className="flex w-full relative">
+
+                    {/* Desktop Sidebar */}
+
+                    <div className="hidden lg:block sticky top-[61px] h-[calc(100vh-61px)] z-30">
+
                         <SideMenu activeMenu={activeMenu} />
+
                     </div>
 
                     {/* Main Content */}
-                    <div className="flex-1 w-full px-3 sm:px-6 lg:px-8">
-                        {children}
-                    </div>
+
+                    <main className='
+                        flex-1
+                        min-h-[calc(100vh-61px)]
+                        px-3
+                        sm:px-5
+                        md:px-6
+                        lg:px-8
+                        xl:px-10
+                        py-4
+                        sm:py-5
+                        lg:py-6
+                        transition-all duration-300
+                    '>
+
+                        {/* Content Wrapper */}
+
+                        <div className='
+                            w-full
+                            max-w-[1700px]
+                            mx-auto
+                            animate-fadeIn
+                        '>
+
+                            {children}
+
+                        </div>
+
+                    </main>
 
                 </div>
+
             )}
+
         </div>
     );
 }
