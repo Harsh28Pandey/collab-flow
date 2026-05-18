@@ -12,7 +12,13 @@ const groupSchema = new mongoose.Schema({
     members: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
-    }]
+    }],
+
+    teamCode: {
+        type: String,
+        required: true,
+        index: true
+    }
 
 }, { timestamps: true });
 

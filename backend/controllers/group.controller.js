@@ -8,7 +8,8 @@ const createGroup = async (req, res) => {
         const group = await Group.create({
             name,
             admin: req.user.id,
-            members: [...members, req.user.id]
+            members: [...members, req.user.id],
+            teamCode: req.user.teamCode
         });
 
         const populatedGroup = await Group.findById(group._id)
@@ -25,7 +26,8 @@ const createGroup = async (req, res) => {
 const getMyGroups = async (req, res) => {
     try {
         const groups = await Group.find({
-            members: req.user.id
+            members: req.user.id,
+            teamCode: req.user.teamCode
         }).populate("members", "name email");
 
         res.json(groups);
@@ -43,6 +45,10 @@ const addMember = async (req, res) => {
         //* group exist check
         if (!group) {
             return res.status(404).json({ message: "Group not found" });
+        }
+
+        if (group.teamCode !== req.user.teamCode) {
+            return res.status(403).json({ message: "Not authorized" });
         }
 
         //* admin check
@@ -83,6 +89,10 @@ const removeMember = async (req, res) => {
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ message: "Group not found" });
+        }
+
+        if (group.teamCode !== req.user.teamCode) {
+            return res.status(403).json({ message: "Not authorized" });
         }
 
         //* admin check
@@ -133,6 +143,11 @@ const deleteGroup = async (req, res) => {
             return res.status(404).json({ message: "Group not found" });
         }
 
+        if (group.teamCode !== req.user.teamCode) {
+            return res.status(403).json({ message: "Not authorized" });
+        }
+
+
         //* admin check
         if (group.admin.toString() !== req.user.id) {
             return res.status(403).json({ message: "Only admin can delete this group" });
@@ -152,4 +167,4 @@ const deleteGroup = async (req, res) => {
 };
 
 
-module.exports = { createGroup, getMyGroups, addMember, removeMember, deleteGroup };
+module.exports = { createGroup, getMyGroups, addMember, removeMember, deleteGroup }; 

@@ -16,7 +16,8 @@ const createPoll = async (req, res) => {
                 votes: []
             })),
             expiry,
-            status: "active"
+            status: "active",
+            teamCode: req.user.teamCode
         });
 
         await poll.save();
@@ -33,12 +34,14 @@ const createPoll = async (req, res) => {
 
 //* Get Polls (Logged-in users)
 const getPolls = async (req, res) => {
+    const teamCode = req.user.teamCode;
     try {
         const now = new Date();
 
         // 🔥 1. Bulk update (fast + scalable)
         await Poll.updateMany(
             {
+                teamCode,
                 expiry: { $lt: now },
                 status: "active"
             },
@@ -48,7 +51,7 @@ const getPolls = async (req, res) => {
         );
 
         // 🔥 2. Fresh data fetch after update
-        const polls = await Poll.find();
+        const polls = await Poll.find({ teamCode });
 
         res.json({
             success: true,
@@ -72,6 +75,10 @@ const votePoll = async (req, res) => {
 
         if (!poll) {
             return res.status(404).json({ msg: "Poll not found" });
+        }
+
+        if (poll.teamCode !== req.user.teamCode) {
+            return res.status(403).json({ msg: "Not authorized" });
         }
 
         if (poll.status === "expired") {
@@ -111,8 +118,48 @@ const votePoll = async (req, res) => {
     }
 };
 
+const deletePoll = async (req, res) => {
+
+    try {
+
+        const { pollId } = req.params;
+
+        if (req.user.role !== "admin") {
+            return res.status(403).json({
+                message: "Access denied",
+            });
+        }
+
+        // ✅ Check poll exists
+        const poll = await Poll.findById(pollId);
+
+        if (!poll) {
+            return res.status(404).json({
+                message: "Poll not found",
+            });
+        }
+
+        // ✅ Delete from database
+        await Poll.findByIdAndDelete(pollId);
+
+        return res.status(200).json({
+            success: true,
+            message: "Poll deleted successfully",
+        });
+
+    } catch (error) {
+
+        console.error("Delete Poll Error:", error);
+
+        return res.status(500).json({
+            message: "Server error while deleting poll",
+        });
+    }
+};
+
 module.exports = {
     createPoll,
     getPolls,
-    votePoll
+    votePoll,
+    deletePoll
 };

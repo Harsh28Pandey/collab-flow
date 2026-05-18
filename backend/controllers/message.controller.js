@@ -12,6 +12,10 @@ const sendMessage = async (req, res) => {
             return res.status(404).json({ message: "Group not found" });
         }
 
+        if (group.teamCode !== req.user.teamCode) {
+            return res.status(403).json({ message: "Not authorized" });
+        }
+
         //* check member (admin bhi member hota hai)
         const isMember = group.members.some(
             (id) => id.toString() === req.user.id
@@ -50,6 +54,10 @@ const getMessages = async (req, res) => {
             return res.status(404).json({ message: "Group not found" });
         }
 
+        if (group.teamCode !== req.user.teamCode) {
+            return res.status(403).json({ message: "Not authorized" });
+        }
+
         //* check user is member
         const isMember = group.members.some(
             (id) => id.toString() === req.user.id
@@ -83,6 +91,10 @@ const deleteMessage = async (req, res) => {
         const group = await Group.findById(message.group);
         if (!group) {
             return res.status(404).json({ message: "Group not found" });
+        }
+
+        if (group.teamCode !== req.user.teamCode) {
+            return res.status(403).json({ message: "Not authorized" });
         }
 
         //* check member
