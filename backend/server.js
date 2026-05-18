@@ -10,8 +10,8 @@ const authRoutes = require('./routes/auth.routes.js');
 const userRoutes = require("./routes/user.routes.js");
 const taskRoutes = require('./routes/task.routes.js');
 const reportRoutes = require("./routes/report.routes.js");
-const groupRoutes = require("./routes/group.route.js");
-const messageRoutes = require("./routes/message.route.js");
+const groupRoutes = require("./routes/group.routes.js");
+const messageRoutes = require("./routes/message.routes.js");
 const pollRoutes = require("./routes/poll.routes.js");
 
 // const { Server } = require("socket.io");
