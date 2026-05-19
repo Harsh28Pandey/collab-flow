@@ -25,10 +25,7 @@ const SideMenu = ({ activeMenu }) => {
     const navigate = useNavigate();
 
     const handleClick = (route) => {
-
-        // ✅ old logout menu item hide/remove
         if (route === "logout") return;
-
         navigate(route);
     }
 
@@ -54,7 +51,6 @@ const SideMenu = ({ activeMenu }) => {
 
         if (user) {
 
-            // ✅ remove old logout item
             const filteredMenu = (
                 user?.role === "admin"
                     ? SIDE_MENU_DATA
@@ -187,11 +183,13 @@ const SideMenu = ({ activeMenu }) => {
 
             </div>
 
-            {/* Menu Items */}
+            {/* Menu Items + Back to Home + Logout — sab ek saath */}
 
             <div className="flex-1 overflow-y-auto py-3 px-2.5 scrollbar-hide">
 
                 <div className='space-y-1.5'>
+
+                    {/* Main Menu Items */}
 
                     {sideMenuData.map((item, index) => {
 
@@ -272,84 +270,94 @@ const SideMenu = ({ activeMenu }) => {
                         )
                     })}
 
+                    {/* Divider */}
+
+                    <div className='pt-2 pb-1'>
+                        <div className='h-px bg-blue-100 mx-1' />
+                    </div>
+
+                    {/* Back To Home — menu items ke saath */}
+
+                    <button
+                        onClick={() => navigate("/")}
+                        className='
+                            group
+                            relative
+                            w-full
+                            flex items-center gap-3
+                            rounded-xl
+                            px-3 py-2.5
+                            text-[13.5px]
+                            font-medium
+                            text-gray-700
+                            hover:bg-blue-50
+                            hover:text-blue-700
+                            hover:translate-x-1
+                            transition-all duration-300
+                            cursor-pointer
+                        '
+                    >
+
+                        <div className='
+                            relative z-10
+                            flex items-center justify-center
+                            w-8 h-8
+                            rounded-lg
+                            bg-blue-100
+                            text-blue-600
+                            group-hover:bg-white
+                            transition-all duration-300
+                        '>
+                            <LuHouse className='text-[17px]' />
+                        </div>
+
+                        <span className='relative z-10 tracking-wide'>
+                            Back To Home
+                        </span>
+
+                    </button>
+
+                    {/* Logout — menu items ke saath */}
+
+                    <button
+                        onClick={handleLogout}
+                        className='
+                            group
+                            relative
+                            w-full
+                            flex items-center gap-3
+                            rounded-xl
+                            px-3 py-2.5
+                            text-[13.5px]
+                            font-medium
+                            text-red-600
+                            hover:bg-red-50
+                            hover:translate-x-1
+                            transition-all duration-300
+                            cursor-pointer
+                        '
+                    >
+
+                        <div className='
+                            relative z-10
+                            flex items-center justify-center
+                            w-8 h-8
+                            rounded-lg
+                            bg-red-100
+                            text-red-500
+                            group-hover:bg-white
+                            transition-all duration-300
+                        '>
+                            <LuLogOut className='text-[17px]' />
+                        </div>
+
+                        <span className='relative z-10 tracking-wide'>
+                            Logout
+                        </span>
+
+                    </button>
+
                 </div>
-
-            </div>
-
-            {/* Bottom Actions */}
-
-            <div className='border-t border-blue-100 p-2.5 space-y-2 bg-white/70 backdrop-blur-md flex-shrink-0'>
-
-                {/* Back To Home */}
-
-                <button
-                    onClick={() => navigate("/")}
-                    className='
-                        group
-                        w-full
-                        flex items-center gap-3
-                        px-3 py-2.5
-                        rounded-xl
-                        text-[13.5px]
-                        font-medium
-                        text-gray-700
-                        hover:bg-blue-200
-                        hover:text-blue-700
-                        transition-all duration-300
-                        cursor-pointer
-                    '
-                >
-
-                    <div className='
-                        w-8 h-8
-                        flex items-center justify-center
-                        rounded-lg
-                        bg-blue-200
-                        text-blue-700
-                        group-hover:bg-white
-                        transition-all duration-300
-                    '>
-                        <LuHouse className='text-[17px]' />
-                    </div>
-
-                    Back To Home
-
-                </button>
-
-                {/* Logout */}
-
-                <button
-                    onClick={handleLogout}
-                    className='
-                        group
-                        w-full
-                        flex items-center gap-3
-                        px-3 py-2.5
-                        rounded-xl
-                        text-[13.5px]
-                        font-medium
-                        text-red-700
-                        hover:bg-red-200
-                        transition-all duration-300
-                        cursor-pointer
-                    '
-                >
-
-                    <div className='
-                        w-8 h-8
-                        flex items-center justify-center
-                        rounded-lg
-                        bg-red-200
-                        text-red-700
-                        group-hover:bg-white
-                        transition-all duration-300
-                    '>
-                        <LuLogOut className='text-[17px]' />
-                    </div>
-
-                    Logout
-
-                </button>
 
             </div>
 
