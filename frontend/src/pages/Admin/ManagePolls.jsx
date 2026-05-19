@@ -471,7 +471,7 @@ const ManagePolls = () => {
                                     </button>
 
                                     {/* Question */}
-                                    <h2 className="font-bold text-lg text-gray-800 mb-4 leading-snug">
+                                    <h2 className="font-bold text-lg text-gray-800 mb-4 leading-snug pr-10">
                                         {poll?.question || "No Question"}
                                     </h2>
 
