@@ -289,6 +289,9 @@ const ManageTasks = () => {
             .animate-shimmer {
                 animation: shimmer 1.5s infinite linear;
             }
+
+            .scrollbar-hide::-webkit-scrollbar { display: none; }
+            .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         `;
 
         document.head.appendChild(style);
@@ -307,50 +310,51 @@ const ManageTasks = () => {
             {loading ? (
                 <ManageTasksSkeleton />
             ) : (
-                <div className='py-4 md:py-5 space-y-6'>
+                <div className='space-y-6'>
 
                     {/* ───────────────────────────────────── */}
                     {/* Header */}
                     {/* ───────────────────────────────────── */}
 
-                    <div className='flex flex-col lg:flex-row lg:items-center justify-between gap-4'>
+                    <div className='flex flex-row items-center justify-between gap-3'>
 
-                        <div>
-                            <h1 className='text-2xl md:text-3xl font-bold text-gray-900'>
+                        <div className='min-w-0'>
+                            <h1 className='text-xl md:text-3xl font-bold text-gray-900 truncate'>
                                 Manage Tasks
                             </h1>
 
-                            <p className='text-sm text-gray-500 mt-1'>
+                            <p className='hidden sm:block text-sm text-gray-500 mt-1'>
                                 Organize, track and manage team productivity.
                             </p>
                         </div>
 
-                        <div className='flex flex-wrap items-center gap-3'>
+                        <div className='flex items-center gap-2 flex-shrink-0'>
 
                             <button
                                 onClick={getAllTasks}
-                                className='h-11 px-4 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 flex items-center gap-2 text-sm font-medium transition-all cursor-pointer'
+                                className='h-10 w-10 sm:w-auto sm:px-4 sm:h-11 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center gap-2 text-sm font-medium transition-all cursor-pointer'
                             >
                                 <LuRefreshCcw
                                     className={`${refreshing ? "animate-spin" : ""}`}
                                 />
-                                Refresh
+                                <span className='hidden sm:inline'>Refresh</span>
                             </button>
 
                             <button
                                 onClick={handleDownloadReport}
-                                className='h-11 px-5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white flex items-center gap-2 font-medium shadow-sm transition-all cursor-pointer'
+                                className='h-10 w-10 sm:w-auto sm:px-5 sm:h-11 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center gap-2 font-medium shadow-sm transition-all cursor-pointer'
                             >
                                 <LuFileSpreadsheet className='text-lg' />
-                                Export
+                                <span className='hidden sm:inline'>Export</span>
                             </button>
 
                             <button
                                 onClick={() => navigate("/admin/create-task")}
-                                className='h-11 px-5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 font-medium shadow-sm transition-all cursor-pointer'
+                                className='h-10 px-3 sm:h-11 sm:px-5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 font-medium shadow-sm transition-all cursor-pointer'
                             >
                                 <LuPlus className='text-lg' />
-                                Create Task
+                                <span className='hidden sm:inline'>Create Task</span>
+                                {/* <span className='sm:hidden text-sm'></span> */}
                             </button>
 
                         </div>
@@ -383,7 +387,7 @@ const ManageTasks = () => {
 
                         {/* Tabs */}
 
-                        <div className='overflow-x-auto scrollbar-hide'>
+                        <div className='overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0'>
 
                             <div className='min-w-max'>
                                 <TaskStatusTabs

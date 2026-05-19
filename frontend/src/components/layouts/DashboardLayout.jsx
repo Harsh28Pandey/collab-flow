@@ -33,17 +33,7 @@ const DashboardLayout = ({ children, activeMenu }) => {
                     {/* Main Content */}
 
                     <main className='
-                        flex-1
-                        min-h-[calc(100vh-61px)]
-                        px-3
-                        sm:px-5
-                        md:px-6
-                        lg:px-8
-                        xl:px-10
-                        py-4
-                        sm:py-5
-                        lg:py-6
-                        transition-all duration-300
+                        flex-1 min-w-0 min-h-[calc(100vh-61px)] px-4 sm:px-6 md:px-8 lg:px-8 xl:px-10 py-4 lg:py-6 transition-all duration-300
                     '>
 
                         {/* Content Wrapper */}

@@ -73,7 +73,7 @@ const SideMenu = ({ activeMenu }) => {
         <div className='
             w-[235px]
             lg:w-[245px]
-            h-[calc(100vh-61px)]
+            h-full
             bg-gradient-to-b from-white via-blue-50/20 to-white
             border-r border-blue-100
             sticky top-[61px]

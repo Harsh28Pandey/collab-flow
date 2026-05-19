@@ -72,8 +72,6 @@ const Navbar = ({ activeMenu }) => {
 
                         {/* Logo */}
 
-                        {/* Logo */}
-
                         <div
                             onClick={() => navigate("/")}
                             className='group flex items-center gap-2.5 cursor-pointer select-none'
@@ -82,20 +80,20 @@ const Navbar = ({ activeMenu }) => {
                             {/* Logo Image */}
 
                             <div className='
-        w-10 h-10
-        flex items-center justify-center
-        transition-all duration-300
-        group-hover:scale-105
-    '>
+                                w-10 h-10
+                                flex items-center justify-center
+                                transition-all duration-300
+                                group-hover:scale-105
+                            '>
 
                                 <img
                                     src={logo}
                                     alt="Collab Flow Logo"
                                     className='
-                w-10 h-10
-                object-contain
-                drop-shadow-[0_6px_18px_rgba(59,130,246,0.22)]
-            '
+                                        w-10 h-10
+                                        object-contain
+                                        drop-shadow-[0_6px_18px_rgba(59,130,246,0.22)]
+                                    '
                                 />
 
                             </div>
@@ -141,10 +139,10 @@ const Navbar = ({ activeMenu }) => {
             {/* MOBILE SIDEBAR */}
 
             <div className={`
-    fixed inset-0 z-[70] lg:hidden
-    transition-all duration-300
-    ${openSideMenu ? "visible opacity-100" : "invisible opacity-0 pointer-events-none"}
-`}>
+                fixed inset-0 z-[70] lg:hidden
+                transition-all duration-300
+                ${openSideMenu ? "visible opacity-100" : "invisible opacity-0 pointer-events-none"}
+            `}>
 
                 {/* Overlay */}
 
@@ -156,20 +154,21 @@ const Navbar = ({ activeMenu }) => {
                 {/* Sidebar Wrapper */}
 
                 <div className={`
-        absolute top-0 left-0
-        h-screen
-        w-[260px]
-        max-w-[82%]
-        bg-white
-        shadow-[10px_0_40px_rgba(0,0,0,0.12)]
-        transition-all duration-300 ease-out
-        overflow-hidden
-        ${openSideMenu ? "translate-x-0" : "-translate-x-full"}
-    `}>
+                    absolute top-0 left-0
+                    h-screen
+                    w-[260px]
+                    max-w-[82%]
+                    bg-white
+                    shadow-[10px_0_40px_rgba(0,0,0,0.12)]
+                    transition-all duration-300 ease-out
+                    overflow-hidden
+                    flex flex-col
+                    ${openSideMenu ? "translate-x-0" : "-translate-x-full"}
+                `}>
 
                     {/* Close Button */}
 
-                    <div className='flex items-center justify-between px-4 h-[61px] border-b border-blue-100 bg-white sticky top-0 z-10'>
+                    <div className='flex items-center justify-between px-4 h-[61px] border-b border-blue-100 bg-white flex-shrink-0'>
 
                         {/* Left Side */}
 
@@ -213,9 +212,9 @@ const Navbar = ({ activeMenu }) => {
 
                     </div>
 
-                    {/* Sidebar Content */}
+                    {/* Sidebar Content — flex-1 so it fills remaining height */}
 
-                    <div className='h-[calc(100vh-61px)] overflow-y-auto'>
+                    <div className='flex-1 overflow-y-auto'>
 
                         <SideMenu activeMenu={activeMenu} />
 
