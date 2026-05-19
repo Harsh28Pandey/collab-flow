@@ -22,11 +22,6 @@ const Navbar = ({ activeMenu }) => {
 
     const location = useLocation();
 
-    // ✅ route change hone par sidebar close
-    useEffect(() => {
-        setOpenSideMenu(false);
-    }, [location.pathname]);
-
     // ✅ body scroll lock when sidebar open
     useEffect(() => {
 
@@ -212,7 +207,7 @@ const Navbar = ({ activeMenu }) => {
 
                     </div>
 
-                    {/* Sidebar Content — flex-1 so it fills remaining height */}
+                    {/* Sidebar Content */}
 
                     <div className='flex-1 overflow-y-auto'>
 
