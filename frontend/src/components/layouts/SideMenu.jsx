@@ -76,12 +76,11 @@ const SideMenu = ({ activeMenu }) => {
             h-full
             bg-gradient-to-b from-white via-blue-50/20 to-white
             border-r border-blue-100
-            sticky top-[61px]
+            lg:sticky lg:top-[61px]
             z-20
             flex flex-col
             shadow-[3px_0_18px_rgba(59,130,246,0.05)]
             backdrop-blur-xl
-            overflow-hidden
         '>
 
             {/* Top Glow */}
@@ -279,7 +278,7 @@ const SideMenu = ({ activeMenu }) => {
 
             {/* Bottom Actions */}
 
-            <div className='border-t border-blue-100 p-2.5 space-y-2 bg-white/70 backdrop-blur-md'>
+            <div className='border-t border-blue-100 p-2.5 space-y-2 bg-white/70 backdrop-blur-md flex-shrink-0'>
 
                 {/* Back To Home */}
 
