@@ -20,11 +20,11 @@ const DashboardLayout = ({ children, activeMenu }) => {
 
             {user && (
 
-                <div className="flex w-full relative">
+                <div className="flex w-full relative pt-[61px]">
 
                     {/* Desktop Sidebar */}
 
-                    <div className="hidden lg:block sticky top-[61px] h-[calc(100vh-61px)] z-30">
+                    <div className="hidden lg:block fixed top-[61px] h-[calc(100vh-61px)] z-30 flex-shrink-0">
 
                         <SideMenu activeMenu={activeMenu} />
 
@@ -32,9 +32,7 @@ const DashboardLayout = ({ children, activeMenu }) => {
 
                     {/* Main Content */}
 
-                    <main className='
-                        flex-1 min-w-0 min-h-[calc(100vh-61px)] px-4 sm:px-6 md:px-8 lg:px-8 xl:px-10 py-4 lg:py-6 transition-all duration-300
-                    '>
+                    <main className='flex-1 min-w-0 min-h-[calc(100vh-61px)] px-4 sm:px-6 md:px-8 lg:ml-[245px] lg:px-8 xl:px-10 py-4 lg:py-6 transition-all duration-300'>
 
                         {/* Content Wrapper */}
 

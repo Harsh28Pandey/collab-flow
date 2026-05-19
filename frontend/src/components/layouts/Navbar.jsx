@@ -42,7 +42,7 @@ const Navbar = ({ activeMenu }) => {
         <>
             {/* TOP NAVBAR */}
 
-            <div className='sticky top-0 z-[60] w-full bg-white/90 backdrop-blur-xl border-b border-blue-100 shadow-[0_4px_18px_rgba(59,130,246,0.05)]'>
+            <div className='fixed top-0 left-0 z-[60] w-full bg-white/90 backdrop-blur-xl border-b border-blue-100 shadow-[0_4px_18px_rgba(59,130,246,0.05)]'>
 
                 <div className='h-[61px] px-4 sm:px-6 lg:px-7 flex items-center justify-between'>
 
