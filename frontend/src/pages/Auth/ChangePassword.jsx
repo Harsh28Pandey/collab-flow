@@ -48,7 +48,7 @@ const ChangePassword = () => {
             setIsLoading(true);
 
             const res = await axiosInstance.post(
-                `http://localhost:8000/api/auth/change-password/${email}`,
+                `${import.meta.env.VITE_BASE_URL}/api/auth/change-password/${email}`,
                 {
                     newPassword,
                     confirmPassword
