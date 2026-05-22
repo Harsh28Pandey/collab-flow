@@ -34,7 +34,7 @@ app.use(cors({
 app.options(/(.*)/, cors());
 
 //* connect to database
-connectDB();
+// connectDB();
 
 //* middleware to parse JSON bodies
 app.use(express.json());
@@ -96,14 +96,42 @@ app.get("/", (req, res) => {
     res.send("API is running...");
 });
 
-//* start server
-if (process.env.NODE_ENV !== "production") {
-    const PORT = process.env.PORT || 8000;
 
-    app.listen(PORT, () => {
-        console.log(`Server running on port: ${PORT}`);
-    });
+//* start server after DB connection
+const startServer = async () => {
+
+    try {
+
+        await connectDB();
+
+        console.log("MongoDB Connected Successfully");
+
+        const PORT = process.env.PORT || 8000;
+
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+
+    } catch (error) {
+
+        console.error("Server startup failed:");
+        console.log(error);
+
+    }
+};
+
+if (process.env.NODE_ENV !== "production") {
+    startServer();
 }
+
+//* start server
+// if (process.env.NODE_ENV !== "production") {
+//     const PORT = process.env.PORT || 8000;
+
+//     app.listen(PORT, () => {
+//         console.log(`Server running on port: ${PORT}`);
+//     });
+// }
 
 module.exports = app;
 
