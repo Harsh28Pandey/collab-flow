@@ -93,57 +93,53 @@ const ChangePassword = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 flex items-center justify-center px-4 py-10">
+        <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-white to-sky-100 flex items-center justify-center px-4 py-8">
 
-            <div className="w-full max-w-md">
+            <div className="absolute -top-24 -left-24 w-72 h-72 bg-blue-300/20 rounded-full blur-3xl" />
+            <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-sky-300/20 rounded-full blur-3xl" />
 
-                {/* Card */}
-                <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-blue-100">
+            <div className="relative w-full max-w-md">
 
-                    {/* Top */}
-                    <div className="bg-blue-600 px-8 py-8 text-center">
+                <div className="bg-white/90 backdrop-blur-xl shadow-[0_10px_40px_rgba(37,99,235,0.12)] rounded-3xl overflow-hidden border border-blue-100">
 
-                        <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="bg-gradient-to-r from-blue-600 to-sky-500 px-6 sm:px-8 py-8 text-center">
+
+                        <div className="w-16 h-16 bg-white/15 border border-white/20 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
+
                             <LockKeyhole className="w-8 h-8 text-white" />
+
                         </div>
 
                         <h1 className="text-3xl font-bold text-white">
                             Change Password
                         </h1>
 
-                        <p className="text-blue-100 text-sm mt-2 leading-6">
+                        <p className="text-blue-100 text-sm sm:text-base mt-3 leading-6">
                             Create a new secure password
                         </p>
 
-                        <p className="text-white text-sm font-medium mt-2 break-all">
+                        <p className="text-white text-sm font-medium mt-3 break-all">
                             {email}
                         </p>
+
                     </div>
 
-                    {/* Content */}
-                    <div className="p-8">
+                    <div className="p-6 sm:p-8">
 
-                        {/* Error */}
                         {error && (
-                            <div className="bg-red-100 border border-red-300 text-red-600 text-sm rounded-xl px-4 py-3 mb-5">
+                            <div className="bg-red-100 border border-red-300 text-red-600 text-sm rounded-2xl px-4 py-3 mb-5">
                                 {error}
                             </div>
                         )}
 
-                        {/* Success */}
                         {success && (
-                            <div className="bg-blue-100 border border-blue-200 text-blue-700 text-sm rounded-xl px-4 py-3 mb-5 text-center">
+                            <div className="bg-blue-100 border border-blue-200 text-blue-700 text-sm rounded-2xl px-4 py-3 mb-5 text-center">
                                 {success}
                             </div>
                         )}
 
-                        {/* Form */}
-                        <form
-                            onSubmit={handleChangePassword}
-                            className="space-y-5"
-                        >
+                        <form onSubmit={handleChangePassword} className="space-y-5">
 
-                            {/* New Password */}
                             <div>
 
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -153,51 +149,30 @@ const ChangePassword = () => {
                                 <div className="relative">
 
                                     <input
-                                        type={
-                                            showPassword
-                                                ? "text"
-                                                : "password"
-                                        }
+                                        type={showPassword ? "text" : "password"}
                                         placeholder="Enter new password"
                                         value={newPassword}
-                                        onChange={(e) =>
-                                            setNewPassword(
-                                                e.target.value
-                                            )
-                                        }
-                                        className="
-                                            w-full h-12 px-4 pr-12
-                                            rounded-xl border border-gray-300
-                                            outline-none
-                                            focus:ring-4 focus:ring-blue-100
-                                            focus:border-blue-500
-                                            transition-all
-                                        "
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        className="w-full h-12 px-4 pr-12 rounded-2xl border border-gray-300 outline-none bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all"
                                     />
 
                                     <button
                                         type="button"
-                                        onClick={() =>
-                                            setShowPassword(
-                                                !showPassword
-                                            )
-                                        }
-                                        className="
-                                            absolute top-1/2 right-4
-                                            -translate-y-1/2
-                                            text-gray-500 cursor-pointer
-                                        "
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-500 hover:text-blue-600 transition-all cursor-pointer"
                                     >
+
                                         {showPassword ? (
                                             <EyeOff className="w-5 h-5" />
                                         ) : (
                                             <Eye className="w-5 h-5" />
                                         )}
+
                                     </button>
+
                                 </div>
                             </div>
 
-                            {/* Confirm Password */}
                             <div>
 
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -207,93 +182,71 @@ const ChangePassword = () => {
                                 <div className="relative">
 
                                     <input
-                                        type={
-                                            showConfirmPassword
-                                                ? "text"
-                                                : "password"
-                                        }
+                                        type={showConfirmPassword ? "text" : "password"}
                                         placeholder="Confirm password"
                                         value={confirmPassword}
-                                        onChange={(e) =>
-                                            setConfirmPassword(
-                                                e.target.value
-                                            )
-                                        }
-                                        className="
-                                            w-full h-12 px-4 pr-12
-                                            rounded-xl border border-gray-300
-                                            outline-none
-                                            focus:ring-4 focus:ring-blue-100
-                                            focus:border-blue-500
-                                            transition-all
-                                        "
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        className="w-full h-12 px-4 pr-12 rounded-2xl border border-gray-300 outline-none bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all"
                                     />
 
                                     <button
                                         type="button"
-                                        onClick={() =>
-                                            setShowConfirmPassword(
-                                                !showConfirmPassword
-                                            )
-                                        }
-                                        className="
-                                            absolute top-1/2 right-4
-                                            -translate-y-1/2
-                                            text-gray-500 cursor-pointer
-                                        "
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-500 hover:text-blue-600 transition-all cursor-pointer"
                                     >
+
                                         {showConfirmPassword ? (
                                             <EyeOff className="w-5 h-5" />
                                         ) : (
                                             <Eye className="w-5 h-5" />
                                         )}
+
                                     </button>
+
                                 </div>
                             </div>
 
-                            {/* Submit Button */}
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="
-                                    w-full h-12 bg-blue-600
-                                    hover:bg-blue-700
-                                    disabled:bg-blue-300
-                                    rounded-xl text-white font-semibold
-                                    transition-all flex items-center justify-center cursor-pointer
-                                "
+                                className="w-full h-12 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 disabled:opacity-70 rounded-2xl text-white font-semibold transition-all duration-300 flex items-center justify-center shadow-lg shadow-blue-200 cursor-pointer"
                             >
 
                                 {isLoading ? (
                                     <span className="flex items-center gap-2">
+
                                         <Loader2 className="w-5 h-5 animate-spin" />
+
                                         Changing...
+
                                     </span>
                                 ) : (
                                     "Change Password"
                                 )}
+
                             </button>
                         </form>
 
-                        {/* Footer */}
                         <p className="text-center text-sm text-gray-600 mt-6">
 
                             Back to{" "}
 
                             <Link
                                 to="/login"
-                                className="text-blue-600 hover:underline font-semibold cursor-pointer"
+                                className="text-blue-600 hover:text-blue-700 hover:underline font-semibold cursor-pointer"
                             >
                                 Login
                             </Link>
+
                         </p>
+
                     </div>
                 </div>
 
-                {/* Footer */}
-                <p className="text-center text-gray-500 text-xs mt-6">
+                <p className="text-center text-gray-400 text-xs mt-6">
                     © 2026 Collab Flow. All rights reserved.
                 </p>
+
             </div>
         </div>
     );
