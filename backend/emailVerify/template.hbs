@@ -2,92 +2,200 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Email Verification</title>
+
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eef4ff;
             font-family: 'Segoe UI', sans-serif;
-            background-color: #eef4ff;
+            padding: 40px 15px;
         }
 
-        .container {
-            max-width: 600px;
+        .wrapper {
+            max-width: 560px;
             margin: auto;
+        }
+
+        .card {
             background: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 12px rgba(0, 102, 255, 0.12);
-            border: 1px solid #dbe7ff;
+            border-radius: 22px;
+            overflow: hidden;
+            border: 1px solid #dbeafe;
+            box-shadow:
+                0 10px 35px rgba(37, 99, 235, 0.12),
+                0 4px 12px rgba(0, 0, 0, 0.04);
         }
 
-        .header {
+        .top {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            padding: 45px 30px;
             text-align: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #dbe7ff;
         }
 
-        .header h2 {
-            color: #0f172a;
-        }
-
-        .message {
-            font-size: 16px;
-            color: #334155;
-            line-height: 1.6;
-            padding: 20px 0;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #2563eb;
+        .top h1 {
             color: #ffffff;
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .top p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .content {
+            padding: 40px 35px;
+        }
+
+        .content h2 {
+            color: #0f172a;
+            font-size: 24px;
+            margin-bottom: 18px;
+        }
+
+        .content p {
+            color: #475569;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 18px;
+        }
+
+        .btn-wrapper {
+            text-align: center;
+            margin: 35px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: #ffffff !important;
             text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            margin-top: 20px;
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+            padding: 15px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
+        }
+
+        .note {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
+        .note p {
+            margin: 0;
+            color: #1e40af;
+            font-size: 14px;
         }
 
         .footer {
-            font-size: 13px;
-            color: #64748b;
             text-align: center;
-            margin-top: 30px;
+            padding: 22px;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fbff;
         }
 
-        a {
-            color: #ffffff;
+        .footer p {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        @media screen and (max-width: 600px) {
+
+            .top {
+                padding: 38px 22px;
+            }
+
+            .content {
+                padding: 32px 24px;
+            }
+
+            .top h1 {
+                font-size: 26px;
+            }
+
+            .content h2 {
+                font-size: 22px;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 15px 20px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">
-            <h2>Verify Your Email Address</h2>
+
+    <div class="wrapper">
+
+        <div class="card">
+
+            <div class="top">
+
+                <h1>Verify Your Email</h1>
+
+                <p>
+                    Complete your account verification to continue using Collab Flow
+                </p>
+
+            </div>
+
+            <div class="content">
+
+                <h2>Hello 👋</h2>
+
+                <p>
+                    Thanks for signing up on <strong>Collab Flow</strong>.
+                    Please verify your email address by clicking the button below.
+                </p>
+
+                <div class="btn-wrapper">
+
+                    <a href="{{clientUrl}}/verify?token={{token}}" class="btn" target="_blank">
+
+                        Verify Email
+
+                    </a>
+
+                </div>
+
+                <div class="note">
+
+                    <p>
+                        This verification link may expire after some time for security reasons.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="footer">
+
+                <p>
+                    © 2026 Collab Flow. All Rights Reserved.
+                </p>
+
+            </div>
+
         </div>
-        <div class="message">
-            <p>Hello,</p>
-            <p>
-                Thank you for registering on our website. To complete your signup process and activate your account,
-                please verify your email address by clicking the button below.
-            </p>
-            <p style="text-align: center; color:#ffffff">
-                <a href="https://collaspace.netlify.app/verify?token={{token}}" target="_blank"
-                    style="display: inline-block; padding:12px 24px; background-color:#2563eb; color:#ffffff !important; text-decoration:none; border-radius:8px; font-weight:bold;">
-                    Verify Your Email
-                </a>
-            </p>
-            <p>If you did not initiate this request, you can safely ignore this email.</p>
-        </div>
-        <div class="footer">
-            &copy; 2026 Collab Flow. All Rights Reserved.
-        </div>
+
     </div>
+
 </body>
 
 </html>
