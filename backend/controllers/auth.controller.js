@@ -512,9 +512,20 @@ const logoutUser = async (req, res) => {
 */
 const getTeamByCode = async (req, res) => {
     try {
+
         const { teamCode } = req.params;
 
-        const admin = await User.findOne({ teamCode, role: "admin" });
+        if (!teamCode) {
+            return res.status(400).json({
+                success: false,
+                message: "Team code is required"
+            });
+        }
+
+        const admin = await User.findOne({
+            teamCode,
+            role: "admin"
+        });
 
         if (!admin) {
             return res.status(404).json({
@@ -529,6 +540,9 @@ const getTeamByCode = async (req, res) => {
         });
 
     } catch (error) {
+
+        console.log(error);
+
         return res.status(500).json({
             success: false,
             message: error.message
