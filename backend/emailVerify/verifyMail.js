@@ -18,173 +18,154 @@ const verifyMail = async (token, email) => {
         //* email html
         const htmlToSend = `
         <!DOCTYPE html>
-<html lang="en">
+        <html lang="en">
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Email Verification</title>
-</head>
+        <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Email Verification</title>
+        </head>
 
-<body style="margin:0;padding:30px 15px;background:#eef4ff;font-family:'Segoe UI',sans-serif;">
+        <body style="margin:0;padding:0;background:#eef4ff;font-family:Segoe UI,sans-serif;">
 
-    <div style="max-width:620px;margin:auto;">
+            <div style="max-width:600px;margin:40px auto;padding:0 15px;">
 
-        <div style="
-            background:#ffffff;
-            border-radius:28px;
-            overflow:hidden;
-            border:1px solid #dbeafe;
-            box-shadow:0 15px 50px rgba(37,99,235,0.12);
-        ">
+                <div style="background:#ffffff;border-radius:24px;overflow:hidden;
+                    box-shadow:0 10px 40px rgba(37,99,235,0.12);
+                    border:1px solid #dbeafe;">
 
-            <!-- Top Section -->
-            <div style="
-                background:linear-gradient(135deg,#2563eb,#3b82f6,#60a5fa);
-                padding:55px 35px;
-                text-align:center;
-            ">
+                    <!-- Top Section -->
+                    <div style="background:linear-gradient(135deg,#2563eb,#3b82f6,#60a5fa);
+                        padding:45px 30px;text-align:center;">
 
-                <h1 style="
-                    margin:0;
-                    color:#ffffff;
-                    font-size:34px;
-                    font-weight:700;
-                    letter-spacing:-0.5px;
-                ">
-                    Verify Your Email
-                </h1>
+                        <div style="width:70px;height:70px;
+                            background:rgba(255,255,255,0.15);
+                            border-radius:20px;
+                            margin:auto;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            font-size:30px;
+                            font-weight:bold;
+                            color:white;
+                            border:1px solid rgba(255,255,255,0.2);">
 
-                <p style="
-                    margin-top:16px;
-                    color:#dbeafe;
-                    font-size:16px;
-                    line-height:1.8;
-                    max-width:420px;
-                    margin-left:auto;
-                    margin-right:auto;
-                ">
-                    Confirm your email address to securely activate your
-                    Collab Flow account and continue.
-                </p>
+                            CF
 
-            </div>
+                        </div>
 
-            <!-- Content -->
-            <div style="padding:45px 35px;">
+                        <h1 style="color:white;font-size:30px;
+                            margin-top:18px;margin-bottom:10px;">
 
-                <p style="
-                    font-size:17px;
-                    color:#0f172a;
-                    margin-top:0;
-                    margin-bottom:18px;
-                    font-weight:600;
-                ">
-                    Hello 👋
-                </p>
+                            Verify Your Email
 
-                <p style="
-                    font-size:15px;
-                    color:#475569;
-                    line-height:1.9;
-                    margin-bottom:18px;
-                ">
-                    Thanks for signing up with <strong>Collab Flow</strong>.
-                    To complete your registration and access your workspace,
-                    please verify your email address.
-                </p>
+                        </h1>
 
-                <p style="
-                    font-size:15px;
-                    color:#475569;
-                    line-height:1.9;
-                    margin-bottom:0;
-                ">
-                    Click the button below to verify your account securely.
-                </p>
+                        <p style="color:#dbeafe;font-size:15px;line-height:1.7;">
 
-                <!-- Button -->
-                <div style="text-align:center;margin:42px 0;">
+                            Please verify your email address to activate your account.
 
-                    <a href="${verifyUrl}"
-                        target="_blank"
-                        style="
-                            display:inline-block;
-                            padding:16px 38px;
-                            background:linear-gradient(135deg,#2563eb,#3b82f6);
-                            color:#ffffff;
-                            text-decoration:none;
-                            border-radius:16px;
-                            font-size:16px;
-                            font-weight:700;
-                            box-shadow:0 12px 25px rgba(37,99,235,0.28);
+                        </p>
+
+                    </div>
+
+                    <!-- Content -->
+                    <div style="padding:40px 32px;">
+
+                        <p style="font-size:16px;color:#334155;line-height:1.8;">
+
+                            Welcome to <strong>Collab Flow</strong> 🎉
+
+                        </p>
+
+                        <p style="font-size:16px;color:#475569;line-height:1.8;">
+
+                            Click the button below to verify your email address
+                            and continue using your account.
+
+                        </p>
+
+                        <div style="text-align:center;margin:35px 0;">
+
+                            <a href="${verifyUrl}"
+                                target="_blank"
+                                style="
+                                    display:inline-block;
+                                    padding:15px 32px;
+                                    background:linear-gradient(135deg,#2563eb,#3b82f6);
+                                    color:#ffffff;
+                                    text-decoration:none;
+                                    border-radius:14px;
+                                    font-size:16px;
+                                    font-weight:700;
+                                    box-shadow:0 10px 25px rgba(37,99,235,0.28);
+                                ">
+
+                                Verify Email
+
+                            </a>
+
+                        </div>
+
+                        <div style="
+                            background:#eff6ff;
+                            border:1px solid #bfdbfe;
+                            padding:16px;
+                            border-radius:14px;
                         ">
 
-                        Verify Email
+                            <p style="margin:0;color:#1e40af;
+                                font-size:14px;line-height:1.7;">
 
-                    </a>
+                                This verification link may expire after some time
+                                for security reasons.
 
-                </div>
+                            </p>
 
-                <!-- Info Box -->
-                <div style="
-                    background:#f0f7ff;
-                    border:1px solid #bfdbfe;
-                    border-radius:18px;
-                    padding:18px 20px;
-                ">
+                        </div>
 
-                    <p style="
-                        margin:0;
-                        font-size:14px;
-                        color:#1d4ed8;
-                        line-height:1.8;
+                        <p style="
+                            margin-top:28px;
+                            color:#64748b;
+                            font-size:14px;
+                            line-height:1.7;
+                        ">
+
+                            If you didn’t create this account,
+                            you can safely ignore this email.
+
+                        </p>
+
+                    </div>
+
+                    <!-- Footer -->
+                    <div style="
+                        padding:22px;
+                        text-align:center;
+                        border-top:1px solid #e2e8f0;
+                        background:#f8fbff;
                     ">
-                        This verification link may expire after some time for
-                        security purposes.
-                    </p>
+
+                        <p style="
+                            font-size:13px;
+                            color:#64748b;
+                            margin:0;
+                            line-height:1.7;
+                        ">
+
+                            © 2026 Collab Flow. All Rights Reserved.
+
+                        </p>
+
+                    </div>
 
                 </div>
 
-                <!-- Bottom Text -->
-                <p style="
-                    margin-top:28px;
-                    font-size:14px;
-                    color:#64748b;
-                    line-height:1.8;
-                ">
-                    If you didn’t create this account, you can safely ignore
-                    this email.
-                </p>
-
             </div>
 
-            <!-- Footer -->
-            <div style="
-                background:#f8fbff;
-                border-top:1px solid #e2e8f0;
-                padding:24px;
-                text-align:center;
-            ">
+        </body>
 
-                <p style="
-                    margin:0;
-                    color:#64748b;
-                    font-size:13px;
-                    line-height:1.8;
-                ">
-                    © 2026 Collab Flow. All Rights Reserved.
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</body>
-
-</html>
+        </html>
         `;
 
         //* transporter
