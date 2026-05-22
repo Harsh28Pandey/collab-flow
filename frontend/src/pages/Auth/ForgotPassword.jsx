@@ -28,7 +28,7 @@ const ForgotPassword = () => {
             setIsLoading(true);
 
             const res = await axiosInstance.post(
-                `${import.meta.env.VITE_BASE_URL}/api/auth/forgot-password`,
+                "/api/auth/forgot-password",
                 { email }
             );
 
