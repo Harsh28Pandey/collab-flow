@@ -34,7 +34,7 @@ router.post(
 
             //* upload image to imagekit
             const response = await imagekit.upload({
-                file: req.file.buffer,
+                file: req.file.buffer.toString("base64"),
                 fileName:
                     `${Date.now()}-${req.file.originalname}`,
                 folder: "/collab-flow"
