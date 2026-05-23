@@ -15,6 +15,11 @@ const generateToken = (userId) => {
  * @access Public
 */
 const registerUser = async (req, res) => {
+
+    console.log(req.body);
+    console.log("CLIENT_URL:", process.env.CLIENT_URL);
+    console.log("MAIL_USER:", process.env.MAIL_USER);
+
     try {
         const { name, email, password, profileImageUrl, role, teamName, teamCode } = req.body;
 
@@ -87,9 +92,11 @@ const registerUser = async (req, res) => {
         });
 
         //* send verification mail
-        verifyMail(verificationToken, email).catch((err) => {
-            console.error("Email send failed:", err.message);
-        });
+        // verifyMail(verificationToken, email).catch((err) => {
+        //     console.error("Email send failed:", err.message);
+        // });
+
+        await verifyMail(verificationToken, email);
 
         //* return response
         res.status(201).json({
