@@ -1,7 +1,7 @@
 const express = require("express");
 const { registerUser, loginUser, getUserProfile, updateUserProfile, changePassword, forgotPassword, logoutUser, verification, verifyOTP, getTeamByCode } = require("../controllers/auth.controller.js");
 const { protect } = require("../middlewares/auth.middleware.js");
-// const upload = require("../middlewares/upload.middleware.js");
+const upload = require("../middlewares/upload.middleware.js");
 const imagekit = require("../config/imagekit.js");
 
 const router = express.Router();
