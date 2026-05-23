@@ -90,9 +90,9 @@ const Navbar = () => {
                                         }}
                                         className="cursor-pointer"
                                     >
-                                        {user.profileImage ? (
+                                        {user.profileImageUrl ? (
                                             <img
-                                                src={user.profileImage}
+                                                src={user.profileImageUrl}
                                                 className="w-8 h-8 rounded-full object-cover border border-gray-200"
                                             />
                                         ) : (
@@ -217,9 +217,9 @@ const Navbar = () => {
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                     className="flex items-center gap-2 cursor-pointer px-2 py-1 rounded-lg"
                                 >
-                                    {user.profileImage ? (
+                                    {user.profileImageUrl ? (
                                         <img
-                                            src={user.profileImage}
+                                            src={user.profileImageUrl}
                                             className="w-8 h-8 rounded-full object-cover border border-gray-200"
                                         />
                                     ) : (
@@ -321,8 +321,8 @@ const Navbar = () => {
                                 }}
                                 className="flex items-center gap-3 bg-gray-100 p-3 rounded-xl cursor-pointer"
                             >
-                                {user.profileImage ? (
-                                    <img src={user.profileImage} className="w-9 h-9 rounded-full object-cover" />
+                                {user.profileImageUrl ? (
+                                    <img src={user.profileImageUrl} className="w-9 h-9 rounded-full object-cover" />
                                 ) : (
                                     <div className="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">
                                         {user.name?.charAt(0)}
