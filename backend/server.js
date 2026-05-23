@@ -3,7 +3,7 @@ const express = require("express");
 // const http = require("http");
 // const https = require("https");
 const cors = require("cors");
-const path = require("path");
+// const path = require("path");
 const connectDB = require("./config/db.js");
 
 const authRoutes = require('./routes/auth.routes.js');
@@ -89,8 +89,8 @@ app.use("/api/polls", pollRoutes);
 //     });
 // });
 
-//* serve uploads folder
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+//* serve uploads folder (works only on localhost, not production ready)
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("/", (req, res) => {
     res.send("API is running...");
