@@ -64,6 +64,12 @@ const SideMenu = ({ activeMenu }) => {
                     </div>
                 )}
 
+                {user?.role === "member" && (
+                    <div className='mt-1.5 px-2 py-0.5 text-[9px] font-semibold text-blue-700 bg-blue-100 border border-blue-200 rounded-full tracking-wide'>
+                        MEMBER
+                    </div>
+                )}
+
                 <h5 className='text-gray-900 font-bold text-[13px] mt-1.5 leading-5 text-center'>
                     {user?.name || ""}
                 </h5>
