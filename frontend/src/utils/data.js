@@ -1,4 +1,9 @@
-import { LuLayoutDashboard, LuUsers, LuClipboardCheck, LuSquarePlus, LuLogOut, LuMessageSquare, LuListTodo } from "react-icons/lu";
+import {
+    LuLayoutDashboard, LuUsers, LuClipboardCheck, LuSquarePlus, LuLogOut,
+    LuMessageSquare, LuListTodo, LuMegaphone, 
+    LuClock, LuSettings,
+    LuCalendar, LuFolderClosed, LuCircleUser
+} from "react-icons/lu";
 
 export const SIDE_MENU_DATA = [
     {
@@ -37,8 +42,26 @@ export const SIDE_MENU_DATA = [
         icon: LuListTodo,
         path: "/admin/polls",
     },
-    { 
+    {
         id: "07",
+        label: "File Manager",
+        icon: LuFolderClosed,
+        path: "/admin/file-manager"
+    },
+    {
+        id: "08",
+        label: "Timesheet",
+        icon: LuClock,
+        path: "/admin/timesheet"
+    },
+    {
+        id: "09",
+        label: "Settings",
+        icon: LuSettings,
+        path: "/admin/settings"
+    },
+    {
+        id: "10",
         label: "Logout",
         icon: LuLogOut,
         path: "logout",
@@ -72,6 +95,24 @@ export const SIDE_MENU_USER_DATA = [
     },
     {
         id: "05",
+        label: "Calendar",
+        icon: LuCalendar,
+        path: "/user/calendar"
+    },
+    {
+        id: "06",
+        label: "Files",
+        icon: LuFolderClosed,
+        path: "/user/files"
+    },
+    {
+        id: "07",
+        label: "Profile Settings",
+        icon: LuCircleUser,
+        path: "/user/profile-settings"
+    },
+    {
+        id: "08",
         label: "Logout",
         icon: LuLogOut,
         path: "logout",

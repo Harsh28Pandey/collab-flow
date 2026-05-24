@@ -28,6 +28,12 @@ import ForgotPassword from './pages/Auth/ForgotPassword.jsx'
 import VerifyOTP from './pages/Auth/VerifyOTP.jsx'
 import ChangePassword from './pages/Auth/ChangePassword.jsx'
 import NotFound from './pages/NotFound.jsx'
+import Calendar from './pages/User/Calendar.jsx'
+import Files from './pages/User/Files.jsx'
+import ProfileSettings from './pages/User/ProfileSettings.jsx'
+import FileManager from './pages/Admin/FileManager.jsx'
+import TimeSheet from './pages/Admin/TimeSheet.jsx'
+import Settings from './pages/Admin/Settings.jsx'
 
 
 const App = () => {
@@ -64,6 +70,9 @@ const App = () => {
                             <Route path='/admin/users' element={<ManageUsers />} />
                             <Route path='/admin/groups' element={<AdminGroups />} />
                             <Route path='/admin/polls' element={<ManagePolls />} />
+                            <Route path='/admin/file-manager' element={<FileManager />} />
+                            <Route path='/admin/timesheet' element={<TimeSheet />} />
+                            <Route path='/admin/settings' element={<Settings />} />
                         </Route>
 
                         {/* User Routes */}
@@ -73,6 +82,9 @@ const App = () => {
                             <Route path='/user/task-details/:id' element={<ViewTaskDetails />} />
                             <Route path='/user/groups' element={<MyGroups />} />
                             <Route path='/user/polls' element={<MyPolls />} />
+                            <Route path='/user/calendar' element={<Calendar />} />
+                            <Route path='/user/files' element={<Files />} />
+                            <Route path='/user/profile-settings' element={<ProfileSettings />} />
                         </Route>
 
                         <Route path="*" element={<NotFound />} />

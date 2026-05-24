@@ -40,10 +40,15 @@ export const API_PATHS = {
     },
 
     GROUPS: {
-        CREATE_GROUP: "/api/groups",  //* create a group (admin only)
-        GET_MY_GROUPS: "/api/groups",  //* get my groups where admin and members should be added
-        ADD_MEMBER: "/api/groups/add",  //* add member into a particular group (admin only)
-        REMOVE_MEMBER: "/api/groups/remove",  //* remove member from particular group (admin only)
+        CREATE_GROUP: "/api/groups",  //* create a new group (admin only)
+        GET_MY_GROUPS: "/api/groups",  //* get groups of logged-in user
+        GET_SINGLE_GROUP: (groupId) => `/api/groups/${groupId}`,  //* get single group details (admin & members)
+        ADD_MEMBER: (groupId) => `/api/groups/${groupId}/members`,  //* add member to group (admin only)
+        REMOVE_MEMBER: (groupId, memberId) =>  
+            `/api/groups/${groupId}/members/${memberId}`,  //* remove member from group (admin only)
+        LEAVE_GROUP: (groupId) => `/api/groups/${groupId}/leave`,  //* leave group (admin & members)
+        UPDATE_GROUP: (groupId) => `/api/groups/${groupId}`,  //* update group details (admin only)
+        JOIN_GROUP: (code) => `/api/groups/join/${code}`,  //* join group via code (admin & members)
         DELETE_GROUP: (groupId) => `/api/groups/${groupId}`,  //* delete a group (admin only)
     },
 
