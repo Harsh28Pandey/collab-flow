@@ -1,10 +1,25 @@
-import React from 'react'
-import DashboardLayout from '../../components/layouts/DashboardLayout'
+import React from "react";
+import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
 
 const MyGroups = () => {
     return (
-        <DashboardLayout activeMenu="My Groups">MyGroups</DashboardLayout>
-    )
-}
+        <DashboardLayout activeMenu="My Groups">
 
-export default MyGroups
+            <div className="bg-white rounded-3xl border border-gray-200 p-10 min-h-[500px] flex flex-col items-center justify-center text-center">
+
+                <h1 className="text-3xl font-bold text-gray-900 mb-3">
+                    My Groups Page
+                </h1>
+
+                <p className="text-gray-500 text-sm max-w-md">
+                    This page is currently under development.
+                    Upcoming calendar features and scheduling tools
+                    will be available soon.
+                </p>
+            </div>
+
+        </DashboardLayout>
+    );
+};
+
+export default MyGroups;
