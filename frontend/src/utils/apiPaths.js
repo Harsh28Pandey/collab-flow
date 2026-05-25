@@ -7,6 +7,10 @@ export const API_PATHS = {
         GET_PROFILE: "/api/auth/profile",  //* get logged-in user details
         GET_TEAM_BY_CODE: (teamCode) => `/api/auth/team/${teamCode}`,  //* get team name by team code
         UPDATE_PROFILE: "/api/auth/profile", //* update user profile details
+        // PASSWORD ROUTES
+        FORGOT_PASSWORD: "/api/auth/forgot-password",  //* send OTP to email for password reset
+        VERIFY_OTP: (email) => `/api/auth/verify-otp/${email}`,  //* verify OTP for password reset
+        CHANGE_PASSWORD: (email) => `/api/auth/change-password/${email}`,  //* change password after OTP verification
     },
 
     USERS: {
@@ -44,7 +48,7 @@ export const API_PATHS = {
         GET_MY_GROUPS: "/api/groups",  //* get groups of logged-in user
         GET_SINGLE_GROUP: (groupId) => `/api/groups/${groupId}`,  //* get single group details (admin & members)
         ADD_MEMBER: (groupId) => `/api/groups/${groupId}/members`,  //* add member to group (admin only)
-        REMOVE_MEMBER: (groupId, memberId) =>  
+        REMOVE_MEMBER: (groupId, memberId) =>
             `/api/groups/${groupId}/members/${memberId}`,  //* remove member from group (admin only)
         LEAVE_GROUP: (groupId) => `/api/groups/${groupId}/leave`,  //* leave group (admin & members)
         UPDATE_GROUP: (groupId) => `/api/groups/${groupId}`,  //* update group details (admin only)
@@ -65,5 +69,11 @@ export const API_PATHS = {
         DELETE_POLL: "/api/polls/delete",  //* delete poll (admin only)
 
         // GET_POLL_BY_ID: (pollId) => `/api/polls/${pollId}`,  //* optional (future use)
+    },
+
+    // SETTINGS
+    SETTINGS: {
+        GET_SETTINGS: "/api/settings",  //* get admin settings
+        UPDATE_SETTINGS: "/api/settings/update",  //* update admin settings
     },
 };

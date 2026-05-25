@@ -13,6 +13,8 @@ const reportRoutes = require("./routes/report.routes.js");
 const groupRoutes = require("./routes/group.routes.js");
 const messageRoutes = require("./routes/message.routes.js");
 const pollRoutes = require("./routes/poll.routes.js");
+const settingsRoutes = require("./routes/setting.routes.js");
+
 
 // const { Server } = require("socket.io");
 // const Message = require("./models/message.model.js");
@@ -48,6 +50,7 @@ app.use("/api/reports", reportRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/polls", pollRoutes);
+app.use("/api/settings", settingsRoutes);
 
 // const io = new Server(server, {
 //     cors: {
