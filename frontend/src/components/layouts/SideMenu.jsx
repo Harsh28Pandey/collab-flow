@@ -38,10 +38,13 @@ const SideMenu = ({ activeMenu }) => {
     }, [user]);
 
     return (
-        <div className='w-[235px] lg:w-[245px] h-full bg-gradient-to-b from-white via-blue-50/20 to-white border-r border-blue-100 z-20 flex flex-col'>
+        // FIX 1: h-full → h-screen aur overflow-hidden add kiya
+        // Taaki mobile mein bhi poori screen height mile aur bahar na nikle
+        <div className='w-[235px] lg:w-[245px] h-screen overflow-hidden bg-gradient-to-b from-white via-blue-50/20 to-white border-r border-blue-100 z-20 flex flex-col'>
 
             {/* Profile Section */}
-            <div className='relative flex flex-col items-center justify-center px-3 pt-2.5 pb-2.5'>
+            {/* FIX 2: flex-shrink-0 add kiya taaki profile section scroll ke saath shrink na ho */}
+            <div className='flex-shrink-0 relative flex flex-col items-center justify-center px-3 pt-2.5 pb-2.5'>
 
                 <div className='relative group'>
 
@@ -81,10 +84,13 @@ const SideMenu = ({ activeMenu }) => {
             </div>
 
             {/* Menu Items + Back to Home + Logout */}
-            <div className="flex-1 overflow-y-auto py-2 px-2 scrollbar-hide">
+            {/* FIX 3: min-h-0 add kiya — yeh flex child ko shrink hone deta hai
+                       overflow-y-auto tabhi kaam karta hai jab parent ki bounded height ho
+                       min-h-0 ke bina flex-1 overflow ko ignore kar deta hai mobile par */}
+            <div className="flex-1 min-h-0 overflow-y-auto py-2 px-2 scrollbar-hide">
                 <div className='space-y-1'>
 
-                    {/* Horizontal line — sirf pehle menu item (Dashboard) ke upar */}
+                    {/* Horizontal line */}
                     <div className='h-px bg-blue-100 mx-1 mb-1' />
 
                     {/* Main Menu Items */}
