@@ -8,6 +8,7 @@ import axiosInstance from "../../utils/axiosInstance.js";
 const Navbar = () => {
 
     const dropdownRef = useRef(null);
+    const mobileDropdownRef = useRef(null);
 
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
@@ -24,10 +25,10 @@ const Navbar = () => {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (!dropdownRef.current) return;
+            const clickedOutsideDesktop = dropdownRef.current && !dropdownRef.current.contains(event.target);
+            const clickedOutsideMobile = mobileDropdownRef.current && !mobileDropdownRef.current.contains(event.target);
 
-            // only close if click is outside BOTH dropdown + button
-            if (!dropdownRef.current.contains(event.target)) {
+            if (clickedOutsideDesktop && clickedOutsideMobile) {
                 setIsDropdownOpen(false);
             }
         };
@@ -47,6 +48,13 @@ const Navbar = () => {
             localStorage.removeItem("token");
             window.location.reload();
         }
+    };
+
+    // FIX: Reusable navigate handler jo dropdown close kare aur phir navigate kare
+    const handleNavigate = (path) => {
+        setIsDropdownOpen(false);
+        setIsOpen(false);
+        setTimeout(() => navigate(path), 0);
     };
 
     return (
@@ -78,7 +86,7 @@ const Navbar = () => {
                         {/* MOBILE PROFILE DROPDOWN */}
                         <div
                             className="md:hidden flex items-center relative"
-                            ref={dropdownRef}
+                            ref={mobileDropdownRef}
                         >
                             {user && (
                                 <>
@@ -102,49 +110,69 @@ const Navbar = () => {
                                         )}
                                     </button>
 
-                                    {/* MOBILE DROPDOWN */}
+                                    {/* MOBILE DROPDOWN - FIX: Admin/User specific options added */}
                                     {isDropdownOpen && (
                                         <div className="absolute right-0 top-12 w-56 z-[9999] bg-white/95 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-2xl overflow-hidden">
 
                                             {/* Dashboard */}
                                             <DropdownItem
                                                 label="Dashboard"
-                                                onClick={() => {
-                                                    setIsDropdownOpen(false);
-
-                                                    navigate(
-                                                        user.role === "admin"
-                                                            ? "/admin/dashboard"
-                                                            : "/user/dashboard"
-                                                    );
-                                                }}
+                                                onClick={() => handleNavigate(
+                                                    user.role === "admin"
+                                                        ? "/admin/dashboard"
+                                                        : "/user/dashboard"
+                                                )}
                                             />
 
                                             {/* Tasks */}
                                             <DropdownItem
-                                                label={
+                                                label={user.role === "admin" ? "Manage Tasks" : "My Tasks"}
+                                                onClick={() => handleNavigate(
                                                     user.role === "admin"
-                                                        ? "Manage Tasks"
-                                                        : "My Tasks"
-                                                }
-                                                onClick={() => {
-                                                    setIsDropdownOpen(false);
-
-                                                    navigate(
-                                                        user.role === "admin"
-                                                            ? "/admin/tasks"
-                                                            : "/user/tasks"
-                                                    );
-                                                }}
+                                                        ? "/admin/tasks"
+                                                        : "/user/tasks"
+                                                )}
                                             />
+
+                                            {/* ADMIN ONLY */}
+                                            {user?.role === "admin" && (
+                                                <>
+                                                    <DropdownItem
+                                                        label="File Manager"
+                                                        onClick={() => handleNavigate("/admin/file-manager")}
+                                                    />
+
+                                                    <DropdownItem
+                                                        label="Timesheet"
+                                                        onClick={() => handleNavigate("/admin/timesheet")}
+                                                    />
+
+                                                    <DropdownItem
+                                                        label="Settings"
+                                                        onClick={() => handleNavigate("/admin/settings")}
+                                                    />
+                                                </>
+                                            )}
+
+                                            {/* USER ONLY */}
+                                            {user?.role !== "admin" && (
+                                                <>
+                                                    <DropdownItem
+                                                        label="Files"
+                                                        onClick={() => handleNavigate("/user/files")}
+                                                    />
+
+                                                    <DropdownItem
+                                                        label="Profile Settings"
+                                                        onClick={() => handleNavigate("/user/profile-settings")}
+                                                    />
+                                                </>
+                                            )}
 
                                             {/* Change Password */}
                                             <DropdownItem
                                                 label="Change Password"
-                                                onClick={() => {
-                                                    setIsDropdownOpen(false);
-                                                    navigate("/forgot-password");
-                                                }}
+                                                onClick={() => handleNavigate("/forgot-password")}
                                             />
 
                                             <div className="h-px bg-gray-100 my-1" />
@@ -162,7 +190,7 @@ const Navbar = () => {
                         </div>
                     </div>
 
-                    {/* CENTER LINKS (UPDATED UNDERLINE STYLE) */}
+                    {/* CENTER LINKS */}
                     <div className="hidden md:flex gap-6">
 
                         {navLinks.map((link) => {
@@ -181,7 +209,6 @@ const Navbar = () => {
                                         {link.name}
                                     </span>
 
-                                    {/* underline */}
                                     <span
                                         className={`
                                     absolute left-0 -bottom-1 h-[2px] rounded-full bg-gradient-to-r from-indigo-600 to-sky-500 transition-all duration-300
@@ -236,28 +263,62 @@ const Navbar = () => {
                                 {isDropdownOpen && (
                                     <div className="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-xl border border-gray-100 shadow-xl rounded-xl overflow-hidden z-50">
 
-                                        <DropdownItem label="Dashboard" onClick={() => {
-                                            setIsDropdownOpen(false);
-                                            navigate(user.role === "admin" ? "/admin/dashboard" : "/user/dashboard");
-                                        }} />
+                                        <DropdownItem
+                                            label="Dashboard"
+                                            onClick={() => handleNavigate(user.role === "admin" ? "/admin/dashboard" : "/user/dashboard")}
+                                        />
 
-                                        <DropdownItem label={user.role === "admin" ? "Manage Tasks" : "My Tasks"} onClick={() => {
-                                            setIsDropdownOpen(false);
-                                            navigate(user.role === "admin" ? "/admin/tasks" : "/user/tasks");
-                                        }} />
+                                        <DropdownItem
+                                            label={user.role === "admin" ? "Manage Tasks" : "My Tasks"}
+                                            onClick={() => handleNavigate(user.role === "admin" ? "/admin/tasks" : "/user/tasks")}
+                                        />
 
-                                        <DropdownItem label="Change Password" onClick={() => {
-                                            setIsDropdownOpen(false);
-                                            navigate("/forgot-password");
-                                        }} />
+                                        {user?.role === "admin" && (
+                                            <>
+                                                <DropdownItem
+                                                    label="File Manager"
+                                                    onClick={() => handleNavigate("/admin/file-manager")}
+                                                />
+
+                                                <DropdownItem
+                                                    label="Timesheet"
+                                                    onClick={() => handleNavigate("/admin/timesheet")}
+                                                />
+
+                                                <DropdownItem
+                                                    label="Settings"
+                                                    onClick={() => handleNavigate("/admin/settings")}
+                                                />
+                                            </>
+                                        )}
+
+                                        {user?.role !== "admin" && (
+                                            <>
+                                                <DropdownItem
+                                                    label="Files"
+                                                    onClick={() => handleNavigate("/user/files")}
+                                                />
+
+                                                <DropdownItem
+                                                    label="Profile Settings"
+                                                    onClick={() => handleNavigate("/user/profile-settings")}
+                                                />
+                                            </>
+                                        )}
+
+                                        <DropdownItem
+                                            label="Change Password"
+                                            onClick={() => handleNavigate("/forgot-password")}
+                                        />
 
                                         <div className="h-px bg-gray-100 my-1" />
 
                                         <DropdownItem
                                             label="Logout"
                                             danger
-                                            onClick={handleLogout}  // ✅ Direct function pass karo
+                                            onClick={handleLogout}
                                         />
+
                                     </div>
                                 )}
                             </div>
@@ -315,10 +376,7 @@ const Navbar = () => {
                             </>
                         ) : (
                             <div
-                                onClick={() => {
-                                    setIsOpen(false);
-                                    navigate(user.role === "admin" ? "/admin/dashboard" : "/user/dashboard");
-                                }}
+                                onClick={() => handleNavigate(user.role === "admin" ? "/admin/dashboard" : "/user/dashboard")}
                                 className="flex items-center gap-3 bg-gray-100 p-3 rounded-xl cursor-pointer"
                             >
                                 {user.profileImageUrl ? (
