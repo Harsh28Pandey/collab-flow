@@ -2,106 +2,204 @@ import React from 'react';
 import Progress from '../Progress.jsx';
 import AvatarGroup from '../AvatarGroup.jsx';
 import moment from 'moment';
-import { LuPaperclip } from 'react-icons/lu';
 
-const TaskCard = ({ title, description, priority, status, progress, createdAt, dueDate, assignedTo, attachmentCount, completedTodoCount, todoChecklist, onClick }) => {
+import {
+    LuPaperclip,
+    LuArrowRight,
+    LuCalendarDays,
+    LuCircleCheckBig
+} from 'react-icons/lu';
+
+const TaskCard = ({
+    title,
+    description,
+    priority,
+    status,
+    progress,
+    createdAt,
+    dueDate,
+    assignedTo,
+    attachmentCount,
+    completedTodoCount,
+    todoChecklist,
+    onClick,
+    index = 0
+}) => {
+
+    const accentColors = [
+        'border-l-cyan-500',
+        'border-l-violet-500',
+        'border-l-emerald-500',
+        'border-l-rose-500',
+        'border-l-amber-500'
+    ];
+
+    const currentAccentColor = accentColors[index % 5];
 
     const getStatusTagColor = () => {
         switch (status) {
             case "In Progress":
-                return 'text-cyan-600 bg-cyan-100 border border-cyan-600/10';
+                return 'text-cyan-700 bg-cyan-50 border border-cyan-200';
+
             case "Completed":
-                return 'text-lime-600 bg-lime-100 border border-lime-600/10';
+                return 'text-lime-700 bg-lime-50 border border-lime-200';
+
             default:
-                return 'text-violet-600 bg-violet-100 border border-violet-600/10';
+                return 'text-violet-700 bg-violet-50 border border-violet-200';
         }
     }
 
     const getPriorityTagColor = () => {
         switch (priority) {
             case "Low":
-                return 'text-emerald-600 bg-emerald-100 border border-emerald-600/10';
+                return 'text-emerald-700 bg-emerald-50 border border-emerald-200';
+
             case "Medium":
-                return 'text-amber-600 bg-amber-100 border border-amber-600/10';
+                return 'text-amber-700 bg-amber-50 border border-amber-200';
+
             default:
-                return 'text-rose-600 bg-rose-100 border border-rose-600/10';
+                return 'text-rose-700 bg-rose-50 border border-rose-200';
         }
     }
 
     return (
-        <div className='w-full max-w-full sm:max-w-md mx-auto bg-white rounded-xl sm:rounded-2xl py-3 sm:py-4 shadow-md shadow-gray-200 border border-gray-300/50 cursor-pointer' onClick={onClick}>
+        <div
+            onClick={onClick}
+            className='group relative w-full bg-white rounded-3xl border border-gray-200/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden cursor-pointer'
+        >
 
-            {/* Tags */}
-            <div className='flex items-center gap-2 px-3 sm:px-4 flex-wrap'>
-                <div className={`text-[10px] sm:text-[11px] font-medium ${getStatusTagColor()} px-3 sm:px-4 py-0.5 rounded`}>
-                    {status}
+            <div className='p-3'>
+
+                {/* Header */}
+                <div className='flex items-start justify-between gap-1'>
+
+                    <div className='flex flex-wrap items-center gap-1'>
+                        <div
+                            className={`text-[9px] sm:text-[10px] font-semibold px-2 py-1 rounded-full ${getStatusTagColor()}`}
+                        >
+                            {status}
+                        </div>
+
+                        <div
+                            className={`text-[9px] sm:text-[10px] font-semibold px-2 py-1 rounded-full ${getPriorityTagColor()}`}
+                        >
+                            {priority} Priority
+                        </div>
+                    </div>
+
+                    {attachmentCount > 0 && (
+                        <div className='flex items-center gap-1 bg-blue-50 border border-blue-100 px-2 py-1 rounded-full shrink-0'>
+                            <LuPaperclip className='text-blue-600 text-[10px]' />
+
+                            <span className='text-[9px] font-semibold text-gray-700'>
+                                {attachmentCount}
+                            </span>
+                        </div>
+                    )}
                 </div>
 
-                <div className={`text-[10px] sm:text-[11px] font-medium ${getPriorityTagColor()} px-3 sm:px-4 py-0.5 rounded`}>
-                    {priority} Priority
-                </div>
-            </div>
+                {/* Title to Progress Vertical Line */}
+                <div
+                    className={`mt-2.5 -ml-3 pl-3 border-l-[3px] ${currentAccentColor}`}
+                >
 
-            {/* Content */}
-            <div className={`px-3 sm:px-4 border-l-[3px] mt-2 ${status === "In Progress"
-                ? "border-cyan-600"
-                : status === "Completed"
-                    ? "border-indigo-600"
-                    : "border-violet-600"
-                }`}>
-
-                <p className='text-sm sm:text-base font-medium text-gray-900 mt-3 line-clamp-2'>
-                    {title}
-                </p>
-
-                <p className='text-xs sm:text-sm text-gray-600 mt-1.5 line-clamp-2 leading-5'>
-                    {description}
-                </p>
-
-                <p className='text-xs sm:text-[13px] text-gray-800/90 font-medium mt-2 mb-2'>
-                    Task Done:{" "}
-                    <span className='font-semibold text-gray-800'>
-                        {completedTodoCount} / {todoChecklist.length || 0}
-                    </span>
-                </p>
-
-                <Progress progress={progress} status={status} />
-            </div>
-
-            {/* Dates */}
-            <div className='px-3 sm:px-4 mt-2'>
-                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
+                    {/* Title & Description */}
                     <div>
-                        <label className='text-[11px] sm:text-xs text-gray-600'>Start Date</label>
-                        <p className='text-xs sm:text-[13px] text-gray-900 font-medium'>
+
+                        <h3 className='text-[13px] sm:text-[14px] font-bold text-gray-900 line-clamp-2 leading-5 group-hover:text-primary transition-colors'>
+                            {title}
+                        </h3>
+
+                        <p className='text-[10px] sm:text-[11px] text-gray-600 mt-1 line-clamp-2 leading-4'>
+                            {description}
+                        </p>
+                    </div>
+
+                    {/* Progress Section */}
+                    <div className='mt-2.5 bg-gray-50 border border-gray-100 rounded-2xl p-2'>
+
+                        <div className='flex items-center justify-between gap-2'>
+
+                            <div className='flex items-center gap-1.5'>
+
+                                <div className='w-7 h-7 rounded-md bg-white border border-gray-100 shadow-sm flex items-center justify-center'>
+                                    <LuCircleCheckBig className='text-primary text-xs' />
+                                </div>
+
+                                <div>
+                                    <p className='text-[8px] text-gray-500 font-medium'>
+                                        Progress
+                                    </p>
+
+                                    <p className='text-[10px] sm:text-[11px] font-bold text-gray-900'>
+                                        {completedTodoCount} / {todoChecklist.length || 0} Done
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className='text-sm font-bold text-primary'>
+                                    {progress}%
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className='mt-1.5'>
+                            <Progress progress={progress} status={status} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Dates */}
+                <div className='grid grid-cols-2 gap-1.5 mt-2.5'>
+
+                    <div className='bg-gray-50 border border-gray-100 rounded-2xl p-2'>
+
+                        <div className='flex items-center gap-1 mb-1'>
+                            <LuCalendarDays className='text-gray-500 text-[9px]' />
+
+                            <label className='text-[8px] text-gray-500 font-medium'>
+                                Start Date
+                            </label>
+                        </div>
+
+                        <p className='text-[9px] sm:text-[10px] font-semibold text-gray-900'>
                             {moment(createdAt).format("Do MMM YYYY")}
                         </p>
                     </div>
 
-                    <div>
-                        <label className='text-[11px] sm:text-xs text-gray-600'>Due Date</label>
-                        <p className='text-xs sm:text-[13px] text-gray-900 font-medium'>
+                    <div className='bg-gray-50 border border-gray-100 rounded-2xl p-2'>
+
+                        <div className='flex items-center gap-1 mb-1'>
+                            <LuCalendarDays className='text-gray-500 text-[9px]' />
+
+                            <label className='text-[8px] text-gray-500 font-medium'>
+                                Due Date
+                            </label>
+                        </div>
+
+                        <p className='text-[9px] sm:text-[10px] font-semibold text-gray-900'>
                             {moment(dueDate).format("Do MMM YYYY")}
                         </p>
                     </div>
                 </div>
 
-                {/* Bottom Section */}
-                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 gap-2'>
+                {/* Footer */}
+                <div className='flex items-center justify-between gap-1.5 mt-2.5 pt-2 border-t border-gray-100'>
+
                     <AvatarGroup avatars={assignedTo || []} />
 
-                    {attachmentCount > 0 && (
-                        <div className='flex items-center gap-1.5 bg-blue-100 px-2 py-1 rounded-xl w-fit'>
-                            <LuPaperclip className='text-primary text-sm' />
-                            <span className='text-[11px] sm:text-xs text-gray-900'>
-                                {attachmentCount}
-                            </span>
-                        </div>
-                    )}
+                    <button
+                        className='flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 border border-blue-500 text-white text-[10px] sm:text-[11px] font-semibold px-5 py-2.5 rounded-3xl transition-all duration-300 cursor-pointer active:scale-95 shadow-sm hover:shadow-md'
+                    >
+                        View Details
+
+                        <LuArrowRight className='text-[13px]' />
+                    </button>
                 </div>
             </div>
         </div>
     )
 }
 
-export default TaskCard
+export default TaskCard;

@@ -69,8 +69,9 @@ const CreateTask = () => {
             })
 
             toast.success("Task created successfully");
-
             clearData();
+            navigate("/admin/tasks");
+
         } catch (error) {
             console.error("Error creating task: ", error);
             setLoading(false);
@@ -101,6 +102,8 @@ const CreateTask = () => {
             })
 
             toast.success("Task updated successfully");
+            navigate("/admin/tasks");
+
         } catch (error) {
             console.error("Error creating task: ", error);
         } finally {

@@ -353,21 +353,30 @@ const ManageUsers = () => {
 
                             <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5'>
 
-                                {allUsers?.map((user) => (
+                                {allUsers?.map((user) => {
 
-                                    <div
-                                        key={user._id}
-                                        className='transition-all duration-300 hover:-translate-y-1'
-                                    >
+                                    // Normalize backend data (VERY IMPORTANT)
+                                    const safeUser = {
+                                        ...user,
+                                        pendingTasks: user?.pendingTasks ?? 0,
+                                        inProgressTasks: user?.inProgressTasks ?? 0,
+                                        completedTasks: user?.completedTasks ?? 0,
+                                    };
+
+                                    return (
                                         <div
-                                            onClick={() => handleOpenUser(user)}
-                                            className='cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg'
+                                            key={safeUser._id}
+                                            className='transition-all duration-300 hover:-translate-y-1'
                                         >
-                                            <UserCard userInfo={user} />
+                                            <div
+                                                onClick={() => handleOpenUser(safeUser)}
+                                                className='cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg'
+                                            >
+                                                <UserCard userInfo={safeUser} />
+                                            </div>
                                         </div>
-                                    </div>
-
-                                ))}
+                                    );
+                                })}
 
                             </div>
                         </>
@@ -383,61 +392,81 @@ const ManageUsers = () => {
                 onClose={() => setOpenUserModal(false)}
                 title="Member Details"
             >
-
                 {selectedUser && (
+                    <div className="space-y-6">
 
-                    <div className='space-y-5'>
+                        {/* PROFILE SECTION */}
+                        <div className="flex flex-col items-center text-center">
 
-                        {/* Profile */}
+                            {/* Avatar / Fallback */}
+                            {selectedUser?.profileImageUrl ? (
+                                <img
+                                    src={selectedUser.profileImageUrl}
+                                    alt="profile"
+                                    className="w-24 h-24 rounded-full object-cover border-4 border-blue-100 shadow-sm"
+                                />
+                            ) : (
+                                <div className="w-24 h-24 rounded-full flex items-center justify-center bg-blue-600 text-white text-3xl font-bold border-4 border-blue-100 shadow-sm">
+                                    {selectedUser?.name?.charAt(0)?.toUpperCase() || "?"}
+                                </div>
+                            )}
 
-                        <div className='flex flex-col items-center text-center'>
-
-                            <img
-                                src={
-                                    selectedUser?.profileImageUrl ||
-                                    "https://ui-avatars.com/api/?name=User"
-                                }
-                                alt="profile"
-                                className='w-24 h-24 rounded-full object-cover border-4 border-blue-100 shadow-sm'
-                            />
-
-                            <h3 className='text-xl font-bold text-gray-900 mt-4'>
+                            <h3 className="text-xl font-bold text-gray-900 mt-4">
                                 {selectedUser?.name}
                             </h3>
 
-                            <p className='text-sm text-gray-500 mt-1'>
+                            <p className="text-sm text-gray-500 mt-1">
                                 {selectedUser?.email}
                             </p>
 
-                            <span className='mt-3 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold'>
+                            <span className="mt-3 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
                                 {selectedUser?.role || "Member"}
                             </span>
-
                         </div>
 
-                        {/* Stats */}
+                        {/* TASK STATS */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
-                        <div className='grid grid-cols-2 gap-4'>
+                            {/* PENDING */}
+                            <div className="relative overflow-hidden rounded-3xl p-5 text-center bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-lg hover:scale-[1.02] transition">
 
-                            <div className='bg-gray-50 border border-gray-300 rounded-2xl p-4 text-center'>
+                                <div className="absolute -top-10 -right-10 w-28 h-28 bg-white/20 rounded-full blur-2xl"></div>
 
-                                <p className='text-sm text-gray-600'>
-                                    Total Tasks
+                                <p className="text-xs font-semibold uppercase tracking-wide opacity-90">
+                                    Pending
                                 </p>
 
-                                <h4 className='text-2xl font-bold text-gray-900 mt-1'>
-                                    {selectedUser?.totalTasks || 0}
+                                <h4 className="text-4xl font-extrabold mt-2">
+                                    {selectedUser?.pendingTasks || 0}
                                 </h4>
 
                             </div>
 
-                            <div className='bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center'>
+                            {/* IN PROGRESS */}
+                            <div className="relative overflow-hidden rounded-3xl p-5 text-center bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-lg hover:scale-[1.02] transition">
 
-                                <p className='text-sm text-emerald-700'>
+                                <div className="absolute -top-10 -right-10 w-28 h-28 bg-white/20 rounded-full blur-2xl"></div>
+
+                                <p className="text-xs font-semibold uppercase tracking-wide opacity-90">
+                                    In Progress
+                                </p>
+
+                                <h4 className="text-4xl font-extrabold mt-2">
+                                    {selectedUser?.inProgressTasks || 0}
+                                </h4>
+
+                            </div>
+
+                            {/* COMPLETED */}
+                            <div className="relative overflow-hidden rounded-3xl p-5 text-center bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg hover:scale-[1.02] transition">
+
+                                <div className="absolute -top-10 -right-10 w-28 h-28 bg-white/20 rounded-full blur-2xl"></div>
+
+                                <p className="text-xs font-semibold uppercase tracking-wide opacity-90">
                                     Completed
                                 </p>
 
-                                <h4 className='text-2xl font-bold text-emerald-700 mt-1'>
+                                <h4 className="text-4xl font-extrabold mt-2">
                                     {selectedUser?.completedTasks || 0}
                                 </h4>
 
@@ -445,38 +474,40 @@ const ManageUsers = () => {
 
                         </div>
 
-                        {/* Joined Date */}
-
-                        <div className='bg-gray-50 border border-gray-300 rounded-2xl p-4'>
-
-                            <p className='text-sm text-gray-600'>
-                                Joined Date
-                            </p>
-
-                            <h4 className='font-semibold text-gray-800 mt-1'>
+                        {/* JOINED DATE */}
+                        <div className="bg-gray-50 border rounded-2xl p-4">
+                            <p className="text-sm text-gray-600">Joined Date</p>
+                            <h4 className="font-semibold text-gray-800 mt-1">
                                 {selectedUser?.createdAt
-                                    ? new Date(
-                                        selectedUser.createdAt
-                                    ).toLocaleDateString()
+                                    ? new Date(selectedUser.createdAt).toLocaleDateString("en-IN", {
+                                        year: "numeric",
+                                        month: "short",
+                                        day: "numeric",
+                                    })
                                     : "N/A"}
                             </h4>
-
                         </div>
 
-                        {/* Remove Button */}
+                        {/* ACTION BUTTONS */}
+                        <div className="flex flex-col sm:flex-row gap-3">
 
-                        <button
-                            onClick={() =>
-                                handleRemoveUser(selectedUser._id)
-                            }
-                            className='w-full h-12 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-semibold transition-all duration-200 cursor-pointer'
-                        >
-                            Remove User
-                        </button>
+                            <button
+                                onClick={() => handleRemoveUser(selectedUser._id)}
+                                className="w-full h-12 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-semibold transition cursor-pointer"
+                            >
+                                Remove User
+                            </button>
 
+                            <button
+                                onClick={() => setOpenUserModal(false)}
+                                className="w-full h-12 rounded-2xl bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold transition cursor-pointer"
+                            >
+                                Cancel
+                            </button>
+
+                        </div>
                     </div>
                 )}
-
             </Model>
 
 

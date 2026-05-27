@@ -457,7 +457,7 @@ const ManageTasks = () => {
 
                             <div className='grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5'>
 
-                                {filteredTasks.map((item) => (
+                                {filteredTasks.map((item, index) => (
 
                                     <TaskCard
                                         key={item._id}
@@ -483,6 +483,7 @@ const ManageTasks = () => {
                                         todoChecklist={
                                             item.todoChecklist || []
                                         }
+                                        index={index}
                                         onClick={() =>
                                             navigate(
                                                 `/admin/create-task`,

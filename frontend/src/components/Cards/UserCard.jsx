@@ -15,60 +15,56 @@ const UserCard = ({ userInfo }) => {
 
     return (
 
-        <div className='group relative overflow-hidden bg-gradient-to-br from-white to-blue-50 border border-blue-100 hover:border-blue-300 rounded-[30px] p-5 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer'>
+        <div className='group relative overflow-hidden bg-gradient-to-br from-white to-blue-50 border border-blue-100 hover:border-blue-300 rounded-3xl p-3.5 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer'>
 
-            {/* Top Glow */}
+            {/* Glow */}
 
-            <div className='absolute top-0 right-0 w-32 h-32 bg-blue-100/40 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500'></div>
+            <div className='absolute top-0 right-0 w-20 h-20 bg-blue-100/40 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500'></div>
 
             {/* Header */}
 
-            <div className='relative flex items-start justify-between gap-4'>
+            <div className='relative flex items-center gap-3 min-w-0'>
 
-                <div className='flex items-center gap-4'>
+                {/* Profile */}
 
-                    {/* Profile */}
+                <div className='relative flex-shrink-0'>
 
-                    <div className='relative'>
+                    {userInfo?.profileImageUrl ? (
 
-                        {userInfo?.profileImageUrl ? (
+                        <img
+                            src={userInfo?.profileImageUrl}
+                            alt="profile"
+                            className='w-12 h-12 rounded-xl object-cover border-2 border-white shadow-sm'
+                        />
 
-                            <img
-                                src={userInfo?.profileImageUrl}
-                                alt="profile"
-                                className='w-16 h-16 rounded-2xl object-cover border-4 border-white shadow-md'
-                            />
+                    ) : (
 
-                        ) : (
-
-                            <div className='w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-sky-400 flex items-center justify-center text-white text-xl font-bold shadow-md border-4 border-white'>
-                                {getInitial(userInfo?.name)}
-                            </div>
-
-                        )}
-
-                        {/* Online Dot */}
-
-                        <div className='absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-[3px] border-white'></div>
-
-                    </div>
-
-                    {/* User Info */}
-
-                    <div className='min-w-0'>
-
-                        <h3 className='text-[17px] font-bold text-gray-900 truncate'>
-                            {userInfo?.name}
-                        </h3>
-
-                        <p className='text-sm text-gray-600 truncate mt-0.5'>
-                            {userInfo?.email}
-                        </p>
-
-                        <div className='mt-2 inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-[11px] font-semibold px-2.5 py-1 rounded-full'>
-                            Team Member
+                        <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-sky-400 flex items-center justify-center text-white text-sm font-bold shadow-sm border-2 border-white'>
+                            {getInitial(userInfo?.name)}
                         </div>
 
+                    )}
+
+                    {/* Online Dot */}
+
+                    <div className='absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white'></div>
+
+                </div>
+
+                {/* User Info */}
+
+                <div className='min-w-0 flex-1'>
+
+                    <h3 className='text-sm font-bold text-gray-900 truncate'>
+                        {userInfo?.name}
+                    </h3>
+
+                    <p className='text-[11px] text-gray-600 truncate mt-0.5'>
+                        {userInfo?.email}
+                    </p>
+
+                    <div className='mt-1.5 inline-flex items-center bg-blue-100 text-blue-700 text-[9px] font-semibold px-2 py-0.5 rounded-full'>
+                        Team Member
                     </div>
 
                 </div>
@@ -77,11 +73,11 @@ const UserCard = ({ userInfo }) => {
 
             {/* Divider */}
 
-            <div className='h-px bg-gradient-to-r from-transparent via-blue-100 to-transparent my-5'></div>
+            <div className='h-px bg-gradient-to-r from-transparent via-blue-100 to-transparent my-3'></div>
 
             {/* Stats */}
 
-            <div className='grid grid-cols-3 gap-3'>
+            <div className='grid grid-cols-3 gap-2'>
 
                 <StatCard
                     label="Pending"
@@ -132,18 +128,18 @@ const StatCard = ({
     return (
 
         <div
-            className={`bg-gradient-to-br ${bg} border ${border} rounded-2xl p-3 text-center transition-all duration-300 hover:scale-[1.03]`}
+            className={`bg-gradient-to-br ${bg} border ${border} rounded-2xl p-2 text-center transition-all duration-300 hover:scale-[1.02]`}
         >
 
-            <div className={`flex justify-center text-lg mb-1 ${text}`}>
+            <div className={`flex justify-center text-sm mb-0.5 ${text}`}>
                 {icon}
             </div>
 
-            <h4 className={`text-xl font-bold ${text}`}>
+            <h4 className={`text-base font-bold ${text}`}>
                 {count}
             </h4>
 
-            <p className='text-[11px] font-semibold text-gray-600 mt-0.5'>
+            <p className='text-[9px] font-semibold text-gray-600 truncate'>
                 {label}
             </p>
 
