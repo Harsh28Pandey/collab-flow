@@ -1,23 +1,6 @@
-import React, {
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
+import React, { useContext, useEffect, useMemo, useState, } from "react";
 
-import {
-    LuSearch,
-    LuUpload,
-    LuRefreshCcw,
-    LuImage,
-    LuVideo,
-    LuFileText,
-    LuFile,
-    LuArrowUpRight,
-    LuFolderOpen,
-    LuTrash2,
-    LuX,
-} from "react-icons/lu";
+import { LuSearch, LuUpload, LuRefreshCcw, LuImage, LuVideo, LuFileText, LuFile, LuArrowUpRight, LuFolderOpen, LuTrash2, LuX, } from "react-icons/lu";
 
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
 
