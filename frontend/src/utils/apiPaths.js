@@ -71,6 +71,12 @@ export const API_PATHS = {
         // GET_POLL_BY_ID: (pollId) => `/api/polls/${pollId}`,  //* optional (future use)
     },
 
+    FILES: {
+        UPLOAD_FILE: "/api/files/upload",  //* upload a file to a project
+        GET_PROJECT_FILES: (projectId) => `/api/files/project/${projectId}`,  //* get all files of a project
+        DELETE_FILE: (fileId) => `/api/files/${fileId}`,  //* delete a file by id
+    },
+
     // SETTINGS
     SETTINGS: {
         GET_SETTINGS: "/api/settings",  //* get admin settings

@@ -34,6 +34,11 @@ import ProfileSettings from './pages/User/ProfileSettings.jsx'
 import FileManager from './pages/Admin/FileManager.jsx'
 import TimeSheet from './pages/Admin/TimeSheet.jsx'
 import Settings from './pages/Admin/Settings.jsx'
+import Expenses from './pages/Admin/Expenses.jsx'
+import AddExpense from './pages/Admin/AddExpense.jsx'
+import Budgets from './pages/Admin/Budgets.jsx'
+import ExpenseAnalytics from './pages/Admin/ExpenseAnalytics.jsx'
+import MyExpenses from "./pages/User/MyExpenses.jsx"
 
 
 const App = () => {
@@ -70,6 +75,10 @@ const App = () => {
                             <Route path='/admin/users' element={<ManageUsers />} />
                             <Route path='/admin/groups' element={<AdminGroups />} />
                             <Route path='/admin/polls' element={<ManagePolls />} />
+                            <Route path='/admin/expenses' element={<Expenses />} />
+                            <Route path='/admin/add-expense' element={<AddExpense />} />
+                            <Route path='/admin/budgets' element={<Budgets />} />
+                            <Route path='/admin/expense-analytics' element={<ExpenseAnalytics />} />
                             <Route path='/admin/file-manager' element={<FileManager />} />
                             <Route path='/admin/timesheet' element={<TimeSheet />} />
                             <Route path='/admin/settings' element={<Settings />} />
@@ -82,6 +91,7 @@ const App = () => {
                             <Route path='/user/task-details/:id' element={<ViewTaskDetails />} />
                             <Route path='/user/groups' element={<MyGroups />} />
                             <Route path='/user/polls' element={<MyPolls />} />
+                            <Route path='/user/my-expenses' element={<MyExpenses />} />
                             <Route path='/user/calendar' element={<Calendar />} />
                             <Route path='/user/files' element={<Files />} />
                             <Route path='/user/profile-settings' element={<ProfileSettings />} />

@@ -1,40 +1,110 @@
 const multer = require("multer");
 
-//* memory storage for vercel
 const storage = multer.memoryStorage();
 
-//* file filter
 const fileFilter = (req, file, cb) => {
 
     const allowedTypes = [
-        "image/jpeg",
+
+        // Images
         "image/png",
+        "image/jpeg",
         "image/jpg",
-        "image/webp"
+        "image/webp",
+
+        // Videos
+        "video/mp4",
+        "video/mkv",
+        "video/webm",
+        "video/quicktime",
+
+        // PDF
+        "application/pdf",
+
+        // Docs
+        "application/msword",
+
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+
+        // Excel
+        "application/vnd.ms-excel",
+
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
+        // Text
+        "text/plain",
+
+        // Zip
+        "application/zip",
+        "application/x-zip-compressed",
     ];
 
     if (allowedTypes.includes(file.mimetype)) {
+
         cb(null, true);
+
     } else {
+
         cb(
             new Error(
-                "Only jpeg, jpg, png and webp are allowed"
+                "Unsupported file type"
             ),
             false
         );
     }
-
 };
 
 const upload = multer({
+
     storage,
-    fileFilter,
+
     limits: {
-        fileSize: 5 * 1024 * 1024
-    }
+        fileSize: 100 * 1024 * 1024,
+    },
+
+    fileFilter,
 });
 
 module.exports = upload;
+
+
+// const multer = require("multer");
+
+// //* memory storage for vercel
+// const storage = multer.memoryStorage();
+
+// //* file filter
+// const fileFilter = (req, file, cb) => {
+
+//     const allowedTypes = [
+//         "image/jpeg",
+//         "image/png",
+//         "image/jpg",
+//         "image/webp"
+//     ];
+
+//     if (allowedTypes.includes(file.mimetype)) {
+//         cb(null, true);
+//     } else {
+//         cb(
+//             new Error(
+//                 "Only jpeg, jpg, png and webp are allowed"
+//             ),
+//             false
+//         );
+//     }
+
+// };
+
+// const upload = multer({
+//     storage,
+//     fileFilter,
+//     limits: {
+//         fileSize: 5 * 1024 * 1024
+//     }
+// });
+
+// module.exports = upload;
 
 
 

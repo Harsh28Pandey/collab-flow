@@ -148,6 +148,11 @@ const Navbar = () => {
                                                     />
 
                                                     <DropdownItem
+                                                        label="Budgets"
+                                                        onClick={() => handleNavigate("/admin/budgets")}
+                                                    />
+
+                                                    <DropdownItem
                                                         label="Settings"
                                                         onClick={() => handleNavigate("/admin/settings")}
                                                     />
@@ -161,6 +166,12 @@ const Navbar = () => {
                                                         label="Files"
                                                         onClick={() => handleNavigate("/user/files")}
                                                     />
+
+                                                    <DropdownItem
+                                                        label="My Expenses"
+                                                        onClick={() => handleNavigate("/user/my-expenses")}
+                                                    />
+
 
                                                     <DropdownItem
                                                         label="Profile Settings"
@@ -286,6 +297,11 @@ const Navbar = () => {
                                                 />
 
                                                 <DropdownItem
+                                                    label="Budgets"
+                                                    onClick={() => handleNavigate("/admin/budgets")}
+                                                />
+
+                                                <DropdownItem
                                                     label="Settings"
                                                     onClick={() => handleNavigate("/admin/settings")}
                                                 />
@@ -297,6 +313,11 @@ const Navbar = () => {
                                                 <DropdownItem
                                                     label="Files"
                                                     onClick={() => handleNavigate("/user/files")}
+                                                />
+
+                                                <DropdownItem
+                                                    label="My Expenses"
+                                                    onClick={() => handleNavigate("/user/my-expenses")}
                                                 />
 
                                                 <DropdownItem
