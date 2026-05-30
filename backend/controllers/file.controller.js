@@ -107,34 +107,52 @@ exports.uploadFile = async (req, res) => {
     }
 };
 
+const User = require("../models/user.model.js");
+
 exports.getProjectFiles = async (req, res) => {
 
     try {
 
+        const currentUser = req.user;
+
+        let adminId;
+
+        if (currentUser.role === "admin") {
+
+            adminId = currentUser._id;
+
+        } else {
+
+            const admin = await User.findOne({
+                role: "admin",
+                teamCode: currentUser.teamCode,
+            });
+
+            if (!admin) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Admin not found",
+                });
+            }
+
+            adminId = admin._id;
+        }
+
         const files = await File.find({
-
-            project:
-                req.params.projectId,
-
+            project: adminId,
         })
             .populate(
                 "uploadedBy",
                 "name email profileImageUrl role"
             )
-            .sort({
-                createdAt: -1,
-            });
+            .sort({ createdAt: -1 });
 
         res.status(200).json({
-
             success: true,
-
             files,
         });
 
     } catch (error) {
-
-        console.log(error);
 
         res.status(500).json({
             success: false,

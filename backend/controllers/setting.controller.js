@@ -230,10 +230,112 @@ const changePassword = async (req, res) => {
     }
 }
 
+// ==========================================
+// GET USER PROFILE
+// ==========================================
+const getUserProfile = async (req, res) => {
+
+    try {
+
+        const user = await User.findById(
+            req.user.id
+        ).select("-password");
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                teamName: user.teamName,
+                teamCode: user.teamCode,
+                profileImageUrl:
+                    user.profileImageUrl || "",
+            },
+        });
+
+    } catch (error) {
+
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+// ==========================================
+// UPDATE USER PROFILE
+// ==========================================
+const updateUserProfile = async (req, res) => {
+
+    try {
+
+        const {
+            name,
+            profileImageUrl,
+        } = req.body;
+
+        const user = await User.findById(
+            req.user.id
+        );
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // user sirf ye update kar sakta hai
+        user.name =
+            name || user.name;
+
+        user.profileImageUrl =
+            profileImageUrl ||
+            user.profileImageUrl;
+
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message:
+                "Profile updated successfully",
+            data: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                teamName: user.teamName,
+                teamCode: user.teamCode,
+                profileImageUrl:
+                    user.profileImageUrl || "",
+            },
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            success: false,
+            message:
+                "Server error. Please try again later.",
+        });
+    }
+};
+
 module.exports = {
     getAdminSettings,
     updateAdminSettings,
     forgotPassword,
     verifyOTP,
-    changePassword
+    changePassword,
+    getUserProfile,
+    updateUserProfile,
 };

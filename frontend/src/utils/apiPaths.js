@@ -81,5 +81,7 @@ export const API_PATHS = {
     SETTINGS: {
         GET_SETTINGS: "/api/settings",  //* get admin settings
         UPDATE_SETTINGS: "/api/settings/update",  //* update admin settings
+        GET_USER_PROFILE: "/api/settings/user",  //* get logged-in user profile
+        UPDATE_USER_PROFILE: "/api/settings/user/update",  //* update logged-in user profile
     },
 };
