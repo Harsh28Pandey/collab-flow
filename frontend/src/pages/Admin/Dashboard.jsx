@@ -195,6 +195,38 @@ const Dashboard = () => {
                                     value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.Completed || 0)}
                                     color="bg-lime-600"
                                 />
+
+                                <InfoCard
+                                    label="Total Groups"
+                                    value={addThousandSeparator(
+                                        dashboardData?.overview?.totalGroups || 0
+                                    )}
+                                    color="bg-orange-500"
+                                />
+
+                                <InfoCard
+                                    label="Total Files"
+                                    value={addThousandSeparator(
+                                        dashboardData?.overview?.totalFiles || 0
+                                    )}
+                                    color="bg-pink-600"
+                                />
+
+                                <InfoCard
+                                    label="Active Polls"
+                                    value={addThousandSeparator(
+                                        dashboardData?.overview?.activePolls || 0
+                                    )}
+                                    color="bg-emerald-600"
+                                />
+
+                                <InfoCard
+                                    label="Closed Polls"
+                                    value={addThousandSeparator(
+                                        dashboardData?.overview?.closedPolls || 0
+                                    )}
+                                    color="bg-rose-600"
+                                />
                             </div>
                         ) : (
                             /* Empty State */
