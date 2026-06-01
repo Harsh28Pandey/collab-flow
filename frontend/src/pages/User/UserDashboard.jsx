@@ -194,6 +194,38 @@ const UserDashboard = () => {
                                     value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.Completed || 0)}
                                     color="bg-lime-600"
                                 />
+
+                                <InfoCard
+                                    label="Groups"
+                                    value={addThousandSeparator(
+                                        dashboardData?.overview?.totalGroups || 0
+                                    )}
+                                    color="bg-orange-500"
+                                />
+
+                                <InfoCard
+                                    label="Files"
+                                    value={addThousandSeparator(
+                                        dashboardData?.overview?.totalFiles || 0
+                                    )}
+                                    color="bg-pink-600"
+                                />
+
+                                <InfoCard
+                                    label="Active Polls"
+                                    value={addThousandSeparator(
+                                        dashboardData?.overview?.activePolls || 0
+                                    )}
+                                    color="bg-emerald-600"
+                                />
+
+                                <InfoCard
+                                    label="Closed Polls"
+                                    value={addThousandSeparator(
+                                        dashboardData?.overview?.closedPolls || 0
+                                    )}
+                                    color="bg-rose-600"
+                                />
                             </div>
                         ) : (
                             /* ✅ Empty State — jab koi task assign na hua ho */
