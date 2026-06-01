@@ -1,4 +1,7 @@
 const Task = require("../models/task.model.js");
+const Group = require("../models/group.model.js");
+const File = require("../models/file.model.js");
+const Poll = require("../models/poll.model.js");
 
 /**
  * @desc Get all tasks (Admin: all, User: only assigned tasks)
@@ -432,6 +435,25 @@ const getDashboardData = async (req, res) => {
             .limit(10)
             .select("title status priority dueDate createdAt");
 
+        // Groups
+        const totalGroups = await Group.countDocuments({
+            teamCode
+        });
+
+        // Files
+        const totalFiles = await File.countDocuments();
+
+        // Polls
+        const activePolls = await Poll.countDocuments({
+            teamCode,
+            status: "active"
+        });
+
+        const closedPolls = await Poll.countDocuments({
+            teamCode,
+            status: "expired"
+        });
+
         res.status(200).json({
             statistics: {
                 totalTasks,
@@ -439,10 +461,19 @@ const getDashboardData = async (req, res) => {
                 completedTasks,
                 overdueTasks,
             },
+
+            overview: {
+                totalGroups,
+                totalFiles,
+                activePolls,
+                closedPolls,
+            },
+
             charts: {
                 taskDistribution,
                 taskPriorityLevels,
             },
+
             recentTasks,
         });
 
@@ -477,6 +508,24 @@ const getUserDashboardData = async (req, res) => {
 
         //* task distribution by status
         const taskStatuses = ["Pending", "In Progress", "Completed"];
+
+        const totalGroups = await Group.countDocuments({
+            teamCode,
+            "members.user": userId
+        });
+
+        const totalFiles = await File.countDocuments();
+
+        const activePolls = await Poll.countDocuments({
+            teamCode,
+            status: "active"
+        });
+
+        const closedPolls = await Poll.countDocuments({
+            teamCode,
+            status: "expired"
+        });
+
         const taskDistributionRaw = await Task.aggregate([
             { $match: { teamCode, assignedTo: userId } },
             { $group: { _id: "$status", count: { $sum: 1 } } },
@@ -508,6 +557,12 @@ const getUserDashboardData = async (req, res) => {
             .select("title status priority dueDate createdAt");
 
         res.status(200).json({
+            overview: {
+                totalGroups,
+                totalFiles,
+                activePolls,
+                closedPolls,
+            },
             statistics: {
                 totalTasks,
                 pendingTasks,
