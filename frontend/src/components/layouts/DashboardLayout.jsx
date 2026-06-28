@@ -3,7 +3,7 @@ import { UserContext } from '../../context/userContext.jsx';
 import Navbar from './Navbar.jsx';
 import SideMenu from './SideMenu.jsx';
 
-const DashboardLayout = ({ children, activeMenu }) => {
+const DashboardLayout = ({ children, activeMenu }) => { 
 
     const { user } = useContext(UserContext);
 

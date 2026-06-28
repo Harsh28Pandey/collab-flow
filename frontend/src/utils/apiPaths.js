@@ -77,6 +77,30 @@ export const API_PATHS = {
         DELETE_FILE: (fileId) => `/api/files/${fileId}`,  //* delete a file by id
     },
 
+    TIMESHEET: {
+        // Dashboard
+        GET_ALL: "/api/timesheets",  //* get all timesheets (admin only)
+        GET_STATS: "/api/timesheets/stats", //* get timesheet stats (admin only)
+
+        // CRUD
+        CREATE: "/api/timesheets",  //* create a new timesheet (user only)
+        GET_BY_ID: (timesheetId) => `/api/timesheets/${timesheetId}`,   //* get a single timesheet by id (admin only)
+        DELETE: (timesheetId) => `/api/timesheets/${timesheetId}`,  //* delete a timesheet by id (admin only)
+
+        // Actions
+        APPROVE: (timesheetId) => `/api/timesheets/approve/${timesheetId}`,  //* approve a timesheet (admin only)
+        REJECT: (timesheetId) => `/api/timesheets/reject/${timesheetId}`,  //* reject a timesheet (admin only)
+
+        // Bulk Actions (Future)
+        BULK_APPROVE: "/api/timesheets/bulk/approve",  //* bulk approve timesheets (admin only)
+        BULK_REJECT: "/api/timesheets/bulk/reject", //* bulk reject timesheets (admin only)
+        BULK_DELETE: "/api/timesheets/bulk/delete", //* bulk delete timesheets (admin only)
+
+        // Export (Future)
+        EXPORT_CSV: "/api/timesheets/export/csv",   //* export timesheets to CSV (admin only)
+        EXPORT_PDF: "/api/timesheets/export/pdf",   //* export timesheets to PDF (admin only)
+    },
+
     // SETTINGS
     SETTINGS: {
         GET_SETTINGS: "/api/settings",  //* get admin settings

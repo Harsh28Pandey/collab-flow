@@ -15,6 +15,7 @@ const messageRoutes = require("./routes/message.routes.js");
 const pollRoutes = require("./routes/poll.routes.js");
 const fileRoutes = require("./routes/file.routes.js");
 const settingsRoutes = require("./routes/setting.routes.js");
+const timesheetRoutes = require("./routes/timesheet.routes.js");
 
 // const { Server } = require("socket.io");
 // const Message = require("./models/message.model.js");
@@ -52,6 +53,7 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/polls", pollRoutes);
 app.use("/api/files", fileRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/timesheets", timesheetRoutes);
 
 // const io = new Server(server, {
 //     cors: {
