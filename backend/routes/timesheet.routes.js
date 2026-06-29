@@ -1,6 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { createTimesheet, getAllTimesheets, getTimesheetStats, getSingleTimesheet, approveTimesheet, rejectTimesheet, deleteTimesheet } = require("../controllers/timesheet.controller.js");
+const {
+    createTimesheet,
+    getAllTimesheets,
+    getTimesheetStats,
+    getMyApprovedTimesheets,
+    getSingleTimesheet,
+    approveTimesheet,
+    rejectTimesheet,
+    deleteTimesheet,
+} = require("../controllers/timesheet.controller.js");
 const { adminOnly, protect } = require("../middlewares/auth.middleware.js");
 
 router.post(
@@ -11,6 +20,10 @@ router.post(
 
 router.get("/", protect, adminOnly, getAllTimesheets);
 router.get("/stats", protect, adminOnly, getTimesheetStats);
+
+// All employees' approved timesheets — visible to every logged-in user
+router.get("/my-timesheets", protect, getMyApprovedTimesheets);
+
 // Get one Timesheet
 router.get(
     "/:id",

@@ -102,24 +102,30 @@ export const SIDE_MENU_USER_DATA = [
     },
     {
         id: "06",
+        label: "My Timesheets",
+        icon: LuClock,
+        path: "/user/timesheet",
+    },
+    {
+        id: "07",
         label: "Calendar",
         icon: LuCalendar,
         path: "/user/calendar"
     },
     {
-        id: "07",
+        id: "08",
         label: "Files",
         icon: LuFolderClosed,
         path: "/user/files"
     },
     {
-        id: "08",
+        id: "09",
         label: "Profile Settings",
         icon: LuCircleUser,
         path: "/user/profile-settings"
     },
     {
-        id: "09",
+        id: "10",
         label: "Logout",
         icon: LuLogOut,
         path: "logout",

@@ -9,6 +9,10 @@ export const getTimesheets = (params) =>
 export const getTimesheetStats = () =>
     axiosInstance.get(API_PATHS.TIMESHEET.GET_STATS);
 
+// All employees' approved timesheets — visible to every logged-in user
+export const getMyTimesheets = () =>
+    axiosInstance.get(API_PATHS.TIMESHEET.GET_MY_TIMESHEETS);
+
 export const createTimesheet = (data) =>
     axiosInstance.post(API_PATHS.TIMESHEET.CREATE, data);
 

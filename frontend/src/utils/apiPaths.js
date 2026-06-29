@@ -81,9 +81,10 @@ export const API_PATHS = {
         // Dashboard
         GET_ALL: "/api/timesheets",  //* get all timesheets (admin only)
         GET_STATS: "/api/timesheets/stats", //* get timesheet stats (admin only)
+        GET_MY_TIMESHEETS: "/api/timesheets/my-timesheets", //* get all approved timesheets (any logged-in user)
 
         // CRUD
-        CREATE: "/api/timesheets",  //* create a new timesheet (user only)
+        CREATE: "/api/timesheets",  //* create a new timesheet (admin only, for any employee)
         GET_BY_ID: (timesheetId) => `/api/timesheets/${timesheetId}`,   //* get a single timesheet by id (admin only)
         DELETE: (timesheetId) => `/api/timesheets/${timesheetId}`,  //* delete a timesheet by id (admin only)
 

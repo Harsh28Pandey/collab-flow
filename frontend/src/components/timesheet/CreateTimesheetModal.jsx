@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     X,
     Calendar,
     FolderKanban,
     ClipboardCheck,
+    Users,
     LogIn,
     LogOut,
     Coffee,
@@ -25,6 +26,7 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
     const today = new Date().toISOString().split("T")[0];
 
     // FORM FIELDS
+    const [employeeId, setEmployeeId] = useState("");
     const [date, setDate] = useState(today);
     const [project, setProject] = useState("");
     const [attendance, setAttendance] = useState("");
@@ -39,12 +41,39 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
 
     const [creating, setCreating] = useState(false);
 
+    // EMPLOYEES LIST (for the employee select dropdown)
+    const [employees, setEmployees] = useState([]);
+    const [loadingEmployees, setLoadingEmployees] = useState(true);
+
     // FIELD-LEVEL ERRORS
-    // Shape: { date, project, attendance, workMode, clockIn, clockOut,
+    // Shape: { employeeId, date, project, attendance, workMode, clockIn, clockOut,
     //          breakMinutes, overtimeHours, notes, tasks: { [index]: { title, hours } } }
     const [errors, setErrors] = useState({});
 
     const [toast, setToast] = useState("");
+
+    // FETCH EMPLOYEES (only while the modal is open)
+    useEffect(() => {
+        if (!open) return;
+
+        const fetchEmployees = async () => {
+            try {
+                setLoadingEmployees(true);
+
+                const res = await axiosInstance.get(
+                    API_PATHS.USERS.GET_ALL_USERS
+                );
+
+                setEmployees(res.data || []);
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setLoadingEmployees(false);
+            }
+        };
+
+        fetchEmployees();
+    }, [open]);
 
     // TASKS
     const handleTaskChange = (index, field, value) => {
@@ -100,6 +129,7 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
 
     // RESET
     const resetForm = () => {
+        setEmployeeId("");
         setDate(today);
         setProject("");
         setAttendance("");
@@ -116,6 +146,10 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
     // VALIDATION
     const validateForm = () => {
         const newErrors = {};
+
+        if (!employeeId) {
+            newErrors.employeeId = "Please select an employee";
+        }
 
         if (!date) {
             newErrors.date = "Date is required";
@@ -191,6 +225,7 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
         }
 
         const formData = {
+            employeeId,
             date,
             project,
             attendanceStatus: attendance,
@@ -309,6 +344,37 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                     </h3>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                                        {/* EMPLOYEE */}
+                                        <div className="sm:col-span-2">
+                                            <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
+                                                <Users size={16} />
+                                                Employee
+                                            </label>
+
+                                            <select
+                                                value={employeeId}
+                                                onChange={handleFieldChange(setEmployeeId, "employeeId")}
+                                                disabled={loadingEmployees}
+                                                className={`${inputClass(errors.employeeId)} bg-white`}
+                                            >
+                                                <option value="">
+                                                    {loadingEmployees ? "Loading employees..." : "Select Employee"}
+                                                </option>
+
+                                                {employees.map((emp) => (
+                                                    <option key={emp._id} value={emp._id}>
+                                                        {emp.name} {emp.email ? `(${emp.email})` : ""}
+                                                    </option>
+                                                ))}
+                                            </select>
+
+                                            {errors.employeeId && (
+                                                <p className="text-xs text-red-600 mt-1.5">
+                                                    {errors.employeeId}
+                                                </p>
+                                            )}
+                                        </div>
 
                                         {/* DATE */}
                                         <div>

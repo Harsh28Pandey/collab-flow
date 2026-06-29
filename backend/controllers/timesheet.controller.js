@@ -47,16 +47,8 @@ const WORK_MODE_OPTIONS = ["Office", "WFH", "Hybrid"];
 const createTimesheet = async (req, res) => {
     try {
 
-        const employee = await User.findById(req.user._id);
-
-        if (!employee) {
-            return res.status(404).json({
-                success: false,
-                message: "Employee not found",
-            });
-        }
-
         const {
+            employeeId,
             project,
             date,
             attendanceStatus,
@@ -69,8 +61,26 @@ const createTimesheet = async (req, res) => {
             tasks,
         } = req.body;
 
+        // Admin creates a timesheet on behalf of a selected employee.
+        // Falls back to the logged-in user if no employeeId is sent
+        // (keeps backward compatibility with the old self-create flow).
+        const targetEmployeeId = employeeId || req.user._id;
+
+        const employee = await User.findById(targetEmployeeId);
+
+        if (!employee) {
+            return res.status(404).json({
+                success: false,
+                message: "Employee not found",
+            });
+        }
+
         // ---- REQUIRED FIELD VALIDATION ----
         const errors = {};
+
+        if (!employeeId) {
+            errors.employeeId = "Employee is required";
+        }
 
         if (!date) {
             errors.date = "Date is required";
@@ -785,6 +795,39 @@ const getTimesheetStats = async (req, res) => {
     }
 };
 
+// All employees' APPROVED timesheets — visible to every logged-in user (no private data)
+const getMyApprovedTimesheets = async (req, res) => {
+    try {
+
+        const timesheets = await Timesheet.find({
+            status: "Approved",
+            isDeleted: false,
+        })
+            .populate(
+                "employee",
+                "name email profileImageUrl"
+            )
+            .sort({ date: -1 })
+            .lean();
+
+        return res.status(200).json({
+            success: true,
+            message: "Approved timesheets fetched successfully",
+            data: timesheets,
+        });
+
+    } catch (error) {
+
+        console.error("Get My Timesheets Error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to fetch timesheets",
+        });
+
+    }
+};
+
 const getSingleTimesheet = async (req, res) => {
     try {
 
@@ -987,6 +1030,7 @@ module.exports = {
     createTimesheet,
     getAllTimesheets,
     getTimesheetStats,
+    getMyApprovedTimesheets,
     getSingleTimesheet,
     approveTimesheet,
     rejectTimesheet,

@@ -39,6 +39,7 @@ import AddExpense from './pages/Admin/AddExpense.jsx'
 import Budgets from './pages/Admin/Budgets.jsx'
 import ExpenseAnalytics from './pages/Admin/ExpenseAnalytics.jsx'
 import MyExpenses from "./pages/User/MyExpenses.jsx"
+import MyTimesheets from "./pages/User/MyTimesheets.jsx"
 
 
 const App = () => {
@@ -92,6 +93,7 @@ const App = () => {
                             <Route path='/user/groups' element={<MyGroups />} />
                             <Route path='/user/polls' element={<MyPolls />} />
                             <Route path='/user/my-expenses' element={<MyExpenses />} />
+                            <Route path='/user/timesheet' element={<MyTimesheets />} />
                             <Route path='/user/calendar' element={<Calendar />} />
                             <Route path='/user/files' element={<Files />} />
                             <Route path='/user/profile-settings' element={<ProfileSettings />} />
