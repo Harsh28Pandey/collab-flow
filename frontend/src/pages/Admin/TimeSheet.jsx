@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
-import { Plus, Users, Clock3, ClipboardList, CheckCircle } from "lucide-react";
+import { Plus, Users, Clock3, ClipboardList, CheckCircle, Download } from "lucide-react";
 
 import SearchBar from "../../components/timesheet/SearchBar.jsx";
 import SummaryCard from "../../components/timesheet/SummaryCard.jsx";
@@ -19,6 +19,16 @@ import {
 import CreateTimesheetModal from "../../components/timesheet/CreateTimesheetModal.jsx";
 import axiosInstance from "../../utils/axiosInstance.js";
 import { API_PATHS } from "../../utils/apiPaths.js";
+
+const escapeCsvValue = (value) => {
+    const str = String(value ?? "");
+
+    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+        return `"${str.replace(/"/g, '""')}"`;
+    }
+
+    return str;
+};
 
 const Timesheet = () => {
 
@@ -115,6 +125,63 @@ const Timesheet = () => {
         await fetchData();
     };
 
+    // EXPORT TO CSV — exports whatever timesheets are currently loaded
+    const handleExportReport = () => {
+        if (timesheets.length === 0) return;
+
+        const headers = [
+            "Employee",
+            "Email",
+            "Date",
+            "Project",
+            "Attendance",
+            "Work Mode",
+            "Clock In",
+            "Clock Out",
+            "Break (min)",
+            "Total Hours",
+            "Overtime (hrs)",
+            "Status",
+            "Notes",
+        ];
+
+        const rows = timesheets.map((t) => [
+            t.employeeName || t.employee?.name || "",
+            t.employeeEmail || t.employee?.email || "",
+            t.date ? new Date(t.date).toLocaleDateString("en-IN") : "",
+            t.project || "",
+            t.attendanceStatus || "",
+            t.workMode || "",
+            t.clockIn || "",
+            t.clockOut || "",
+            t.breakMinutes ?? 0,
+            t.totalHours ?? 0,
+            t.overtimeHours ?? 0,
+            t.status || "",
+            t.notes || "",
+        ]);
+
+        const csvContent = [headers, ...rows]
+            .map((row) => row.map(escapeCsvValue).join(","))
+            .join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute(
+            "download",
+            `timesheets_${new Date().toISOString().split("T")[0]}.csv`
+        );
+
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+
+        URL.revokeObjectURL(url);
+    };
+
     return (
         <DashboardLayout activeMenu="Timesheet">
 
@@ -142,6 +209,15 @@ const Timesheet = () => {
                             value={search}
                             onChange={setSearch}
                         />
+
+                        <button
+                            onClick={handleExportReport}
+                            disabled={timesheets.length === 0}
+                            className="border border-green-200 bg-green-50 hover:bg-green-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all text-green-700 rounded-2xl px-5 py-3 flex items-center justify-center gap-2 shadow-sm"
+                        >
+                            <Download size={18} />
+                            Export
+                        </button>
 
                         <button
                             onClick={() => setOpenCreate(true)}
