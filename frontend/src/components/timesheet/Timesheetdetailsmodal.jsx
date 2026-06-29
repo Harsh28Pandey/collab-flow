@@ -41,7 +41,7 @@ const formatDate = (date) => {
     });
 };
 
-const InfoBlock = ({ icon: Icon, label, value }) => (
+const InfoBlock = ({ label, value }) => (
     <div className="bg-gray-50 rounded-2xl p-3.5">
         <div className="flex items-center gap-1.5 text-gray-400 mb-1.5">
             <Icon size={14} />
@@ -50,7 +50,7 @@ const InfoBlock = ({ icon: Icon, label, value }) => (
             </span>
         </div>
 
-        <p className="text-sm font-semibold text-gray-900 break-words">
+        <p className="text-sm font-semibold text-gray-900 wrap-break-word">
             {value || "—"}
         </p>
     </div>
@@ -65,7 +65,7 @@ const TimesheetDetailsModal = ({ open, timesheet, onClose }) => {
     const StatusIcon = statusConfig.icon;
 
     return (
-        <div className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+        <div className="fixed inset-0 z-9999 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
 
             <div className="w-full max-w-2xl bg-white rounded-[26px] shadow-2xl overflow-hidden animate-[modalPop_.2s_ease] my-auto">
 
