@@ -9,8 +9,8 @@ import {
     TrendingUp,
 } from "lucide-react";
 
-import TimesheetCard from "../../components/timesheet/TimesheetCard.jsx";
-import TimesheetDetailsModal from "../../components/timesheet/TimesheetDetailsModal.jsx";
+import TimesheetCard from "../../components/timesheet/Timesheetcard.jsx";
+import TimesheetDetailsModal from "../../components/timesheet/Timesheetdetailsmodal.jsx";
 import TimesheetSkeleton from "../../components/timesheet/TimesheetSkeleton.jsx";
 
 import { getMyTimesheets } from "../../utils/timesheetService.js";
