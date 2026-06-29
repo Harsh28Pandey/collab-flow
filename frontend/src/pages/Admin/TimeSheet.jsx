@@ -5,7 +5,7 @@ import { Plus, Users, Clock3, ClipboardList, CheckCircle } from "lucide-react";
 import SearchBar from "../../components/timesheet/SearchBar.jsx";
 import SummaryCard from "../../components/timesheet/SummaryCard.jsx";
 import TimesheetSkeleton from "../../components/timesheet/TimesheetSkeleton.jsx";
-import TimesheetCard from "../../components/timesheet/Timesheetcard.jsx";
+import TimesheetCard from "../../components/timesheet/TimesheetCard.jsx";
 import ApproveRejectModal from "../../components/timesheet/ApproveRejectModal.jsx";
 import TimesheetDetailsModal from "../../components/timesheet/TimesheetDetailsModal.jsx";
 
