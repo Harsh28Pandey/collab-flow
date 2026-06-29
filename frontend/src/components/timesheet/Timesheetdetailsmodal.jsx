@@ -41,7 +41,7 @@ const formatDate = (date) => {
     });
 };
 
-const InfoBlock = ({ label, value }) => (
+const InfoBlock = ({ icon: Icon, label, value }) => (
     <div className="bg-gray-50 rounded-2xl p-3.5">
         <div className="flex items-center gap-1.5 text-gray-400 mb-1.5">
             <Icon size={14} />
