@@ -5,7 +5,7 @@ import { Plus, Users, Clock3, ClipboardList, CheckCircle } from "lucide-react";
 import SearchBar from "../../components/timesheet/SearchBar.jsx";
 import SummaryCard from "../../components/timesheet/SummaryCard.jsx";
 import TimesheetSkeleton from "../../components/timesheet/TimesheetSkeleton.jsx";
-import TimesheetCard from "../../components/timesheet/TimesheetCard.jsx";
+import Timesheetcard from "../../components/timesheet/TimesheetCard.jsx";
 import Approverejectmodal from "../../components/timesheet/ApproveRejectModal.jsx";
 import Timesheetdetailsmodal from "../../components/timesheet/TimesheetDetailsModal.jsx";
 
@@ -204,7 +204,7 @@ const Timesheet = () => {
                     ) : (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             {timesheets.map((timesheet) => (
-                                <TimesheetCard
+                                <Timesheetcard
                                     key={timesheet._id}
                                     timesheet={timesheet}
                                     onView={setViewingTimesheet}
