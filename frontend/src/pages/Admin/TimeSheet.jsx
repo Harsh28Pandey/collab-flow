@@ -6,8 +6,8 @@ import SearchBar from "../../components/timesheet/SearchBar.jsx";
 import SummaryCard from "../../components/timesheet/SummaryCard.jsx";
 import TimesheetSkeleton from "../../components/timesheet/TimesheetSkeleton.jsx";
 import TimesheetCard from "../../components/timesheet/TimesheetCard.jsx";
-import ApproveRejectModal from "../../components/timesheet/ApproveRejectModal.jsx";
-import TimesheetDetailsModal from "../../components/timesheet/TimesheetDetailsModal.jsx";
+import Approverejectmodal from "../../components/timesheet/ApproveRejectModal.jsx";
+import Timesheetdetailsmodal from "../../components/timesheet/TimesheetDetailsModal.jsx";
 
 import {
     getTimesheets,
@@ -223,13 +223,13 @@ const Timesheet = () => {
                     onSuccess={fetchData}
                 />
 
-                <TimesheetDetailsModal
+                <Timesheetdetailsmodal
                     open={!!viewingTimesheet}
                     timesheet={viewingTimesheet}
                     onClose={() => setViewingTimesheet(null)}
                 />
 
-                <ApproveRejectModal
+                <Approverejectmodal
                     open={actionModal.open}
                     mode={actionModal.mode}
                     onClose={closeActionModal}
