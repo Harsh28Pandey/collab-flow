@@ -56,7 +56,7 @@ Collab Flow is a powerful **MERN Stack-based task management and team collaborat
 **Frontend:**
 
 - React.js
-- CSS / Tailwind (if used)
+- Tailwind CSS
 
 **Backend:**
 
@@ -70,7 +70,7 @@ Collab Flow is a powerful **MERN Stack-based task management and team collaborat
 **Other Tools:**
 
 - REST APIs
-- JWT Authentication (if implemented)
+- JWT Authentication
 
 ---
 
@@ -96,7 +96,29 @@ This project is deployed using modern cloud platforms for scalability and perfor
 
 ## 🔗 Live Demo
 
-👉 **Live Application:**  
+👉 **Live Application:**
 https://collaspace.netlify.app/login
 
 ---
+
+# ⭐ Show Your Support
+
+If you like this project, please consider:-
+
+⭐ Starring the repository
+🍴 Forking the project
+📢 Sharing it with others
+
+Every star motivates further development.
+
+---
+
+<p align="center">
+
+## 🚀 Thank You for Visiting Collab Flow
+
+### If you found this project helpful, don't forget to ⭐ Star the Repository!
+
+Made with ❤️ by **Harsh Pandey**
+
+</p>
