@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import DashboardLayout from '../../components/layouts/DashboardLayout'
 import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPaths';
@@ -7,7 +7,8 @@ import Model from '../../components/Model.jsx';
 import {
     LuFileSpreadsheet,
     LuUsers,
-    LuRefreshCcw
+    LuRefreshCcw,
+    LuSearch,
 } from 'react-icons/lu';
 
 import UserCard from '../../components/Cards/UserCard';
@@ -84,8 +85,21 @@ const ManageUsers = () => {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
+    const [search, setSearch] = useState("");
+
     const [selectedUser, setSelectedUser] = useState(null);
     const [openUserModal, setOpenUserModal] = useState(false);
+
+    // SEARCH — filter by name or email (client-side, no extra API call)
+    const filteredUsers = useMemo(() => {
+        const query = search.trim().toLowerCase();
+        if (!query) return allUsers;
+        return allUsers.filter(
+            (user) =>
+                user.name?.toLowerCase().includes(query) ||
+                user.email?.toLowerCase().includes(query)
+        );
+    }, [allUsers, search]);
 
     const handleOpenUser = (user) => {
         setSelectedUser(user);
@@ -310,6 +324,18 @@ const ManageUsers = () => {
 
                     </div>
 
+                    {/* SEARCH */}
+                    <div className='relative mb-5'>
+                        <LuSearch className='absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-[17px]' />
+                        <input
+                            type='text'
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder='Search by name or email...'
+                            className='w-full h-11 pl-11 pr-4 rounded-2xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm'
+                        />
+                    </div>
+
                     {/* Empty State */}
 
                     {allUsers.length === 0 ? (
@@ -333,6 +359,24 @@ const ManageUsers = () => {
 
                         </div>
 
+                    ) : filteredUsers.length === 0 ? (
+
+                        <div className='bg-white border border-dashed border-gray-300 rounded-[30px] py-16 px-6 flex flex-col items-center justify-center text-center shadow-sm'>
+
+                            <div className='w-16 h-16 rounded-3xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-4'>
+                                <LuSearch className='text-3xl text-gray-400' />
+                            </div>
+
+                            <h3 className='text-lg font-bold text-gray-800'>
+                                No results for "{search}"
+                            </h3>
+
+                            <p className='text-gray-500 text-sm mt-2'>
+                                Try a different name or email address.
+                            </p>
+
+                        </div>
+
                     ) : (
 
                         <>
@@ -341,10 +385,26 @@ const ManageUsers = () => {
                             <div className='flex items-center justify-between mb-4'>
 
                                 <p className='text-sm text-gray-600'>
-                                    Total Members :{" "}
-                                    <span className='font-semibold text-gray-900'>
-                                        {allUsers.length}
-                                    </span>
+                                    {search.trim() ? (
+                                        <>
+                                            Showing{" "}
+                                            <span className='font-semibold text-gray-900'>
+                                                {filteredUsers.length}
+                                            </span>
+                                            {" "}of{" "}
+                                            <span className='font-semibold text-gray-900'>
+                                                {allUsers.length}
+                                            </span>
+                                            {" "}members
+                                        </>
+                                    ) : (
+                                        <>
+                                            Total Members :{" "}
+                                            <span className='font-semibold text-gray-900'>
+                                                {allUsers.length}
+                                            </span>
+                                        </>
+                                    )}
                                 </p>
 
                             </div>
@@ -353,7 +413,7 @@ const ManageUsers = () => {
 
                             <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5'>
 
-                                {allUsers?.map((user) => {
+                                {filteredUsers?.map((user) => {
 
                                     // Normalize backend data (VERY IMPORTANT)
                                     const safeUser = {
