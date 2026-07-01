@@ -101,18 +101,6 @@ https://collaspace.netlify.app/login
 
 ---
 
-# ⭐ Show Your Support
-
-If you like this project, please consider:-
-
-⭐ Starring the repository
-🍴 Forking the project
-📢 Sharing it with others
-
-Every star motivates further development.
-
----
-
 <p align="center">
 
 ## 🚀 Thank You for Visiting Collab Flow
@@ -121,4 +109,6 @@ Every star motivates further development.
 
 Made with ❤️ by **Harsh Pandey**
 
-</p>
+## </p>
+
+---
