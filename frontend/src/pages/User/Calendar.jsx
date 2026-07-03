@@ -5,7 +5,7 @@ import { API_PATHS } from "../../utils/apiPaths.js";
 import {
     ChevronLeft, ChevronRight, RefreshCcw, CalendarDays,
     ClipboardCheck, Clock3, X, AlertCircle, CheckCircle2,
-    Search, CalendarRange, LayoutGrid, List,
+    Search, CalendarRange, LayoutGrid, List, Megaphone, Users, Sparkles,
 } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -28,11 +28,21 @@ const STATUS_BADGE = {
     "Completed": "bg-green-50 text-green-700 border-green-200",
 };
 
+// admin-created event "type" -> color + icon
+const EVENT_TYPE_STYLE = {
+    Meeting: { solid: "bg-blue-600", badge: "bg-blue-50 text-blue-700 border-blue-200", icon: Users },
+    Holiday: { solid: "bg-amber-500", badge: "bg-amber-50 text-amber-700 border-amber-200", icon: CalendarDays },
+    Announcement: { solid: "bg-purple-600", badge: "bg-purple-50 text-purple-700 border-purple-200", icon: Megaphone },
+    Deadline: { solid: "bg-red-500", badge: "bg-red-50 text-red-700 border-red-200", icon: AlertCircle },
+    Event: { solid: "bg-indigo-600", badge: "bg-indigo-50 text-indigo-700 border-indigo-200", icon: Sparkles },
+};
+
 const fmt = (d, opts) => new Date(d).toLocaleDateString("en-IN", opts);
 const dateKey = (d) => { const dt = new Date(d); return `${dt.getFullYear()}-${dt.getMonth()}-${dt.getDate()}`; };
 const isSameDay = (a, b) => { const da = new Date(a), db = new Date(b); return da.getFullYear() === db.getFullYear() && da.getMonth() === db.getMonth() && da.getDate() === db.getDate(); };
 const isPast = (d) => new Date(d) < new Date(new Date().setHours(0, 0, 0, 0));
 const startOfWeek = (d) => { const dt = new Date(d); dt.setDate(dt.getDate() - dt.getDay()); dt.setHours(0, 0, 0, 0); return dt; };
+const to12h = (t) => { if (!t) return ""; const [h, m] = t.split(":").map(Number); const period = h >= 12 ? "PM" : "AM"; const hh = h % 12 === 0 ? 12 : h % 12; return `${hh}:${String(m).padStart(2, "0")} ${period}`; };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SKELETON
@@ -81,6 +91,7 @@ const DayModal = ({ date, events, onClose }) => {
     if (!date) return null;
     const tasks = events.filter(e => e.type === "task");
     const tss = events.filter(e => e.type === "timesheet");
+    const evs = events.filter(e => e.type === "event");
     return (
         <div className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
             <div className="w-full max-w-lg bg-white rounded-[26px] shadow-2xl max-h-[85vh] flex flex-col animate-[modalPop_.2s_ease]" onClick={e => e.stopPropagation()}>
@@ -105,6 +116,38 @@ const DayModal = ({ date, events, onClose }) => {
 
                 {/* Body */}
                 <div className="overflow-y-auto flex-1 p-5 space-y-5 custom-scrollbar">
+
+                    {evs.length > 0 && (
+                        <div>
+                            <div className="flex items-center gap-2 mb-3">
+                                <Megaphone size={15} className="text-indigo-600" />
+                                <h3 className="text-sm font-semibold text-gray-800">Events & Announcements ({evs.length})</h3>
+                            </div>
+                            <div className="space-y-2">
+                                {evs.map(e => {
+                                    const style = EVENT_TYPE_STYLE[e.eventType] || EVENT_TYPE_STYLE.Event;
+                                    const Icon = style.icon;
+                                    return (
+                                        <div key={e.id} className="rounded-2xl p-3.5 border border-gray-200 bg-gray-50/70">
+                                            <div className="flex items-start justify-between gap-2">
+                                                <div className="flex items-start gap-2.5 min-w-0">
+                                                    <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 border ${style.badge}`}>
+                                                        <Icon size={14} />
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-medium text-gray-900 leading-snug break-words">{e.title}</p>
+                                                        <p className="text-xs text-gray-500 mt-0.5">{to12h(e.time)}</p>
+                                                    </div>
+                                                </div>
+                                                <span className={`shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full border ${style.badge}`}>{e.eventType}</span>
+                                            </div>
+                                            {e.description && <p className="text-xs text-gray-600 mt-2 leading-relaxed">{e.description}</p>}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
 
                     {tasks.length > 0 && (
                         <div>
@@ -178,6 +221,7 @@ const WeekView = ({ weekStart, eventMap, today, onDayClick }) => {
                 const events = eventMap[key] || [];
                 const tasks = events.filter(e => e.type === "task");
                 const tss = events.filter(e => e.type === "timesheet");
+                const evs = events.filter(e => e.type === "event");
                 const isToday = isSameDay(d, today);
                 return (
                     <button key={i} type="button" onClick={() => onDayClick(d, events)}
@@ -188,13 +232,16 @@ const WeekView = ({ weekStart, eventMap, today, onDayClick }) => {
                             <p className={`text-lg font-bold leading-tight ${isToday ? "text-white" : "text-gray-800"}`}>{d.getDate()}</p>
                         </div>
                         <div className="flex flex-col gap-1 w-full">
+                            {evs.slice(0, 1).map(e => (
+                                <span key={e.id} className={`text-[10px] font-medium px-1.5 py-0.5 rounded-lg truncate ${isToday ? "bg-white/20 text-white" : "bg-indigo-600 text-white"}`}>{e.title}</span>
+                            ))}
                             {tasks.slice(0, 2).map(e => (
                                 <span key={e.id} className={`text-[10px] font-medium px-1.5 py-0.5 rounded-lg truncate ${isToday ? "bg-white/20 text-white" : e.overdue ? "bg-red-500 text-white" : "bg-blue-600 text-white"}`}>{e.title}</span>
                             ))}
                             {tss.slice(0, 1).map(e => (
                                 <span key={e.id} className={`text-[10px] font-medium px-1.5 py-0.5 rounded-lg truncate ${isToday ? "bg-white/20 text-white" : "bg-green-600 text-white"}`}>{e.title}</span>
                             ))}
-                            {events.length > 3 && <span className={`text-[10px] ${isToday ? "text-white/70" : "text-gray-400"}`}>+{events.length - 3} more</span>}
+                            {events.length > 4 && <span className={`text-[10px] ${isToday ? "text-white/70" : "text-gray-400"}`}>+{events.length - 4} more</span>}
                         </div>
                     </button>
                 );
@@ -262,23 +309,165 @@ const HeatmapView = ({ year, eventMap }) => {
 
 const EventItem = ({ event }) => {
     const isTask = event.type === "task";
+    const isEvent = event.type === "event";
+    const evStyle = isEvent ? (EVENT_TYPE_STYLE[event.eventType] || EVENT_TYPE_STYLE.Event) : null;
+    const EvIcon = evStyle?.icon;
     return (
         <div className={`flex items-start gap-2.5 px-3 py-2.5 rounded-2xl border
             ${isTask ? event.overdue ? "bg-red-50 border-red-100" : "bg-blue-50 border-blue-100"
-                : "bg-green-50 border-green-100"}`}>
+                : isEvent ? evStyle.badge
+                    : "bg-green-50 border-green-100"}`}>
             <div className={`h-7 w-7 rounded-xl flex items-center justify-center shrink-0 mt-0.5
-                ${isTask ? event.overdue ? "bg-red-100" : "bg-blue-100" : "bg-green-100"}`}>
+                ${isTask ? event.overdue ? "bg-red-100" : "bg-blue-100" : isEvent ? "bg-white/70" : "bg-green-100"}`}>
                 {isTask
                     ? <ClipboardCheck size={13} className={event.overdue ? "text-red-600" : "text-blue-600"} />
-                    : <Clock3 size={13} className="text-green-600" />}
+                    : isEvent
+                        ? <EvIcon size={13} />
+                        : <Clock3 size={13} className="text-green-600" />}
             </div>
             <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-900 truncate">{event.title}</p>
                 <p className="text-xs text-gray-500 mt-0.5">
                     {isTask
                         ? `${event.priority} · ${event.status}${event.overdue ? " · ⚠ Overdue" : ""}`
-                        : `${event.hours}h logged · ${event.workMode}`}
+                        : isEvent
+                            ? `${event.eventType} · ${to12h(event.time)}`
+                            : `${event.hours}h logged · ${event.workMode}`}
                 </p>
+            </div>
+        </div>
+    );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EVENTS & HOLIDAYS PANEL — every admin-created event, filterable by type
+// ─────────────────────────────────────────────────────────────────────────────
+
+const EVENT_FILTER_TABS = ["All", "Meeting", "Holiday", "Announcement", "Deadline", "Event"];
+
+const EventsHolidaysPanel = ({ adminEvents, loading, filter, setFilter, onSelect }) => {
+    const list = useMemo(() => {
+        return adminEvents
+            .filter(ev => filter === "All" || ev.type === filter)
+            .slice()
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+    }, [adminEvents, filter]);
+
+    return (
+        <div className="bg-white border border-gray-200 rounded-3xl p-5">
+            <div className="flex items-center gap-2.5 mb-4">
+                <div className="h-9 w-9 rounded-2xl bg-purple-100 flex items-center justify-center shrink-0">
+                    <Megaphone size={16} className="text-purple-600" />
+                </div>
+                <div className="min-w-0">
+                    <h3 className="text-sm font-bold text-gray-900">Events & Holidays</h3>
+                    <p className="text-xs text-gray-400">{loading ? "Loading…" : `${list.length} total`}</p>
+                </div>
+            </div>
+
+            {!loading && (
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                    {EVENT_FILTER_TABS.map(t => (
+                        <button key={t} type="button" onClick={() => setFilter(t)}
+                            className={`cursor-pointer text-[11px] font-semibold px-2.5 py-1.5 rounded-xl border transition-all
+                                ${filter === t ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"}`}>
+                            {t}
+                        </button>
+                    ))}
+                </div>
+            )}
+
+            {loading ? (
+                <SidebarSkeleton />
+            ) : list.length === 0 ? (
+                <div className="border border-dashed border-gray-200 rounded-2xl py-8 text-center">
+                    <Megaphone size={24} className="mx-auto text-gray-300 mb-2" />
+                    <p className="text-sm font-medium text-gray-600">No events found</p>
+                    <p className="text-xs text-gray-400 mt-0.5">Try a different filter</p>
+                </div>
+            ) : (
+                <div className="space-y-2 max-h-80 overflow-y-auto custom-scrollbar pr-1">
+                    {list.map(ev => {
+                        const style = EVENT_TYPE_STYLE[ev.type] || EVENT_TYPE_STYLE.Event;
+                        const Icon = style.icon;
+                        const d = new Date(ev.date);
+                        return (
+                            <button key={ev._id} type="button" onClick={() => onSelect(ev)}
+                                className="cursor-pointer w-full flex items-start gap-2.5 px-3 py-2.5 rounded-2xl border border-gray-100 bg-gray-50/60 hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all text-left">
+                                <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 border ${style.badge}`}>
+                                    <Icon size={13} />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <div className="flex items-center justify-between gap-2">
+                                        <p className="text-sm font-medium text-gray-900 truncate">{ev.title}</p>
+                                        <span className={`shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${style.badge}`}>{ev.type}</span>
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-0.5">{fmt(d, { day: "numeric", month: "short", year: "numeric" })} · {to12h(ev.time)}</p>
+                                </div>
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EVENT DETAIL MODAL — full view of a single event/holiday/announcement
+// ─────────────────────────────────────────────────────────────────────────────
+
+const EventDetailModal = ({ event, onClose }) => {
+    if (!event) return null;
+    const style = EVENT_TYPE_STYLE[event.type] || EVENT_TYPE_STYLE.Event;
+    const Icon = style.icon;
+    const d = new Date(event.date);
+    return (
+        <div className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+            <div className="w-full max-w-md bg-white rounded-[26px] shadow-2xl max-h-[85vh] flex flex-col animate-[modalPop_.2s_ease]" onClick={e => e.stopPropagation()}>
+
+                <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
+                    <div className="flex items-center gap-3 min-w-0">
+                        <div className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 border ${style.badge}`}>
+                            <Icon size={18} />
+                        </div>
+                        <div className="min-w-0">
+                            <span className={`inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full border ${style.badge}`}>{event.type}</span>
+                        </div>
+                    </div>
+                    <button type="button" onClick={onClose} className="cursor-pointer h-9 w-9 rounded-2xl hover:bg-gray-100 flex items-center justify-center transition shrink-0">
+                        <X size={18} className="text-gray-500" />
+                    </button>
+                </div>
+
+                <div className="overflow-y-auto flex-1 p-5 space-y-4 custom-scrollbar">
+                    <h2 className="text-lg font-bold text-gray-900 leading-snug break-words">{event.title}</h2>
+
+                    <div className="flex flex-wrap gap-2">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-600">
+                            <CalendarDays size={13} />
+                            {fmt(d, { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-600">
+                            <Clock3 size={13} />
+                            {to12h(event.time)}
+                        </span>
+                    </div>
+
+                    <div>
+                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Description</p>
+                        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap break-words">
+                            {event.description?.trim() ? event.description : "No description added."}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="px-5 py-4 border-t border-gray-100 shrink-0">
+                    <button type="button" onClick={onClose}
+                        className="cursor-pointer w-full h-11 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition">
+                        Close
+                    </button>
+                </div>
             </div>
         </div>
     );
@@ -300,26 +489,31 @@ const Calendar = () => {
     // Data
     const [tasks, setTasks] = useState([]);
     const [timesheets, setTimesheets] = useState([]);
+    const [adminEvents, setAdminEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
     // Filters
     const [showTasks, setShowTasks] = useState(true);
     const [showTimesheets, setShowTimesheets] = useState(true);
+    const [showEvents, setShowEvents] = useState(true);
     const [priorityFilter, setPriorityFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
+    const [eventTypeFilter, setEventTypeFilter] = useState("All");
 
     // Modal
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedEvents, setSelectedEvents] = useState([]);
+    const [selectedAdminEvent, setSelectedAdminEvent] = useState(null);
 
     // ── FETCH ──────────────────────────────────────────────────────────────
     const fetchData = useCallback(async ({ isRefresh = false } = {}) => {
         try {
             isRefresh ? setRefreshing(true) : setLoading(true);
-            const [tRes, tsRes] = await Promise.allSettled([
+            const [tRes, tsRes, evRes] = await Promise.allSettled([
                 axiosInstance.get(API_PATHS.TASKS.GET_ALL_TASKS),
                 axiosInstance.get(API_PATHS.TIMESHEET.GET_MY_TIMESHEETS),
+                axiosInstance.get(API_PATHS.EVENTS.GET_ALL),
             ]);
             if (tRes.status === "fulfilled") {
                 const raw = tRes.value.data?.tasks || tRes.value.data || [];
@@ -328,6 +522,10 @@ const Calendar = () => {
             if (tsRes.status === "fulfilled") {
                 const raw = tsRes.value.data?.data || tsRes.value.data || [];
                 setTimesheets(Array.isArray(raw) ? raw : []);
+            }
+            if (evRes.status === "fulfilled") {
+                const raw = evRes.value.data?.events || evRes.value.data || [];
+                setAdminEvents(Array.isArray(raw) ? raw : []);
             }
         } catch (e) { console.log(e); }
         finally { setLoading(false); setRefreshing(false); }
@@ -372,8 +570,24 @@ const Calendar = () => {
                 });
             });
         }
+
+        if (showEvents) {
+            adminEvents.forEach(ev => {
+                if (!ev.date) return;
+                if (q && !(ev.title || "").toLowerCase().includes(q) && !(ev.description || "").toLowerCase().includes(q)) return;
+                const d = new Date(ev.date);
+                add(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`, {
+                    id: ev._id, type: "event",
+                    title: ev.title || "Event",
+                    description: ev.description || "",
+                    eventType: ev.type || "Event",
+                    time: ev.time || "",
+                    date: d,
+                });
+            });
+        }
         return map;
-    }, [tasks, timesheets, showTasks, showTimesheets, priorityFilter, searchQuery]);
+    }, [tasks, timesheets, adminEvents, showTasks, showTimesheets, showEvents, priorityFilter, searchQuery]);
 
     // ── CALENDAR GRID ──────────────────────────────────────────────────────
     const calendarDays = useMemo(() => {
@@ -407,7 +621,8 @@ const Calendar = () => {
         overdue: tasks.filter(t => t.dueDate && isPast(t.dueDate) && t.status !== "Completed").length,
         tsCount: timesheets.length,
         tsHours: timesheets.reduce((s, t) => s + (t.totalHours || 0), 0),
-    }), [tasks, timesheets]);
+        evCount: adminEvents.length,
+    }), [tasks, timesheets, adminEvents]);
 
     const monthStats = useMemo(() => {
         const inMonth = (d) => { const dt = new Date(d); return dt.getFullYear() === year && dt.getMonth() === month; };
@@ -430,7 +645,7 @@ const Calendar = () => {
         return result;
     }, [eventMap]);
 
-    const hasData = stats.total > 0 || stats.tsCount > 0;
+    const hasData = stats.total > 0 || stats.tsCount > 0 || stats.evCount > 0;
     const weekLabel = `${fmt(weekStart, { month: "short", day: "numeric" })} – ${fmt(new Date(new Date(weekStart).setDate(weekStart.getDate() + 6)), { month: "short", day: "numeric", year: "numeric" })}`;
 
     // ── RENDER ─────────────────────────────────────────────────────────────
@@ -442,7 +657,7 @@ const Calendar = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">My Calendar</h1>
-                        <p className="text-sm text-gray-500 mt-1">Tasks, timesheets and your schedule at a glance</p>
+                        <p className="text-sm text-gray-500 mt-1">Tasks, timesheets, company events and your schedule at a glance</p>
                     </div>
                     <button type="button" onClick={() => fetchData({ isRefresh: true })} disabled={loading || refreshing}
                         className="cursor-pointer h-11 px-4 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-60 text-gray-700 flex items-center gap-2 text-sm font-medium transition-all self-start sm:self-auto">
@@ -453,13 +668,14 @@ const Calendar = () => {
 
                 {/* STAT PILLS */}
                 {!loading && (
-                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                         {[
                             { label: "Total Tasks", value: stats.total, icon: <ClipboardCheck size={16} />, bg: "bg-blue-100", text: "text-blue-600" },
                             { label: "Completed", value: stats.completed, icon: <CheckCircle2 size={16} />, bg: "bg-green-100", text: "text-green-600" },
                             { label: "Overdue", value: stats.overdue, icon: <AlertCircle size={16} />, bg: "bg-red-100", text: "text-red-600" },
                             { label: "Timesheets", value: stats.tsCount, icon: <Clock3 size={16} />, bg: "bg-purple-100", text: "text-purple-600" },
                             { label: "Hours Logged", value: `${stats.tsHours}h`, icon: <Clock3 size={16} />, bg: "bg-amber-100", text: "text-amber-600" },
+                            { label: "Company Events", value: stats.evCount, icon: <Megaphone size={16} />, bg: "bg-indigo-100", text: "text-indigo-600" },
                         ].map(({ label, value, icon, bg, text }) => (
                             <div key={label} className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
                                 <div className={`h-9 w-9 rounded-xl ${bg} ${text} flex items-center justify-center shrink-0`}>{icon}</div>
@@ -514,7 +730,7 @@ const Calendar = () => {
                         <div className="relative flex-1 min-w-[180px]">
                             <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                             <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                                placeholder="Search tasks or projects..."
+                                placeholder="Search tasks, projects or events..."
                                 className="w-full h-10 pl-10 pr-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
                         </div>
 
@@ -528,6 +744,11 @@ const Calendar = () => {
                                 className={`cursor-pointer h-10 px-4 rounded-2xl text-sm font-medium transition-all flex items-center gap-1.5 border
                                     ${showTimesheets ? "bg-green-600 text-white border-green-600" : "bg-white text-gray-600 border-gray-200 hover:bg-green-50"}`}>
                                 <Clock3 size={14} /> Timesheets
+                            </button>
+                            <button type="button" onClick={() => setShowEvents(v => !v)}
+                                className={`cursor-pointer h-10 px-4 rounded-2xl text-sm font-medium transition-all flex items-center gap-1.5 border
+                                    ${showEvents ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-600 border-gray-200 hover:bg-indigo-50"}`}>
+                                <Megaphone size={14} /> Events
                             </button>
                         </div>
 
@@ -592,6 +813,7 @@ const Calendar = () => {
                                                 const events = (key && eventMap[key]) || [];
                                                 const taskEvs = events.filter(e => e.type === "task");
                                                 const tsEvs = events.filter(e => e.type === "timesheet");
+                                                const cEvs = events.filter(e => e.type === "event");
                                                 const overdue = taskEvs.some(e => e.overdue);
                                                 const isToday = cell.current && cell.day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
                                                 const hl = searchQuery && events.length > 0;
@@ -609,6 +831,10 @@ const Calendar = () => {
                                                             {cell.day}
                                                         </span>
                                                         <div className="hidden sm:flex flex-col gap-1 w-full">
+                                                            {cEvs.slice(0, 1).map(e => (
+                                                                <span key={e.id} className={`text-[10px] font-medium px-1.5 py-0.5 rounded-lg truncate
+                                                                    ${isToday ? "bg-white/20 text-white" : "bg-indigo-600 text-white"}`}>{e.title}</span>
+                                                            ))}
                                                             {taskEvs.slice(0, 2).map(e => (
                                                                 <span key={e.id} className={`text-[10px] font-medium px-1.5 py-0.5 rounded-lg truncate
                                                                     ${isToday ? "bg-white/20 text-white" : e.overdue ? "bg-red-500 text-white" : "bg-blue-600 text-white"}`}>{e.title}</span>
@@ -617,10 +843,11 @@ const Calendar = () => {
                                                                 <span key={e.id} className={`text-[10px] font-medium px-1.5 py-0.5 rounded-lg truncate
                                                                     ${isToday ? "bg-white/20 text-white" : "bg-green-600 text-white"}`}>{e.title}</span>
                                                             ))}
-                                                            {events.length > 3 && <span className={`text-[10px] ${isToday ? "text-white/70" : "text-gray-400"}`}>+{events.length - 3} more</span>}
+                                                            {events.length > 4 && <span className={`text-[10px] ${isToday ? "text-white/70" : "text-gray-400"}`}>+{events.length - 4} more</span>}
                                                         </div>
                                                         {events.length > 0 && (
                                                             <div className="flex sm:hidden gap-0.5 mt-auto flex-wrap">
+                                                                {cEvs.length > 0 && <span className={`h-1.5 w-1.5 rounded-full ${isToday ? "bg-white" : "bg-indigo-500"}`} />}
                                                                 {taskEvs.length > 0 && <span className={`h-1.5 w-1.5 rounded-full ${isToday ? "bg-white" : overdue ? "bg-red-500" : "bg-blue-500"}`} />}
                                                                 {tsEvs.length > 0 && <span className={`h-1.5 w-1.5 rounded-full ${isToday ? "bg-white/70" : "bg-green-500"}`} />}
                                                             </div>
@@ -651,6 +878,7 @@ const Calendar = () => {
                                         {[
                                             { color: "bg-blue-600", label: "Task due" },
                                             { color: "bg-green-600", label: "Timesheet" },
+                                            { color: "bg-indigo-600", label: "Event / Announcement" },
                                             { color: "bg-red-500", label: "Overdue" },
                                             { color: "bg-blue-600 ring-2 ring-blue-400 ring-offset-1", label: "Today" },
                                         ].map(({ color, label }) => (
@@ -719,9 +947,10 @@ const Calendar = () => {
                                             <div className="space-y-1.5">
                                                 {events.slice(0, 3).map(e => (
                                                     <div key={e.id} className={`flex items-center gap-2 px-3 py-2 rounded-xl border
-                                                        ${e.type === "task" ? e.overdue ? "bg-red-50 border-red-100" : "bg-blue-50 border-blue-100" : "bg-green-50 border-green-100"}`}>
+                                                        ${e.type === "task" ? e.overdue ? "bg-red-50 border-red-100" : "bg-blue-50 border-blue-100"
+                                                            : e.type === "event" ? "bg-indigo-50 border-indigo-100" : "bg-green-50 border-green-100"}`}>
                                                         <span className={`h-1.5 w-1.5 rounded-full shrink-0
-                                                            ${e.type === "task" ? e.overdue ? "bg-red-500" : "bg-blue-500" : "bg-green-500"}`} />
+                                                            ${e.type === "task" ? e.overdue ? "bg-red-500" : "bg-blue-500" : e.type === "event" ? "bg-indigo-500" : "bg-green-500"}`} />
                                                         <span className="text-xs font-medium text-gray-800 truncate flex-1">{e.title}</span>
                                                         {e.overdue && <span className="text-[10px] text-red-600 font-bold shrink-0">OD</span>}
                                                     </div>
@@ -733,6 +962,15 @@ const Calendar = () => {
                                 </div>
                             )}
                         </div>
+
+                        {/* EVENTS & HOLIDAYS */}
+                        <EventsHolidaysPanel
+                            adminEvents={adminEvents}
+                            loading={loading}
+                            filter={eventTypeFilter}
+                            setFilter={setEventTypeFilter}
+                            onSelect={setSelectedAdminEvent}
+                        />
                     </div>
                 </div>
 
@@ -744,7 +982,7 @@ const Calendar = () => {
                         </div>
                         <h3 className="text-lg font-bold text-gray-800">Your calendar is clear</h3>
                         <p className="text-sm text-gray-500 mt-2 max-w-sm mx-auto">
-                            No tasks or timesheets yet. Once your team assigns tasks or approves timesheets, they'll show up here.
+                            No tasks, timesheets or events yet. Once your team assigns tasks, approves timesheets, or admin publishes an event, they'll show up here.
                         </p>
                     </div>
                 )}
@@ -756,6 +994,14 @@ const Calendar = () => {
                     date={selectedDate}
                     events={selectedEvents}
                     onClose={() => { setSelectedDate(null); setSelectedEvents([]); }}
+                />
+            )}
+
+            {/* EVENT DETAIL MODAL */}
+            {selectedAdminEvent && (
+                <EventDetailModal
+                    event={selectedAdminEvent}
+                    onClose={() => setSelectedAdminEvent(null)}
                 />
             )}
 

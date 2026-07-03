@@ -51,18 +51,24 @@ export const SIDE_MENU_DATA = [
     },
     {
         id: "09",
+        label: "Calendar",
+        icon: LuCalendar,
+        path: "/admin/calendar"
+    },
+    {
+        id: "10",
         label: "Timesheet",
         icon: LuClock,
         path: "/admin/timesheet"
     },
     {
-        id: "10",
+        id: "11",
         label: "Settings",
         icon: LuSettings,
         path: "/admin/settings"
     },
     {
-        id: "11",
+        id: "12",
         label: "Logout",
         icon: LuLogOut,
         path: "logout",

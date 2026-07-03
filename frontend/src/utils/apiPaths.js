@@ -102,6 +102,14 @@ export const API_PATHS = {
         EXPORT_PDF: "/api/timesheets/export/pdf",   //* export timesheets to PDF (admin only)
     },
 
+    // EVENTS
+    EVENTS: {
+        CREATE: "/api/events",  //* create a new event (admin only)
+        GET_ALL: "/api/events",  //* get all events (admin: all, user: only assigned events)
+        UPDATE: (id) => `/api/events/${id}`,  //* update event details
+        DELETE: (id) => `/api/events/${id}`,  //* delete an event (admin only)
+    },
+
     // SETTINGS
     SETTINGS: {
         GET_SETTINGS: "/api/settings",  //* get admin settings

@@ -14,6 +14,7 @@ const groupRoutes = require("./routes/group.routes.js");
 const messageRoutes = require("./routes/message.routes.js");
 const pollRoutes = require("./routes/poll.routes.js");
 const fileRoutes = require("./routes/file.routes.js");
+const eventRoutes = require("./routes/event.routes.js");
 const settingsRoutes = require("./routes/setting.routes.js");
 const timesheetRoutes = require("./routes/timesheet.routes.js");
 
@@ -52,6 +53,7 @@ app.use("/api/groups", groupRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/polls", pollRoutes);
 app.use("/api/files", fileRoutes);
+app.use("/api/events", eventRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/timesheets", timesheetRoutes);
 

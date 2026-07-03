@@ -40,6 +40,7 @@ import Budgets from './pages/Admin/Budgets.jsx'
 import ExpenseAnalytics from './pages/Admin/ExpenseAnalytics.jsx'
 import MyExpenses from "./pages/User/MyExpenses.jsx"
 import MyTimesheets from "./pages/User/MyTimesheets.jsx"
+import AdminCalendar from './pages/Admin/AdminCalendar.jsx'
 
 
 const App = () => {
@@ -81,6 +82,7 @@ const App = () => {
                             <Route path='/admin/budgets' element={<Budgets />} />
                             <Route path='/admin/expense-analytics' element={<ExpenseAnalytics />} />
                             <Route path='/admin/file-manager' element={<FileManager />} />
+                            <Route path='/admin/calendar' element={<AdminCalendar />} />
                             <Route path='/admin/timesheet' element={<TimeSheet />} />
                             <Route path='/admin/settings' element={<Settings />} />
                         </Route>
