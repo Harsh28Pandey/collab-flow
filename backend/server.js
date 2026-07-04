@@ -17,6 +17,8 @@ const fileRoutes = require("./routes/file.routes.js");
 const eventRoutes = require("./routes/event.routes.js");
 const settingsRoutes = require("./routes/setting.routes.js");
 const timesheetRoutes = require("./routes/timesheet.routes.js");
+ const expenseRoutes = require("./routes/expense.routes.js");
+ const budgetRoutes = require("./routes/budget.routes.js");
 
 // const { Server } = require("socket.io");
 // const Message = require("./models/message.model.js");
@@ -56,6 +58,8 @@ app.use("/api/files", fileRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/timesheets", timesheetRoutes);
+app.use("/api/expenses", expenseRoutes);
+ app.use("/api/budgets", budgetRoutes);
 
 // const io = new Server(server, {
 //     cors: {

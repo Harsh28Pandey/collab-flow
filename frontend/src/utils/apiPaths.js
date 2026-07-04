@@ -117,4 +117,23 @@ export const API_PATHS = {
         GET_USER_PROFILE: "/api/settings/user",  //* get logged-in user profile
         UPDATE_USER_PROFILE: "/api/settings/user/update",  //* update logged-in user profile
     },
+
+    // EXPENSES
+    EXPENSES: {
+        CREATE: "/api/expenses",  //* create a new expense (admin only)
+        GET_ALL: "/api/expenses",  //* get all expenses (admin: all, user: only assigned expenses)
+        GET_BY_ID: (id) => `/api/expenses/${id}`,  //* get expense by id
+        UPDATE: (id) => `/api/expenses/${id}`,  //* update expense details
+        DELETE: (id) => `/api/expenses/${id}`,  //* delete an expense (admin only)
+        SUMMARY: "/api/expenses/summary",  //* get high-level summary stats (used by Expenses list header + Analytics)
+        BY_CATEGORY: "/api/expenses/by-category",  //* get expenses grouped by category (used by Analytics)
+        MONTHLY_TREND: "/api/expenses/monthly-trend",  //* get monthly expense trend (used by Analytics)
+    },
+
+    // BUDGETS
+    BUDGETS: {
+        GET_ALL: "/api/budgets",  //* get all budgets for a given month/year, each with computed spend
+        UPSERT: "/api/budgets",  //* create or update a budget for a given category/month/year
+        DELETE: (id) => `/api/budgets/${id}`, //* delete a budget by id
+    },
 };
