@@ -41,6 +41,9 @@ import ExpenseAnalytics from './pages/Admin/ExpenseAnalytics.jsx'
 import MyExpenses from "./pages/User/MyExpenses.jsx"
 import MyTimesheets from "./pages/User/MyTimesheets.jsx"
 import AdminCalendar from './pages/Admin/AdminCalendar.jsx'
+import ManageExpenses from './pages/Admin/ManageExpenses.jsx'
+import ManageHolidays from './pages/Admin/ManageHolidays.jsx'
+import MyHolidays from './pages/User/MyHolidays.jsx'
 
 
 const App = () => {
@@ -78,9 +81,11 @@ const App = () => {
                             <Route path='/admin/groups' element={<AdminGroups />} />
                             <Route path='/admin/polls' element={<ManagePolls />} />
                             <Route path='/admin/expenses' element={<Expenses />} />
+                            <Route path='/admin/manage-expenses' element={<ManageExpenses />} />
                             <Route path='/admin/add-expense' element={<AddExpense />} />
                             <Route path='/admin/budgets' element={<Budgets />} />
                             <Route path='/admin/expense-analytics' element={<ExpenseAnalytics />} />
+                            <Route path='/admin/holidays' element={<ManageHolidays />} />
                             <Route path='/admin/file-manager' element={<FileManager />} />
                             <Route path='/admin/calendar' element={<AdminCalendar />} />
                             <Route path='/admin/timesheet' element={<TimeSheet />} />
@@ -96,6 +101,7 @@ const App = () => {
                             <Route path='/user/polls' element={<MyPolls />} />
                             <Route path='/user/my-expenses' element={<MyExpenses />} />
                             <Route path='/user/timesheet' element={<MyTimesheets />} />
+                            <Route path='/user/holidays' element={<MyHolidays />} />
                             <Route path='/user/calendar' element={<Calendar />} />
                             <Route path='/user/files' element={<Files />} />
                             <Route path='/user/profile-settings' element={<ProfileSettings />} />

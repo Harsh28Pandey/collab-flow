@@ -1,4 +1,4 @@
-import { LuLayoutDashboard, LuUsers, LuClipboardCheck, LuSquarePlus, LuLogOut, LuMessageSquare, LuListTodo, LuMegaphone, LuBadgeIndianRupee, LuChartPie, LuClock, LuSettings, LuWallet, LuReceipt, LuHandCoins, LuCreditCard, LuCalendar, LuFolderClosed, LuCircleUser } from "react-icons/lu";
+import { LuLayoutDashboard, LuUsers, LuClipboardCheck, LuSquarePlus, LuLogOut, LuMessageSquare, LuListTodo, LuMegaphone, LuBadgeIndianRupee, LuChartPie, LuClock, LuSettings, LuWallet, LuReceipt, LuHandCoins, LuCreditCard, LuCalendar, LuFolderClosed, LuCircleUser, LuUmbrella, LuCalendarCheck } from "react-icons/lu";
 
 export const SIDE_MENU_DATA = [
     {
@@ -39,36 +39,48 @@ export const SIDE_MENU_DATA = [
     },
     {
         id: "07",
+        label: "Manage Expenses",
+        icon: LuReceipt,
+        path: "/admin/manage-expenses",
+    },
+    {
+        id: "08",
         label: "Expenses",
         icon: LuWallet,
         path: "/admin/expenses",
     },
     {
-        id: "08",
+        id: "09",
+        label: "Manage Holidays",
+        icon: LuCalendarCheck,
+        path: "/admin/holidays",
+    },
+    {
+        id: "10",
         label: "File Manager",
         icon: LuFolderClosed,
         path: "/admin/file-manager"
     },
     {
-        id: "09",
+        id: "11",
         label: "Calendar",
         icon: LuCalendar,
         path: "/admin/calendar"
     },
     {
-        id: "10",
+        id: "12",
         label: "Timesheet",
         icon: LuClock,
         path: "/admin/timesheet"
     },
     {
-        id: "11",
+        id: "13",
         label: "Settings",
         icon: LuSettings,
         path: "/admin/settings"
     },
     {
-        id: "12",
+        id: "14",
         label: "Logout",
         icon: LuLogOut,
         path: "logout",
@@ -108,30 +120,36 @@ export const SIDE_MENU_USER_DATA = [
     },
     {
         id: "06",
+        label: "Holidays",
+        icon: LuUmbrella,
+        path: "/user/holidays",
+    },
+    {
+        id: "07",
         label: "My Timesheets",
         icon: LuClock,
         path: "/user/timesheet",
     },
     {
-        id: "07",
+        id: "08",
         label: "Calendar",
         icon: LuCalendar,
         path: "/user/calendar"
     },
     {
-        id: "08",
+        id: "09",
         label: "Files",
         icon: LuFolderClosed,
         path: "/user/files"
     },
     {
-        id: "09",
+        id: "10",
         label: "Profile Settings",
         icon: LuCircleUser,
         path: "/user/profile-settings"
     },
     {
-        id: "10",
+        id: "11",
         label: "Logout",
         icon: LuLogOut,
         path: "logout",

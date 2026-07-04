@@ -136,4 +136,14 @@ export const API_PATHS = {
         UPSERT: "/api/budgets",  //* create or update a budget for a given category/month/year
         DELETE: (id) => `/api/budgets/${id}`, //* delete a budget by id
     },
+
+    // HOLIDAYS
+    HOLIDAYS: {
+        APPLY: "/api/holidays",  //* apply for a new holiday (user only)
+        GET_MY: "/api/holidays/my",  //* get all holidays of logged-in user (user only)
+        UPDATE: (id) => `/api/holidays/${id}`, //* update holiday details (user only)
+        DELETE: (id) => `/api/holidays/${id}`,  //* delete a holiday (user only)
+        GET_ALL: "/api/holidays",          //* admin — supports ?status=Pending|Approved|Rejected
+        REVIEW: (id) => `/api/holidays/${id}/review`, //* admin — approve/reject
+    },
 };
