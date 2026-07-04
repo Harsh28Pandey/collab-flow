@@ -429,7 +429,7 @@ const AgendaRow = ({ ev, onEdit, onDelete }) => {
     const style = TYPE_STYLE[ev.type] || TYPE_STYLE.Event;
     const Icon = TYPE_ICON[ev.type] || Sparkles;
     return (
-        <div className="group flex items-start gap-2.5 px-3 py-2.5 rounded-2xl border border-gray-100 bg-gray-50/60 hover:bg-white hover:border-gray-200 transition">
+        <div className="flex items-center gap-2 sm:gap-2.5 px-2.5 sm:px-3 py-2.5 rounded-2xl border border-gray-100 bg-gray-50/60 hover:bg-white hover:border-gray-200 transition">
             <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 border ${style.badge}`}>
                 <Icon size={13} />
             </div>
@@ -437,12 +437,15 @@ const AgendaRow = ({ ev, onEdit, onDelete }) => {
                 <p className="text-sm font-medium text-gray-900 truncate">{ev.title}</p>
                 <p className="text-xs text-gray-500 mt-0.5">{fmt(ev.date, { day: "numeric", month: "short" })} · {to12h(ev.time)}</p>
             </div>
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition shrink-0">
-                <button type="button" onClick={() => onEdit(ev)} className="cursor-pointer h-7 w-7 rounded-lg hover:bg-blue-100 flex items-center justify-center">
-                    <Pencil size={12} className="text-blue-600" />
+            {/* Always visible — mobile has no hover state, so these never rely on group-hover */}
+            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                <button type="button" onClick={() => onEdit(ev)} title="Edit event" aria-label="Edit event"
+                    className="cursor-pointer h-9 w-9 sm:h-8 sm:w-8 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 active:bg-blue-100 flex items-center justify-center shrink-0 transition">
+                    <Pencil size={14} className="text-blue-600" />
                 </button>
-                <button type="button" onClick={() => onDelete(ev)} className="cursor-pointer h-7 w-7 rounded-lg hover:bg-red-100 flex items-center justify-center">
-                    <Trash2 size={12} className="text-red-600" />
+                <button type="button" onClick={() => onDelete(ev)} title="Delete event" aria-label="Delete event"
+                    className="cursor-pointer h-9 w-9 sm:h-8 sm:w-8 rounded-xl border border-gray-200 bg-white hover:bg-red-50 hover:border-red-300 active:bg-red-100 flex items-center justify-center shrink-0 transition">
+                    <Trash2 size={14} className="text-red-600" />
                 </button>
             </div>
         </div>
