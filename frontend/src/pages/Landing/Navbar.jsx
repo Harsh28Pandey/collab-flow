@@ -168,12 +168,6 @@ const Navbar = () => {
                                                     />
 
                                                     <DropdownItem
-                                                        label="My Expenses"
-                                                        onClick={() => handleNavigate("/user/my-expenses")}
-                                                    />
-
-
-                                                    <DropdownItem
                                                         label="Profile Settings"
                                                         onClick={() => handleNavigate("/user/profile-settings")}
                                                     />

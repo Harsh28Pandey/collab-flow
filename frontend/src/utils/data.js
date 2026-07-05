@@ -114,42 +114,36 @@ export const SIDE_MENU_USER_DATA = [
     },
     {
         id: "05",
-        label: "My Expenses",
-        icon: LuWallet,
-        path: "/user/my-expenses",
-    },
-    {
-        id: "06",
         label: "Holidays",
         icon: LuUmbrella,
         path: "/user/holidays",
     },
     {
-        id: "07",
+        id: "06",
         label: "My Timesheets",
         icon: LuClock,
         path: "/user/timesheet",
     },
     {
-        id: "08",
+        id: "07",
         label: "Calendar",
         icon: LuCalendar,
         path: "/user/calendar"
     },
     {
-        id: "09",
+        id: "08",
         label: "Files",
         icon: LuFolderClosed,
         path: "/user/files"
     },
     {
-        id: "10",
+        id: "09",
         label: "Profile Settings",
         icon: LuCircleUser,
         path: "/user/profile-settings"
     },
     {
-        id: "11",
+        id: "10",
         label: "Logout",
         icon: LuLogOut,
         path: "logout",

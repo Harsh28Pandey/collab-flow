@@ -168,13 +168,15 @@ const RequestCard = ({ h, onReview }) => {
 // MAIN ADMIN HOLIDAYS PAGE
 // ─────────────────────────────────────────────────────────────────────────────
 
-const FILTER_TABS = ["Pending", "Approved", "Rejected", "All"];
+// "All" is now first in the tab order, so it renders as the leftmost/first tab.
+const FILTER_TABS = ["All", "Pending", "Approved", "Rejected"];
 
 const ManageHolidays = () => {
     const [holidays, setHolidays] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    const [statusFilter, setStatusFilter] = useState("Pending");
+    // "All" is now the default active filter on page load.
+    const [statusFilter, setStatusFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
 
     const [reviewTarget, setReviewTarget] = useState(null);

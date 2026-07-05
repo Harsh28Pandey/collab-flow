@@ -128,6 +128,13 @@ export const API_PATHS = {
         SUMMARY: "/api/expenses/summary",  //* get high-level summary stats (used by Expenses list header + Analytics)
         BY_CATEGORY: "/api/expenses/by-category",  //* get expenses grouped by category (used by Analytics)
         MONTHLY_TREND: "/api/expenses/monthly-trend",  //* get monthly expense trend (used by Analytics)
+
+        //* User's Own Expenses (My Expenses)
+        GET_MY_EXPENSES: "/api/expenses/my",              //* get logged-in user's own expenses
+        GET_MY_SUMMARY: "/api/expenses/my/summary",        //* get logged-in user's own stats
+        ADD_MY_EXPENSE: "/api/expenses/my",                //* add a personal expense
+        UPDATE_MY_EXPENSE: (id) => `/api/expenses/my/${id}`,  //* update own expense
+        DELETE_MY_EXPENSE: (id) => `/api/expenses/my/${id}`,  //* delete own expense
     },
 
     // BUDGETS

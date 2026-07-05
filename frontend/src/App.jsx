@@ -38,7 +38,6 @@ import Expenses from './pages/Admin/Expenses.jsx'
 import AddExpense from './pages/Admin/AddExpense.jsx'
 import Budgets from './pages/Admin/Budgets.jsx'
 import ExpenseAnalytics from './pages/Admin/ExpenseAnalytics.jsx'
-import MyExpenses from "./pages/User/MyExpenses.jsx"
 import MyTimesheets from "./pages/User/MyTimesheets.jsx"
 import AdminCalendar from './pages/Admin/AdminCalendar.jsx'
 import ManageExpenses from './pages/Admin/ManageExpenses.jsx'
@@ -99,7 +98,6 @@ const App = () => {
                             <Route path='/user/task-details/:id' element={<ViewTaskDetails />} />
                             <Route path='/user/groups' element={<MyGroups />} />
                             <Route path='/user/polls' element={<MyPolls />} />
-                            <Route path='/user/my-expenses' element={<MyExpenses />} />
                             <Route path='/user/timesheet' element={<MyTimesheets />} />
                             <Route path='/user/holidays' element={<MyHolidays />} />
                             <Route path='/user/calendar' element={<Calendar />} />
