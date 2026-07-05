@@ -12,6 +12,7 @@ import {
     ChevronLeft, ChevronRight, Wallet, TrendingUp, TrendingDown,
     Receipt, ArrowUpDown, CheckCircle2, AlertCircle, Loader2, Filter,
 } from "lucide-react";
+import ExpenseNavDropdown from "../../components/ExpenseNavDropdown.jsx"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SKELETONS

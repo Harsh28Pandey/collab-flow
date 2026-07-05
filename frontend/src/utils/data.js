@@ -37,50 +37,50 @@ export const SIDE_MENU_DATA = [
         icon: LuListTodo,
         path: "/admin/polls",
     },
+    // {
+    //     id: "07",
+    //     label: "Manage Expenses",
+    //     icon: LuReceipt,
+    //     path: "/admin/manage-expenses",
+    // },
     {
         id: "07",
-        label: "Manage Expenses",
-        icon: LuReceipt,
-        path: "/admin/manage-expenses",
-    },
-    {
-        id: "08",
         label: "Expenses",
         icon: LuWallet,
         path: "/admin/expenses",
     },
     {
-        id: "09",
+        id: "08",
         label: "Manage Holidays",
         icon: LuCalendarCheck,
         path: "/admin/holidays",
     },
     {
-        id: "10",
+        id: "09",
         label: "File Manager",
         icon: LuFolderClosed,
         path: "/admin/file-manager"
     },
     {
-        id: "11",
+        id: "10",
         label: "Calendar",
         icon: LuCalendar,
         path: "/admin/calendar"
     },
     {
-        id: "12",
+        id: "11",
         label: "Timesheet",
         icon: LuClock,
         path: "/admin/timesheet"
     },
     {
-        id: "13",
+        id: "12",
         label: "Settings",
         icon: LuSettings,
         path: "/admin/settings"
     },
     {
-        id: "14",
+        id: "13",
         label: "Logout",
         icon: LuLogOut,
         path: "logout",

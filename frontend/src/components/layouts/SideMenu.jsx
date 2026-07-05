@@ -20,7 +20,8 @@ import {
     LuChevronRight,
     LuReceipt,
     LuBadgeIndianRupee,
-    LuChartPie
+    LuChartPie,
+    LuWallet
 } from "react-icons/lu";
 
 const SideMenu = ({ activeMenu }) => {
@@ -39,6 +40,7 @@ const SideMenu = ({ activeMenu }) => {
 
     const expenseRoutes = [
         "/admin/expenses",
+        "/admin/manage-expenses",
         "/admin/add-expense",
         "/admin/budgets",
         "/admin/expense-analytics"
@@ -227,14 +229,13 @@ const SideMenu = ({ activeMenu }) => {
                                         {/* ================= PARENT ================= */}
 
                                         <button
-                                            onClick={() =>
-                                                setExpenseDropdownOpen(
-                                                    !expenseDropdownOpen
-                                                )
-                                            }
+                                            onClick={() => {
+                                                navigate("/admin/expenses");
+                                                setExpenseDropdownOpen(true);
+                                            }}
                                             className={`group relative w-full flex items-center justify-between rounded-xl gap-2.5 px-2.5 py-2 text-[13px] font-medium transition-all duration-300 ease-out overflow-hidden cursor-pointer ${isActive
-                                                    ? 'bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-[0_6px_18px_rgba(59,130,246,0.20)] active-menu-item'
-                                                    : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:translate-x-1'
+                                                ? 'bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-[0_6px_18px_rgba(59,130,246,0.20)] active-menu-item'
+                                                : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:translate-x-1'
                                                 }`}
                                         >
 
@@ -247,8 +248,8 @@ const SideMenu = ({ activeMenu }) => {
 
                                                 <div
                                                     className={`relative z-10 flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-300 ${isActive
-                                                            ? 'bg-white/20 text-white'
-                                                            : 'bg-blue-100 text-blue-600 group-hover:bg-white'
+                                                        ? 'bg-white/20 text-white'
+                                                        : 'bg-blue-100 text-blue-600 group-hover:bg-white'
                                                         }`}
                                                 >
                                                     <item.icon className="text-[15px]" />
@@ -260,7 +261,13 @@ const SideMenu = ({ activeMenu }) => {
 
                                             </div>
 
-                                            <div className='relative z-10'>
+                                            <div
+                                                className='relative z-10 p-1 -m-1'
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setExpenseDropdownOpen(!expenseDropdownOpen);
+                                                }}
+                                            >
                                                 {expenseDropdownOpen ? (
                                                     <LuChevronDown className='text-[15px]' />
                                                 ) : (
@@ -274,12 +281,43 @@ const SideMenu = ({ activeMenu }) => {
 
                                         <div
                                             className={`overflow-hidden transition-all duration-300 ease-in-out ${expenseDropdownOpen
-                                                    ? "max-h-80 opacity-100 mt-1"
-                                                    : "max-h-0 opacity-0"
+                                                ? "max-h-80 opacity-100 mt-1"
+                                                : "max-h-0 opacity-0"
                                                 }`}
                                         >
 
                                             <div className='ml-4 mt-1 pl-3 border-l border-blue-100 space-y-1'>
+
+                                                {/* ================= MANAGE EXPENSES ================= */}
+
+                                                <button
+                                                    onClick={() =>
+                                                        navigate("/admin/manage-expenses")
+                                                    }
+                                                    className={`group relative w-full flex items-center rounded-xl gap-2.5 px-2.5 py-2 text-[13px] font-medium transition-all duration-300 ease-out overflow-hidden cursor-pointer ${location.pathname === "/admin/manage-expenses"
+                                                        ? 'bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-[0_6px_18px_rgba(59,130,246,0.20)] active-menu-item'
+                                                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:translate-x-1'
+                                                        }`}
+                                                >
+
+                                                    {location.pathname === "/admin/manage-expenses" && (
+                                                        <div className='absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded-r-full'></div>
+                                                    )}
+
+                                                    <div
+                                                        className={`relative z-10 flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-300 ${location.pathname === "/admin/manage-expenses"
+                                                            ? 'bg-white/20 text-white'
+                                                            : 'bg-blue-100 text-blue-600 group-hover:bg-white'
+                                                            }`}
+                                                    >
+                                                        <LuWallet className="text-[14px]" />
+                                                    </div>
+
+                                                    <span className='relative z-10 tracking-wide'>
+                                                        Manage Expenses
+                                                    </span>
+
+                                                </button>
 
                                                 {/* ================= ADD EXPENSE ================= */}
 
@@ -288,8 +326,8 @@ const SideMenu = ({ activeMenu }) => {
                                                         navigate("/admin/add-expense")
                                                     }
                                                     className={`group relative w-full flex items-center rounded-xl gap-2.5 px-2.5 py-2 text-[13px] font-medium transition-all duration-300 ease-out overflow-hidden cursor-pointer ${location.pathname === "/admin/add-expense"
-                                                            ? 'bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-[0_6px_18px_rgba(59,130,246,0.20)] active-menu-item'
-                                                            : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:translate-x-1'
+                                                        ? 'bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-[0_6px_18px_rgba(59,130,246,0.20)] active-menu-item'
+                                                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:translate-x-1'
                                                         }`}
                                                 >
 
@@ -299,8 +337,8 @@ const SideMenu = ({ activeMenu }) => {
 
                                                     <div
                                                         className={`relative z-10 flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-300 ${location.pathname === "/admin/add-expense"
-                                                                ? 'bg-white/20 text-white'
-                                                                : 'bg-blue-100 text-blue-600 group-hover:bg-white'
+                                                            ? 'bg-white/20 text-white'
+                                                            : 'bg-blue-100 text-blue-600 group-hover:bg-white'
                                                             }`}
                                                     >
                                                         <LuReceipt className="text-[14px]" />
@@ -319,8 +357,8 @@ const SideMenu = ({ activeMenu }) => {
                                                         navigate("/admin/budgets")
                                                     }
                                                     className={`group relative w-full flex items-center rounded-xl gap-2.5 px-2.5 py-2 text-[13px] font-medium transition-all duration-300 ease-out overflow-hidden cursor-pointer ${location.pathname === "/admin/budgets"
-                                                            ? 'bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-[0_6px_18px_rgba(59,130,246,0.20)] active-menu-item'
-                                                            : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:translate-x-1'
+                                                        ? 'bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-[0_6px_18px_rgba(59,130,246,0.20)] active-menu-item'
+                                                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:translate-x-1'
                                                         }`}
                                                 >
 
@@ -330,8 +368,8 @@ const SideMenu = ({ activeMenu }) => {
 
                                                     <div
                                                         className={`relative z-10 flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-300 ${location.pathname === "/admin/budgets"
-                                                                ? 'bg-white/20 text-white'
-                                                                : 'bg-blue-100 text-blue-600 group-hover:bg-white'
+                                                            ? 'bg-white/20 text-white'
+                                                            : 'bg-blue-100 text-blue-600 group-hover:bg-white'
                                                             }`}
                                                     >
                                                         <LuBadgeIndianRupee className="text-[14px]" />
@@ -350,8 +388,8 @@ const SideMenu = ({ activeMenu }) => {
                                                         navigate("/admin/expense-analytics")
                                                     }
                                                     className={`group relative w-full flex items-center rounded-xl gap-2.5 px-2.5 py-2 text-[13px] font-medium transition-all duration-300 ease-out overflow-hidden cursor-pointer ${location.pathname === "/admin/expense-analytics"
-                                                            ? 'bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-[0_6px_18px_rgba(59,130,246,0.20)] active-menu-item'
-                                                            : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:translate-x-1'
+                                                        ? 'bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-[0_6px_18px_rgba(59,130,246,0.20)] active-menu-item'
+                                                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:translate-x-1'
                                                         }`}
                                                 >
 
@@ -361,8 +399,8 @@ const SideMenu = ({ activeMenu }) => {
 
                                                     <div
                                                         className={`relative z-10 flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-300 ${location.pathname === "/admin/expense-analytics"
-                                                                ? 'bg-white/20 text-white'
-                                                                : 'bg-blue-100 text-blue-600 group-hover:bg-white'
+                                                            ? 'bg-white/20 text-white'
+                                                            : 'bg-blue-100 text-blue-600 group-hover:bg-white'
                                                             }`}
                                                     >
                                                         <LuChartPie className="text-[14px]" />
@@ -391,8 +429,8 @@ const SideMenu = ({ activeMenu }) => {
                                         handleClick(item.path)
                                     }
                                     className={`group relative w-full flex items-center rounded-xl gap-2.5 px-2.5 py-2 text-[13px] font-medium transition-all duration-300 ease-out overflow-hidden cursor-pointer ${isActive
-                                            ? 'bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-[0_6px_18px_rgba(59,130,246,0.20)] active-menu-item'
-                                            : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:translate-x-1'
+                                        ? 'bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-[0_6px_18px_rgba(59,130,246,0.20)] active-menu-item'
+                                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:translate-x-1'
                                         }`}
                                 >
 
@@ -406,8 +444,8 @@ const SideMenu = ({ activeMenu }) => {
 
                                     <div
                                         className={`relative z-10 flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-300 ${isActive
-                                                ? 'bg-white/20 text-white'
-                                                : 'bg-blue-100 text-blue-600 group-hover:bg-white'
+                                            ? 'bg-white/20 text-white'
+                                            : 'bg-blue-100 text-blue-600 group-hover:bg-white'
                                             }`}
                                     >
                                         <item.icon className="text-[15px]" />
