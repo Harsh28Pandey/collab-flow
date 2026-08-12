@@ -20,26 +20,29 @@ import toast from 'react-hot-toast';
 
 // ─── Step 1: Role Selection ───────────────────────────────────────────────────
 const RoleSelector = ({ onSelect, onBack }) => (
-    <div className="w-full max-w-lg mx-auto flex flex-col justify-center px-1 sm:px-2 md:px-0 py-2">
+    <div className="w-full max-w-lg mx-auto flex flex-col justify-center px-4 sm:px-6 py-6 bg-white/70 backdrop-blur-2xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.04)] rounded-[2.5rem] overflow-hidden transition-all duration-500 relative">
+
+        {/* Ambient Warm Glow inside card */}
+        <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-orange-100/60 to-yellow-100/40 blur-3xl rounded-full pointer-events-none -z-10" />
 
         {/* back button */}
         <div className="mb-4">
             <button
                 onClick={onBack}
-                className='flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100 hover:border-blue-200 transition-all duration-300 shadow-sm hover:shadow-[0_8px_24px_rgba(59,130,246,0.12)] hover:-translate-y-0.5 active:scale-95 cursor-pointer'
+                className='inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-50/80 text-orange-600 font-semibold border border-orange-100/80 hover:border-orange-200 shadow-[0_2px_8px_rgba(249,115,22,0.04)] hover:bg-orange-100/60 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer group'
             >
-                <ArrowLeft size={18} />
-                <span className='text-sm font-semibold tracking-wide'>Back</span>
+                <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform duration-300" />
+                <span className='text-xs uppercase tracking-wider font-bold'>Back</span>
             </button>
         </div>
 
         {/* heading */}
         <div className="mb-8 text-center">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
+            <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
                 Welcome to CollabFlow ✨
             </h2>
-            <p className="text-sm sm:text-base text-gray-500 mt-2 leading-relaxed">
-                Select your role to continue
+            <p className="text-sm sm:text-base text-slate-500 mt-2 font-medium leading-relaxed">
+                Select your role to continue setting up your workspace
             </p>
         </div>
 
@@ -49,45 +52,45 @@ const RoleSelector = ({ onSelect, onBack }) => (
             {/* Admin card */}
             <button
                 onClick={() => onSelect("admin")}
-                className="group relative flex flex-col items-start gap-3 p-6 rounded-2xl border-2 border-blue-100 bg-white hover:border-blue-500 hover:bg-blue-50 shadow-sm hover:shadow-[0_8px_30px_rgba(59,130,246,0.15)] transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] cursor-pointer text-left"
+                className="group relative flex flex-col items-start gap-4 p-6 rounded-3xl border border-orange-100 bg-white/80 hover:border-orange-500 hover:bg-orange-50/30 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_30px_rgba(249,115,22,0.12)] transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] cursor-pointer text-left"
             >
-                <div className="w-12 h-12 rounded-xl bg-blue-100 group-hover:bg-blue-600 flex items-center justify-center transition-colors duration-300">
-                    <Shield size={22} className="text-blue-600 group-hover:text-white transition-colors duration-300" />
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-100 to-yellow-50 group-hover:from-orange-500 group-hover:to-yellow-500 flex items-center justify-center transition-all duration-500 shadow-sm">
+                    <Shield size={22} className="text-orange-600 group-hover:text-white transition-colors duration-300" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-gray-900 text-base mb-1">Admin</h3>
-                    <p className="text-xs text-gray-500 leading-relaxed">
-                        Create a new team, generate access codes, and manage your workspace.
+                    <h3 className="font-bold text-slate-900 text-base mb-1">Admin</h3>
+                    <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                        Create a new team, generate access codes, and manage workspace settings.
                     </p>
                 </div>
-                <ChevronRight size={16} className="absolute top-5 right-5 text-gray-300 group-hover:text-blue-500 transition-colors duration-300" />
+                <ChevronRight size={16} className="absolute top-6 right-6 text-slate-300 group-hover:text-orange-500 transition-colors duration-300" />
             </button>
 
             {/* Member card */}
             <button
                 onClick={() => onSelect("member")}
-                className="group relative flex flex-col items-start gap-3 p-6 rounded-2xl border-2 border-blue-100 bg-white hover:border-blue-500 hover:bg-blue-50 shadow-sm hover:shadow-[0_8px_30px_rgba(59,130,246,0.15)] transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] cursor-pointer text-left"
+                className="group relative flex flex-col items-start gap-4 p-6 rounded-3xl border border-orange-100 bg-white/80 hover:border-orange-500 hover:bg-orange-50/30 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_30px_rgba(249,115,22,0.12)] transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] cursor-pointer text-left"
             >
-                <div className="w-12 h-12 rounded-xl bg-blue-100 group-hover:bg-blue-600 flex items-center justify-center transition-colors duration-300">
-                    <Users size={22} className="text-blue-600 group-hover:text-white transition-colors duration-300" />
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-100 to-yellow-50 group-hover:from-orange-500 group-hover:to-yellow-500 flex items-center justify-center transition-all duration-500 shadow-sm">
+                    <Users size={22} className="text-orange-600 group-hover:text-white transition-colors duration-300" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-gray-900 text-base mb-1">Team Member</h3>
-                    <p className="text-xs text-gray-500 leading-relaxed">
-                        Join an existing team using a team code and start collaborating.
+                    <h3 className="font-bold text-slate-900 text-base mb-1">Team Member</h3>
+                    <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                        Join an existing team using a shared team code and start collaborating instantly.
                     </p>
                 </div>
-                <ChevronRight size={16} className="absolute top-5 right-5 text-gray-300 group-hover:text-blue-500 transition-colors duration-300" />
+                <ChevronRight size={16} className="absolute top-6 right-6 text-slate-300 group-hover:text-orange-500 transition-colors duration-300" />
             </button>
 
         </div>
 
         {/* footer */}
-        <p className="text-sm text-gray-600 text-center leading-relaxed">
+        <p className="text-sm text-slate-500 text-center leading-relaxed font-medium">
             Already have an account?{" "}
             <Link
                 to="/login"
-                className="font-semibold text-blue-600 hover:text-blue-800 underline-offset-4 hover:underline transition-all duration-300"
+                className="font-bold text-orange-600 hover:text-orange-700 underline-offset-4 hover:underline transition-all duration-300"
             >
                 Login
             </Link>
@@ -161,34 +164,37 @@ const AdminForm = ({ onBack }) => {
     };
 
     return (
-        <div className="w-full max-w-lg mx-auto flex flex-col justify-center px-1 sm:px-2 md:px-0 py-1">
+        <div className="w-full max-w-lg mx-auto flex flex-col justify-center px-4 sm:px-6 py-6 bg-white/70 backdrop-blur-2xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.04)] rounded-[2.5rem] overflow-hidden transition-all duration-500 relative">
+
+            {/* Ambient Warm Glow inside card */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-orange-100/60 to-yellow-100/40 blur-3xl rounded-full pointer-events-none -z-10" />
 
             {/* back */}
             <div className="mb-4">
                 <button
                     onClick={onBack}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100 hover:border-blue-200 transition-all duration-300 shadow-sm hover:shadow-[0_8px_24px_rgba(59,130,246,0.12)] hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-50/80 text-orange-600 font-semibold border border-orange-100/80 hover:border-orange-200 shadow-[0_2px_8px_rgba(249,115,22,0.04)] hover:bg-orange-100/60 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer group"
                 >
-                    <ArrowLeft size={18} />
-                    <span className="text-sm font-semibold tracking-wide">Back</span>
+                    <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform duration-300" />
+                    <span className="text-xs uppercase tracking-wider font-bold">Back</span>
                 </button>
             </div>
 
             {/* heading */}
-            <div className="mb-5">
-                <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-blue-600 text-xs font-semibold px-3 py-1.5 rounded-full mb-3">
+            <div className="mb-6 text-left">
+                <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-100 text-orange-600 text-xs font-bold px-3.5 py-1.5 rounded-full mb-3">
                     <Shield size={13} />
                     Admin Account
                 </div>
-                <h2 className="text-2xl sm:text-2xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
                     Create Your Team ✨
                 </h2>
-                <p className="text-sm text-gray-500 mt-1.5 leading-relaxed">
-                    Set up your admin account and create a team
+                <p className="text-sm text-slate-500 mt-1.5 font-medium leading-relaxed">
+                    Set up your admin account and initialize a workspace
                 </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4">
 
                 {/* profile */}
                 <div className="flex justify-center pb-1">
@@ -200,7 +206,7 @@ const AdminForm = ({ onBack }) => {
                 </div>
 
                 {/* fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                     <Input
                         value={fullName}
                         onChange={({ target }) => { setFullName(target.value); clearError(); }}
@@ -212,7 +218,7 @@ const AdminForm = ({ onBack }) => {
                         value={email}
                         onChange={({ target }) => { setEmail(target.value); clearError(); }}
                         label="Email Address"
-                        placeholder="Enter email"
+                        placeholder="Enter your email"
                         type="email"
                     />
                     <Input
@@ -234,19 +240,20 @@ const AdminForm = ({ onBack }) => {
                             value={teamCode}
                             onChange={({ target }) => { setTeamCode(target.value); clearError(); }}
                             label="Team Code"
-                            placeholder="Create a unique team code (e.g. DS-2025)"
+                            placeholder="Unique code (e.g. DS-2026)"
                             type="text"
                         />
-                        <p className="text-xs text-gray-400 mt-1.5 ml-1">
-                            Share this code with your team members to let them join
+                        <p className="text-xs text-slate-400 mt-1.5 ml-1 font-medium">
+                            Share this code with your team members to let them join your space
                         </p>
                     </div>
                 </div>
 
                 {/* error */}
                 {error && (
-                    <div className="text-sm text-red-600 bg-red-50 border border-red-200 px-4 py-3 rounded-2xl shadow-sm leading-relaxed">
-                        {error}
+                    <div className="flex items-center gap-2.5 text-sm text-red-600 bg-red-50/90 border border-red-200 px-4 py-3 rounded-2xl shadow-sm leading-relaxed font-medium text-left">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse flex-shrink-0" />
+                        <span>{error}</span>
                     </div>
                 )}
 
@@ -254,7 +261,7 @@ const AdminForm = ({ onBack }) => {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-gradient-to-r from-blue-600 via-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 disabled:opacity-70 text-white font-semibold py-3.5 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(59,130,246,0.22)] hover:shadow-[0_14px_40px_rgba(59,130,246,0.32)] hover:-translate-y-1 active:scale-[0.98] cursor-pointer tracking-wide"
+                    className="w-full mt-2 bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 hover:opacity-95 disabled:opacity-70 text-white font-bold py-4 rounded-3xl transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(249,115,22,0.25)] hover:shadow-[0_14px_40px_rgba(249,115,22,0.35)] hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer tracking-wide"
                 >
                     {loading ? (
                         <><Loader2 className="w-5 h-5 animate-spin" /> Creating Team...</>
@@ -263,9 +270,9 @@ const AdminForm = ({ onBack }) => {
                     )}
                 </button>
 
-                <p className="text-sm text-gray-600 text-center leading-relaxed">
+                <p className="text-sm text-slate-500 text-center leading-relaxed font-medium pt-1">
                     Already have an account?{" "}
-                    <Link to="/login" className="font-semibold text-blue-600 hover:text-blue-800 underline-offset-4 hover:underline transition-all duration-300">
+                    <Link to="/login" className="font-bold text-orange-600 hover:text-orange-700 underline-offset-4 hover:underline transition-all duration-300">
                         Login
                     </Link>
                 </p>
@@ -283,8 +290,8 @@ const MemberForm = ({ onBack }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [teamCode, setTeamCode] = useState("");
-    const [teamName, setTeamName] = useState("");           // ✅ ADD
-    const [teamCodeLoading, setTeamCodeLoading] = useState(false); // ✅ ADD
+    const [teamName, setTeamName] = useState("");
+    const [teamCodeLoading, setTeamCodeLoading] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -293,7 +300,6 @@ const MemberForm = ({ onBack }) => {
 
     const clearError = () => { if (error) setError(""); };
 
-    // ✅ ADD - teamCode se team name fetch karo
     const fetchTeamName = async (code) => {
         if (!code.trim()) return;
         try {
@@ -357,32 +363,35 @@ const MemberForm = ({ onBack }) => {
     };
 
     return (
-        <div className="w-full max-w-lg mx-auto flex flex-col justify-center px-1 sm:px-2 md:px-0 py-1">
+        <div className="w-full max-w-lg mx-auto flex flex-col justify-center px-4 sm:px-6 py-6 bg-white/70 backdrop-blur-2xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.04)] rounded-[2.5rem] overflow-hidden transition-all duration-500 relative">
+
+            {/* Ambient Warm Glow inside card */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-orange-100/60 to-yellow-100/40 blur-3xl rounded-full pointer-events-none -z-10" />
 
             <div className="mb-4">
                 <button
                     onClick={onBack}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100 hover:border-blue-200 transition-all duration-300 shadow-sm hover:shadow-[0_8px_24px_rgba(59,130,246,0.12)] hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-50/80 text-orange-600 font-semibold border border-orange-100/80 hover:border-orange-200 shadow-[0_2px_8px_rgba(249,115,22,0.04)] hover:bg-orange-100/60 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer group"
                 >
-                    <ArrowLeft size={18} />
-                    <span className="text-sm font-semibold tracking-wide">Back</span>
+                    <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform duration-300" />
+                    <span className="text-xs uppercase tracking-wider font-bold">Back</span>
                 </button>
             </div>
 
-            <div className="mb-5">
-                <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-blue-600 text-xs font-semibold px-3 py-1.5 rounded-full mb-3">
+            <div className="mb-6 text-left">
+                <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-100 text-orange-600 text-xs font-bold px-3.5 py-1.5 rounded-full mb-3">
                     <Users size={13} />
                     Team Member
                 </div>
-                <h2 className="text-2xl sm:text-2xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
                     Join Your Team ✨
                 </h2>
-                <p className="text-sm text-gray-500 mt-1.5 leading-relaxed">
+                <p className="text-sm text-slate-500 mt-1.5 font-medium leading-relaxed">
                     Enter your team code to join an existing workspace
                 </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4">
 
                 <div className="flex justify-center pb-1">
                     <ProfilePhotoSelector
@@ -392,7 +401,7 @@ const MemberForm = ({ onBack }) => {
                     />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                     <Input
                         value={fullName}
                         onChange={({ target }) => { setFullName(target.value); clearError(); }}
@@ -404,7 +413,7 @@ const MemberForm = ({ onBack }) => {
                         value={email}
                         onChange={({ target }) => { setEmail(target.value); clearError(); }}
                         label="Email Address"
-                        placeholder="Enter email"
+                        placeholder="Enter your email"
                         type="email"
                     />
                     <Input
@@ -415,7 +424,6 @@ const MemberForm = ({ onBack }) => {
                         type="password"
                     />
 
-                    {/* ✅ Team Code with fetch */}
                     <div>
                         <Input
                             value={teamCode}
@@ -426,47 +434,48 @@ const MemberForm = ({ onBack }) => {
                             }}
                             onBlur={() => fetchTeamName(teamCode)}
                             label="Team Code"
-                            placeholder="Team code (e.g. DS-2025)"
+                            placeholder="e.g. DS-2026"
                             type="text"
                         />
 
                         {teamCodeLoading && (
-                            <div className="flex items-center gap-2 mt-2 ml-1">
-                                <Loader2 size={13} className="animate-spin text-blue-500" />
-                                <span className="text-xs text-blue-500">Fetching team...</span>
+                            <div className="flex items-center gap-2 mt-1.5 ml-1">
+                                <Loader2 size={13} className="animate-spin text-orange-500" />
+                                <span className="text-xs text-orange-500 font-medium">Fetching team...</span>
                             </div>
                         )}
 
                         {teamName && !teamCodeLoading && (
-                            <div className="flex items-center gap-2 mt-2 ml-1 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2">
-                                <Users size={13} className="text-blue-500 flex-shrink-0" />
-                                <span className="text-xs text-blue-600 font-semibold">
-                                    Team found: <span className="text-blue-700">{teamName}</span>
+                            <div className="flex items-center gap-2 mt-1.5 ml-1 bg-orange-50 border border-orange-100 rounded-xl px-3 py-2">
+                                <Users size={13} className="text-orange-500 flex-shrink-0" />
+                                <span className="text-xs text-orange-600 font-semibold">
+                                    Team found: <span className="text-orange-700">{teamName}</span>
                                 </span>
                             </div>
                         )}
                     </div>
                 </div>
 
-                <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3">
-                    <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-blue-600 text-xs font-bold">i</span>
+                <div className="flex items-start gap-2.5 bg-orange-50/80 border border-orange-100 rounded-2xl p-3.5 text-left">
+                    <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-orange-600 text-xs font-bold">i</span>
                     </div>
-                    <p className="text-xs text-blue-600 leading-relaxed">
+                    <p className="text-xs text-orange-700 font-medium leading-relaxed">
                         Ask your team admin for the team code. Entering a valid code will automatically add you to their workspace.
                     </p>
                 </div>
 
                 {error && (
-                    <div className="text-sm text-red-600 bg-red-50 border border-red-200 px-4 py-3 rounded-2xl shadow-sm leading-relaxed">
-                        {error}
+                    <div className="flex items-center gap-2.5 text-sm text-red-600 bg-red-50/90 border border-red-200 px-4 py-3 rounded-2xl shadow-sm leading-relaxed font-medium text-left">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse flex-shrink-0" />
+                        <span>{error}</span>
                     </div>
                 )}
 
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-gradient-to-r from-blue-600 via-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 disabled:opacity-70 text-white font-semibold py-3.5 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(59,130,246,0.22)] hover:shadow-[0_14px_40px_rgba(59,130,246,0.32)] hover:-translate-y-1 active:scale-[0.98] cursor-pointer tracking-wide"
+                    className="w-full mt-2 bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 hover:opacity-95 disabled:opacity-70 text-white font-bold py-4 rounded-3xl transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(249,115,22,0.25)] hover:shadow-[0_14px_40px_rgba(249,115,22,0.35)] hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer tracking-wide"
                 >
                     {loading ? (
                         <><Loader2 className="w-5 h-5 animate-spin" /> Joining Team...</>
@@ -475,9 +484,9 @@ const MemberForm = ({ onBack }) => {
                     )}
                 </button>
 
-                <p className="text-sm text-gray-600 text-center leading-relaxed">
+                <p className="text-sm text-slate-500 text-center leading-relaxed font-medium pt-1">
                     Already have an account?{" "}
-                    <Link to="/login" className="font-semibold text-blue-600 hover:text-blue-800 underline-offset-4 hover:underline transition-all duration-300">
+                    <Link to="/login" className="font-bold text-orange-600 hover:text-orange-700 underline-offset-4 hover:underline transition-all duration-300">
                         Login
                     </Link>
                 </p>
@@ -490,7 +499,6 @@ const MemberForm = ({ onBack }) => {
 // ─── Main SignUp Component ────────────────────────────────────────────────────
 const SignUp = () => {
 
-    // "select" | "admin" | "member"
     const [step, setStep] = useState("select");
     const navigate = useNavigate();
 

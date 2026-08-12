@@ -2,77 +2,78 @@ import React from "react";
 
 const FeaturesProductVisualSection = () => {
     return (
-        <section className="relative py-20 md:py-28 px-4 md:px-6 text-center bg-gradient-to-br from-blue-50 to-gray-50 overflow-hidden">
+        <section className="relative py-24 md:py-32 px-4 md:px-6 text-center bg-[#fafaf9] overflow-hidden flex flex-col items-center">
 
-            {/* Background orbs */}
-            <div className="absolute -top-40 -left-40 w-[450px] h-[450px] bg-indigo-200 opacity-40 blur-[120px] rounded-full animate-pulse pointer-events-none" />
-            <div className="absolute -bottom-40 -right-40 w-[450px] h-[450px] bg-sky-200 opacity-30 blur-[120px] rounded-full animate-pulse [animation-delay:1.5s] pointer-events-none" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[200px] bg-blue-100 opacity-40 blur-[80px] rounded-full animate-pulse [animation-delay:0.8s] pointer-events-none" />
+            {/* Premium Subtle Dot Mesh Background */}
+            <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_40%,#000_70%,transparent_100%)] opacity-50 pointer-events-none" />
 
-            {/* Floating particles */}
-            <div className="absolute top-12 left-[10%] w-1.5 h-1.5 bg-indigo-300 opacity-50 rounded-full animate-bounce [animation-delay:0.2s]" />
-            <div className="absolute top-20 right-[14%] w-1 h-1 bg-sky-300 opacity-40 rounded-full animate-bounce [animation-delay:0.6s]" />
-            <div className="absolute bottom-12 left-[20%] w-1 h-1 bg-indigo-200 opacity-40 rounded-full animate-ping [animation-delay:1s]" />
-            <div className="absolute bottom-16 right-[18%] w-1.5 h-1.5 bg-sky-200 opacity-30 rounded-full animate-ping [animation-delay:0.5s]" />
+            {/* Architectural Top Divider */}
+            <div className="absolute top-0 left-0 right-0 flex justify-center opacity-90">
+                <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-orange-200/50 to-transparent" />
+            </div>
 
-            <div className="relative z-10">
+            {/* Refined Ethereal Glows (Ambient lighting) */}
+            <div className="absolute top-0 left-[-10%] w-[600px] h-[600px] bg-gradient-to-br from-yellow-200/40 to-orange-100/10 blur-[130px] rounded-full animate-[breathe_12s_ease-in-out_infinite_alternate] pointer-events-none mix-blend-multiply" />
+            <div className="absolute bottom-[-10%] right-[-5%] w-[700px] h-[500px] bg-gradient-to-tl from-orange-200/30 to-yellow-100/20 blur-[140px] rounded-full animate-[breathe_9s_ease-in-out_infinite_alternate-reverse] pointer-events-none mix-blend-multiply" />
+
+            <div className="relative z-10 max-w-5xl mx-auto w-full">
 
                 {/* Eyebrow badge */}
-                <div className="inline-flex items-center gap-2 mb-5 px-4 py-1.5 rounded-full border border-indigo-200 bg-indigo-50 animate-[fadeInDown_0.7s_ease_both]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                    <span className="text-xs font-semibold tracking-widest uppercase text-indigo-500">
+                <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white border border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] mb-6 transition-all duration-300 hover:shadow-[0_4px_12px_rgba(249,115,22,0.08)] cursor-default animate-[fadeInDown_0.8s_cubic-bezier(0.16,1,0.3,1)_both]">
+                    <span className="relative flex h-2 w-2">
+                        <span className="animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite] absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-60"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-gradient-to-r from-orange-500 to-yellow-500"></span>
+                    </span>
+                    <span className="text-xs font-semibold tracking-wider text-slate-600 uppercase">
                         Live Preview
                     </span>
                 </div>
 
                 {/* Heading */}
-                <h2 className="text-3xl md:text-4xl font-extrabold mb-12 text-gray-900 leading-tight tracking-tight animate-[fadeInDown_0.7s_ease_0.1s_both]">
+                <h2 className="text-4xl md:text-6xl font-extrabold mb-16 text-slate-900 leading-[1.1] tracking-tight animate-[fadeInDown_0.8s_cubic-bezier(0.16,1,0.3,1)_0.1s_both]">
                     See{" "}
-                    <span className="relative inline-block">
-                        <span className="bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-500 bg-clip-text text-transparent">
+                    <span className="relative inline-block px-2">
+                        <span className="absolute inset-0 bg-gradient-to-r from-orange-200 to-yellow-100 blur-xl opacity-40 rounded-full" />
+                        <span className="relative bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
                             Collab Flow
                         </span>
-                        <span className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-indigo-400/0 via-blue-500/60 to-sky-400/0" />
                     </span>
                     {" "}in Action
                 </h2>
 
-                {/* 3D Container */}
-                <div className="max-w-5xl mx-auto animate-[fadeInUp_0.8s_ease_0.2s_both]">
-                    <div className="relative group transform transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2 cursor-pointer">
+                {/* Premium 3D Glass Showcase Container */}
+                <div className="animate-[fadeInUp_1s_cubic-bezier(0.16,1,0.3,1)_0.2s_both]">
+                    <div className="relative group transform transition-all duration-700 hover:scale-[1.01] cursor-default perspective-1000">
 
-                        {/* Outer glow on hover */}
-                        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-300 via-blue-300 to-sky-300
-                                        opacity-0 group-hover:opacity-40 blur-xl rounded-2xl
-                                        transition-opacity duration-500 pointer-events-none" />
+                        {/* Sophisticated Outer glow on hover */}
+                        <div className="absolute -inset-2 bg-gradient-to-r from-orange-200 via-yellow-200 to-orange-200
+                            opacity-0 group-hover:opacity-40 blur-2xl rounded-[2.5rem]
+                            transition-opacity duration-700 pointer-events-none" />
 
-                        {/* Glass Frame */}
-                        <div className="relative bg-white/70 backdrop-blur-xl border border-gray-100
-                                        group-hover:border-indigo-100 p-6 rounded-2xl shadow-xl
-                                        transition-all duration-500
-                                        group-hover:shadow-[0_20px_60px_rgba(99,102,241,0.15)]">
+                        {/* Outer Glass Frame */}
+                        <div className="relative bg-white/40 backdrop-blur-2xl border border-white/80 p-3 md:p-5 rounded-[2.5rem] shadow-[0_8px_32px_rgba(0,0,0,0.04),inset_0_2px_4px_rgba(255,255,255,0.8)]
+                            transition-all duration-700 group-hover:border-white group-hover:shadow-[0_20px_80px_rgba(249,115,22,0.12),inset_0_2px_4px_rgba(255,255,255,1)]">
 
-                            {/* Top accent line */}
-                            <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl
-                                            bg-gradient-to-r from-indigo-500 via-blue-500 to-sky-400
-                                            scale-x-0 group-hover:scale-x-100
-                                            transition-transform duration-700 origin-left" />
+                            {/* Inner Screen Area */}
+                            <div className="bg-[#fafaf9]/90 rounded-[1.5rem] p-6 md:p-10 relative overflow-hidden border border-slate-100 shadow-inner">
 
-                            {/* Inner Screen */}
-                            <div className="bg-white rounded-xl p-8 relative overflow-hidden">
+                                {/* Soft Screen Reflection */}
+                                <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white/80 to-transparent pointer-events-none" />
 
-                                {/* Light reflection */}
-                                <div className="absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-white/60 to-transparent pointer-events-none" />
+                                {/* UI Header */}
+                                <div className="flex items-center justify-between mb-10 relative z-10 animate-[fadeInDown_0.8s_cubic-bezier(0.16,1,0.3,1)_0.4s_both]">
+                                    <h3 className="text-slate-800 font-extrabold text-2xl tracking-tight">
+                                        Team Workspace
+                                    </h3>
+                                    {/* Mock UI Elements */}
+                                    <div className="flex gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-slate-200" />
+                                        <div className="w-3 h-3 rounded-full bg-slate-200" />
+                                        <div className="w-3 h-3 rounded-full bg-slate-200" />
+                                    </div>
+                                </div>
 
-                                {/* Shimmer sweep on hover */}
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-50/40 to-transparent
-                                                -translate-x-full group-hover:translate-x-full
-                                                transition-transform duration-1000 ease-in-out pointer-events-none" />
-
-                                <h3 className="text-indigo-600 font-bold mb-8 text-xl relative z-10 animate-[fadeInDown_0.6s_ease_0.4s_both]">
-                                    Team Workspace
-                                </h3>
-
+                                {/* Feature Cards Grid */}
                                 <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 text-left">
                                     {[
                                         { title: "Tasks", desc: "Organize and assign tasks clearly", delay: "0.5s" },
@@ -82,28 +83,28 @@ const FeaturesProductVisualSection = () => {
                                         <div
                                             key={i}
                                             style={{ animationDelay: item.delay }}
-                                            className="relative bg-blue-50 p-5 rounded-xl
-                                                       border border-gray-100 hover:border-indigo-100
-                                                       hover:-translate-y-2
-                                                       hover:shadow-[0_8px_30px_rgba(99,102,241,0.15)]
-                                                       transition-all duration-300 cursor-pointer group/card overflow-hidden
-                                                       animate-[fadeInUp_0.6s_ease_both]"
+                                            className="relative bg-white p-6 rounded-2xl
+                                                border border-slate-100 hover:border-orange-200/60
+                                                hover:-translate-y-1.5
+                                                shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_24px_rgba(249,115,22,0.06)]
+                                                transition-all duration-500 cursor-pointer group/card overflow-hidden
+                                                animate-[fadeInUp_0.8s_cubic-bezier(0.16,1,0.3,1)_both]"
                                         >
-                                            {/* Card top accent */}
+                                            {/* Card Top Accent Line */}
                                             <div className="absolute top-0 left-0 right-0 h-[2px]
-                                                            bg-gradient-to-r from-indigo-500 via-blue-500 to-sky-400
-                                                            scale-x-0 group-hover/card:scale-x-100
-                                                            transition-transform duration-500 origin-left rounded-t-xl" />
+                                                bg-gradient-to-r from-orange-400 via-orange-300 to-yellow-400
+                                                scale-x-0 group-hover/card:scale-x-100
+                                                transition-transform duration-500 origin-left rounded-t-2xl" />
 
-                                            {/* Card hover glow */}
-                                            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-50 to-sky-50
-                                                            opacity-0 group-hover/card:opacity-100 transition-opacity duration-300" />
+                                            {/* Subtle Inner Card Glow */}
+                                            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-orange-50/30 to-yellow-50/30
+                                                opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
                                             <div className="relative z-10">
-                                                <p className="font-bold text-lg text-gray-800 group-hover/card:text-indigo-600 transition-colors duration-300">
+                                                <p className="font-bold text-lg text-slate-800 group-hover/card:text-orange-600 transition-colors duration-300 tracking-tight">
                                                     {item.title}
                                                 </p>
-                                                <p className="text-sm text-gray-500 mt-1 leading-relaxed">
+                                                <p className="text-sm text-slate-500 mt-2 leading-relaxed font-medium">
                                                     {item.desc}
                                                 </p>
                                             </div>
@@ -116,14 +117,19 @@ const FeaturesProductVisualSection = () => {
                 </div>
             </div>
 
+            {/* Premium Developer Keyframes */}
             <style>{`
                 @keyframes fadeInDown {
-                    from { opacity: 0; transform: translateY(-24px); }
-                    to   { opacity: 1; transform: translateY(0); }
+                    from { opacity: 0; transform: translateY(-24px); filter: blur(8px); }
+                    to { opacity: 1; transform: translateY(0); filter: blur(0); }
                 }
                 @keyframes fadeInUp {
-                    from { opacity: 0; transform: translateY(28px); }
-                    to   { opacity: 1; transform: translateY(0); }
+                    from { opacity: 0; transform: translateY(32px); filter: blur(8px); }
+                    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+                }
+                @keyframes breathe {
+                    0% { transform: scale(1) translateY(0); opacity: 0.8; }
+                    100% { transform: scale(1.05) translateY(-15px); opacity: 0.5; }
                 }
             `}</style>
         </section>
