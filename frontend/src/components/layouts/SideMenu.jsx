@@ -143,7 +143,7 @@ const SideMenu = ({ activeMenu }) => {
 
     return (
         <>
-            <div className='w-[235px] lg:w-[245px] h-screen flex flex-col bg-white/80 backdrop-blur-xl border-r border-slate-200/80 z-20'>
+            <div className='w-[235px] lg:w-[245px] h-screen flex flex-col bg-white/80 backdrop-blur-xl border-r border-slate-200/80 z-25 overflow-hidden'>
 
                 {/* ================= PROFILE ================= */}
 
@@ -203,7 +203,7 @@ const SideMenu = ({ activeMenu }) => {
                     className="flex-1 overflow-y-scroll py-2 px-2 custom-side-scroll"
                 >
 
-                    <div className='space-y-1 pb-10'>
+                    <div className='space-y-1 pb-24'>
 
                         <div className='h-px bg-slate-100 mx-2 mb-2 mt-1' />
 
