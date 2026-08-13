@@ -92,7 +92,7 @@ const RoleSelector = ({ onSelect, onBack }) => (
                 to="/login"
                 className="font-bold text-orange-600 hover:text-orange-700 underline-offset-4 hover:underline transition-all duration-300"
             >
-                Login
+                Sign in
             </Link>
         </p>
 
@@ -273,7 +273,7 @@ const AdminForm = ({ onBack }) => {
                 <p className="text-sm text-slate-500 text-center leading-relaxed font-medium pt-1">
                     Already have an account?{" "}
                     <Link to="/login" className="font-bold text-orange-600 hover:text-orange-700 underline-offset-4 hover:underline transition-all duration-300">
-                        Login
+                        Sign in
                     </Link>
                 </p>
 
