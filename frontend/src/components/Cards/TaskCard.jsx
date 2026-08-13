@@ -27,11 +27,11 @@ const TaskCard = ({
 }) => {
 
     const accentColors = [
-        'border-l-cyan-500',
-        'border-l-violet-500',
-        'border-l-emerald-500',
-        'border-l-rose-500',
-        'border-l-amber-500'
+        'border-l-orange-500',
+        'border-l-amber-500',
+        'border-l-yellow-500',
+        'border-l-rose-400',
+        'border-l-fuchsia-400'
     ];
 
     const currentAccentColor = accentColors[index % 5];
@@ -39,13 +39,13 @@ const TaskCard = ({
     const getStatusTagColor = () => {
         switch (status) {
             case "In Progress":
-                return 'text-cyan-700 bg-cyan-50 border border-cyan-200';
+                return 'text-amber-700 bg-amber-50 border border-amber-200';
 
             case "Completed":
-                return 'text-lime-700 bg-lime-50 border border-lime-200';
+                return 'text-emerald-700 bg-emerald-50 border border-emerald-200';
 
             default:
-                return 'text-violet-700 bg-violet-50 border border-violet-200';
+                return 'text-slate-700 bg-slate-50 border border-slate-200';
         }
     }
 
@@ -65,33 +65,33 @@ const TaskCard = ({
     return (
         <div
             onClick={onClick}
-            className='group relative w-full bg-white rounded-3xl border border-gray-200/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden cursor-pointer'
+            className='group relative w-full bg-white/80 backdrop-blur-xl rounded-[2rem] border border-slate-200/80 shadow-sm hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300 overflow-hidden cursor-pointer'
         >
 
-            <div className='p-3'>
+            <div className='p-4'>
 
                 {/* Header */}
                 <div className='flex items-start justify-between gap-1'>
 
-                    <div className='flex flex-wrap items-center gap-1'>
+                    <div className='flex flex-wrap items-center gap-1.5'>
                         <div
-                            className={`text-[9px] sm:text-[10px] font-semibold px-2 py-1 rounded-full ${getStatusTagColor()}`}
+                            className={`text-[9px] sm:text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide ${getStatusTagColor()}`}
                         >
                             {status}
                         </div>
 
                         <div
-                            className={`text-[9px] sm:text-[10px] font-semibold px-2 py-1 rounded-full ${getPriorityTagColor()}`}
+                            className={`text-[9px] sm:text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide ${getPriorityTagColor()}`}
                         >
                             {priority} Priority
                         </div>
                     </div>
 
                     {attachmentCount > 0 && (
-                        <div className='flex items-center gap-1 bg-blue-50 border border-blue-100 px-2 py-1 rounded-full shrink-0'>
-                            <LuPaperclip className='text-blue-600 text-[10px]' />
+                        <div className='flex items-center gap-1.5 bg-orange-50 border border-orange-100 px-2 py-1 rounded-full shrink-0'>
+                            <LuPaperclip className='text-orange-500 text-[11px]' />
 
-                            <span className='text-[9px] font-semibold text-gray-700'>
+                            <span className='text-[10px] font-bold text-orange-700'>
                                 {attachmentCount}
                             </span>
                         </div>
@@ -100,101 +100,100 @@ const TaskCard = ({
 
                 {/* Title to Progress Vertical Line */}
                 <div
-                    className={`mt-2.5 -ml-3 pl-3 border-l-[3px] ${currentAccentColor}`}
+                    className={`mt-4 -ml-4 pl-4 border-l-[3px] ${currentAccentColor}`}
                 >
 
                     {/* Title & Description */}
                     <div>
 
-                        <h3 className='text-[13px] sm:text-[14px] font-bold text-gray-900 line-clamp-2 leading-5 group-hover:text-primary transition-colors'>
+                        <h3 className='text-[14px] sm:text-[15px] font-extrabold text-slate-900 line-clamp-2 leading-tight group-hover:text-orange-600 transition-colors duration-300 tracking-tight'>
                             {title}
                         </h3>
 
-                        <p className='text-[10px] sm:text-[11px] text-gray-600 mt-1 line-clamp-2 leading-4'>
+                        <p className='text-[11px] sm:text-[12px] text-slate-500 font-medium mt-1.5 line-clamp-2 leading-snug'>
                             {description}
                         </p>
                     </div>
 
                     {/* Progress Section */}
-                    <div className='mt-2.5 bg-gray-50 border border-gray-100 rounded-2xl p-2'>
+                    <div className='mt-4 bg-slate-50 border border-slate-100 rounded-2xl p-3 shadow-sm'>
 
                         <div className='flex items-center justify-between gap-2'>
 
-                            <div className='flex items-center gap-1.5'>
+                            <div className='flex items-center gap-2'>
 
-                                <div className='w-7 h-7 rounded-md bg-white border border-gray-100 shadow-sm flex items-center justify-center'>
-                                    <LuCircleCheckBig className='text-primary text-xs' />
+                                <div className='w-8 h-8 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center'>
+                                    <LuCircleCheckBig className='text-orange-500 text-[14px]' />
                                 </div>
 
                                 <div>
-                                    <p className='text-[8px] text-gray-500 font-medium'>
+                                    <p className='text-[9px] text-slate-500 font-bold uppercase tracking-wider'>
                                         Progress
                                     </p>
 
-                                    <p className='text-[10px] sm:text-[11px] font-bold text-gray-900'>
+                                    <p className='text-[11px] sm:text-[12px] font-extrabold text-slate-800'>
                                         {completedTodoCount} / {todoChecklist.length || 0} Done
                                     </p>
                                 </div>
                             </div>
 
                             <div>
-                                <p className='text-sm font-bold text-primary'>
+                                <p className='text-[15px] font-black text-orange-600'>
                                     {progress}%
                                 </p>
                             </div>
                         </div>
 
-                        <div className='mt-1.5'>
+                        <div className='mt-2.5'>
                             <Progress progress={progress} status={status} />
                         </div>
                     </div>
                 </div>
 
                 {/* Dates */}
-                <div className='grid grid-cols-2 gap-1.5 mt-2.5'>
+                <div className='grid grid-cols-2 gap-2 mt-4'>
 
-                    <div className='bg-gray-50 border border-gray-100 rounded-2xl p-2'>
+                    <div className='bg-slate-50 border border-slate-100 rounded-2xl p-2.5 shadow-sm'>
 
-                        <div className='flex items-center gap-1 mb-1'>
-                            <LuCalendarDays className='text-gray-500 text-[9px]' />
+                        <div className='flex items-center gap-1.5 mb-1'>
+                            <LuCalendarDays className='text-slate-400 text-[11px]' />
 
-                            <label className='text-[8px] text-gray-500 font-medium'>
+                            <label className='text-[9px] text-slate-500 font-bold uppercase tracking-wider'>
                                 Start Date
                             </label>
                         </div>
 
-                        <p className='text-[9px] sm:text-[10px] font-semibold text-gray-900'>
+                        <p className='text-[10px] sm:text-[11px] font-bold text-slate-800 tracking-tight'>
                             {moment(createdAt).format("Do MMM YYYY")}
                         </p>
                     </div>
 
-                    <div className='bg-gray-50 border border-gray-100 rounded-2xl p-2'>
+                    <div className='bg-slate-50 border border-slate-100 rounded-2xl p-2.5 shadow-sm'>
 
-                        <div className='flex items-center gap-1 mb-1'>
-                            <LuCalendarDays className='text-gray-500 text-[9px]' />
+                        <div className='flex items-center gap-1.5 mb-1'>
+                            <LuCalendarDays className='text-slate-400 text-[11px]' />
 
-                            <label className='text-[8px] text-gray-500 font-medium'>
+                            <label className='text-[9px] text-slate-500 font-bold uppercase tracking-wider'>
                                 Due Date
                             </label>
                         </div>
 
-                        <p className='text-[9px] sm:text-[10px] font-semibold text-gray-900'>
+                        <p className='text-[10px] sm:text-[11px] font-bold text-slate-800 tracking-tight'>
                             {moment(dueDate).format("Do MMM YYYY")}
                         </p>
                     </div>
                 </div>
 
                 {/* Footer */}
-                <div className='flex items-center justify-between gap-1.5 mt-2.5 pt-2 border-t border-gray-100'>
+                <div className='flex items-center justify-between gap-2 mt-4 pt-4 border-t border-slate-100'>
 
                     <AvatarGroup avatars={assignedTo || []} />
 
                     <button
-                        className='flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 border border-blue-500 text-white text-[10px] sm:text-[11px] font-semibold px-5 py-2.5 rounded-3xl transition-all duration-300 cursor-pointer active:scale-95 shadow-sm hover:shadow-md'
+                        className='flex items-center justify-center gap-1.5 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 border border-orange-400/50 text-white text-[11px] sm:text-[12px] font-bold px-5 py-2.5 rounded-full transition-all duration-300 cursor-pointer active:scale-95 shadow-[0_4px_12px_rgba(249,115,22,0.25)] hover:shadow-[0_6px_16px_rgba(249,115,22,0.35)] hover:-translate-y-0.5'
                     >
                         View Details
-
-                        <LuArrowRight className='text-[13px]' />
+                        <LuArrowRight className='text-[14px]' />
                     </button>
                 </div>
             </div>

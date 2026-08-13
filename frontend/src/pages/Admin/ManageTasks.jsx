@@ -24,12 +24,12 @@ import toast from 'react-hot-toast';
 
 const SkeletonBlock = ({ className }) => (
     <div
-        className={`bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:200%_100%] animate-shimmer rounded-xl ${className}`}
+        className={`bg-gradient-to-r from-slate-100 via-orange-50 to-slate-100 bg-[length:200%_100%] animate-shimmer rounded-xl ${className}`}
     />
 );
 
 const TaskCardSkeleton = () => (
-    <div className='bg-white border border-gray-100 rounded-3xl p-5 shadow-sm space-y-4'>
+    <div className='bg-white/70 backdrop-blur-xl border border-white/80 rounded-[2rem] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-4'>
         <div className='flex items-center justify-between'>
             <SkeletonBlock className='h-5 w-20' />
             <SkeletonBlock className='h-5 w-16' />
@@ -66,7 +66,7 @@ const ManageTasksSkeleton = () => (
             {[...Array(4)].map((_, i) => (
                 <div
                     key={i}
-                    className='bg-white border border-gray-100 rounded-3xl p-5 space-y-3'
+                    className='bg-white/70 backdrop-blur-xl border border-white/80 rounded-[2rem] p-5 space-y-3 shadow-[0_4px_20px_rgba(0,0,0,0.03)]'
                 >
                     <SkeletonBlock className='h-5 w-16' />
                     <SkeletonBlock className='h-8 w-12' />
@@ -316,33 +316,33 @@ const ManageTasks = () => {
                     {/* Header */}
                     {/* ───────────────────────────────────── */}
 
-                    <div className='flex flex-row items-center justify-between gap-3'>
+                    <div className='flex flex-col md:flex-row md:items-center justify-between gap-4'>
 
                         <div className='min-w-0'>
-                            <h1 className='text-xl md:text-3xl font-bold text-gray-900 truncate'>
+                            <h1 className='text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight truncate'>
                                 Manage Tasks
                             </h1>
 
-                            <p className='hidden sm:block text-sm text-gray-500 mt-1'>
+                            <p className='hidden sm:block text-sm text-slate-500 mt-1 font-medium'>
                                 Organize, track and manage team productivity.
                             </p>
                         </div>
 
-                        <div className='flex items-center gap-2 flex-shrink-0'>
+                        <div className='flex items-center gap-3 flex-shrink-0'>
 
                             <button
                                 onClick={getAllTasks}
-                                className='h-10 w-10 sm:w-auto sm:px-4 sm:h-11 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center gap-2 text-sm font-medium transition-all cursor-pointer'
+                                className='h-10 w-10 sm:w-auto sm:px-4 sm:h-11 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center gap-2 text-sm font-bold text-slate-700 hover:text-slate-900 shadow-sm transition-all cursor-pointer hover:shadow-md'
                             >
                                 <LuRefreshCcw
-                                    className={`${refreshing ? "animate-spin" : ""}`}
+                                    className={`${refreshing ? "animate-spin text-orange-500" : ""}`}
                                 />
                                 <span className='hidden sm:inline'>Refresh</span>
                             </button>
 
                             <button
                                 onClick={handleDownloadReport}
-                                className='h-10 w-10 sm:w-auto sm:px-5 sm:h-11 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center gap-2 font-medium shadow-sm transition-all cursor-pointer'
+                                className='h-10 w-10 sm:w-auto sm:px-5 sm:h-11 rounded-2xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 flex items-center justify-center gap-2 text-sm font-bold shadow-sm transition-all cursor-pointer hover:shadow-md'
                             >
                                 <LuFileSpreadsheet className='text-lg' />
                                 <span className='hidden sm:inline'>Export</span>
@@ -350,11 +350,10 @@ const ManageTasks = () => {
 
                             <button
                                 onClick={() => navigate("/admin/create-task")}
-                                className='h-10 px-3 sm:h-11 sm:px-5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 font-medium shadow-sm transition-all cursor-pointer'
+                                className='h-10 px-4 sm:h-11 sm:px-6 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 hover:opacity-95 text-white flex items-center gap-2 text-sm font-bold shadow-[0_6px_20px_rgba(249,115,22,0.3)] transition-all cursor-pointer hover:shadow-[0_8px_25px_rgba(249,115,22,0.4)] hover:-translate-y-0.5 active:scale-95'
                             >
-                                <LuPlus className='text-lg' />
+                                <LuPlus className='text-lg stroke-[3]' />
                                 <span className='hidden sm:inline'>Create Task</span>
-                                {/* <span className='sm:hidden text-sm'></span> */}
                             </button>
 
                         </div>
@@ -365,13 +364,13 @@ const ManageTasks = () => {
                     {/* Filters */}
                     {/* ───────────────────────────────────── */}
 
-                    <div className='flex flex-col xl:flex-row xl:items-center gap-4'>
+                    <div className='flex flex-col xl:flex-row xl:items-center gap-4 bg-white/60 backdrop-blur-xl p-3 rounded-3xl border border-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)]'>
 
                         {/* Search */}
 
                         <div className='relative flex-1'>
 
-                            <LuSearch className='absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg' />
+                            <LuSearch className='absolute left-4 top-1/2 -translate-y-1/2 text-orange-400 text-lg' />
 
                             <input
                                 type='text'
@@ -380,14 +379,14 @@ const ManageTasks = () => {
                                 onChange={(e) =>
                                     setSearchQuery(e.target.value)
                                 }
-                                className='w-full h-12 pl-11 pr-4 rounded-2xl border border-gray-200 bg-white outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-sm'
+                                className='w-full h-12 pl-11 pr-4 rounded-2xl border border-slate-200 bg-white outline-none focus:ring-4 focus:ring-orange-500/20 focus:border-orange-400 text-sm font-medium transition-all shadow-sm'
                             />
 
                         </div>
 
                         {/* Tabs */}
 
-                        <div className='overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0'>
+                        <div className='overflow-x-auto scrollbar-hide -mx-4 px-4 xl:mx-0 xl:px-0'>
 
                             <div className='min-w-max'>
                                 <TaskStatusTabs
@@ -407,17 +406,17 @@ const ManageTasks = () => {
 
                     {filteredTasks.length === 0 ? (
 
-                        <div className='bg-white border border-dashed border-gray-200 rounded-3xl py-20 px-6 flex flex-col items-center justify-center text-center'>
+                        <div className='bg-slate-50/50 border border-dashed border-slate-200 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center mt-6'>
 
-                            <div className='w-24 h-24 rounded-3xl bg-blue-50 flex items-center justify-center mb-6'>
-                                <LuListFilter className='text-5xl text-blue-500' />
+                            <div className='w-24 h-24 rounded-[2rem] bg-orange-50 border border-orange-100 flex items-center justify-center mb-6 shadow-sm'>
+                                <LuListFilter className='text-5xl text-orange-500' />
                             </div>
 
-                            <h3 className='text-2xl font-bold text-gray-800'>
+                            <h3 className='text-2xl font-extrabold text-slate-800 tracking-tight'>
                                 No Tasks Found
                             </h3>
 
-                            <p className='text-gray-500 max-w-md mt-3 leading-relaxed'>
+                            <p className='text-slate-500 max-w-md mt-3 leading-relaxed font-medium'>
                                 {searchQuery
                                     ? "No tasks matched your search. Try different keywords."
                                     : filterStatus === "All"
@@ -428,9 +427,9 @@ const ManageTasks = () => {
 
                             <button
                                 onClick={() => navigate("/admin/create-task")}
-                                className='mt-8 h-12 px-6 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-medium flex items-center gap-2 transition-all'
+                                className='mt-8 h-12 px-8 rounded-2xl bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold flex items-center gap-2 shadow-[0_6px_20px_rgba(249,115,22,0.3)] hover:shadow-[0_8px_25px_rgba(249,115,22,0.4)] transition-all cursor-pointer hover:-translate-y-0.5 active:scale-95'
                             >
-                                <LuPlus />
+                                <LuPlus className='text-lg stroke-[3]' />
                                 Create Task
                             </button>
 
@@ -443,9 +442,9 @@ const ManageTasks = () => {
 
                             <div className='flex items-center justify-between'>
 
-                                <p className='text-sm text-gray-500'>
+                                <p className='text-sm text-slate-500 font-medium'>
                                     Showing{" "}
-                                    <span className='font-semibold text-gray-900'>
+                                    <span className='font-bold text-slate-900'>
                                         {filteredTasks.length}
                                     </span>{" "}
                                     tasks
@@ -455,7 +454,7 @@ const ManageTasks = () => {
 
                             {/* Tasks Grid */}
 
-                            <div className='grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5'>
+                            <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5'>
 
                                 {filteredTasks.map((item, index) => (
 

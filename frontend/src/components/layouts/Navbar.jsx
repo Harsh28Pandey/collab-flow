@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import logo from "../../assets/favicon.png";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import { LuSparkles } from "react-icons/lu";
 import SideMenu from './SideMenu.jsx';
@@ -25,7 +24,7 @@ const Navbar = ({ activeMenu }) => {
     return (
         <>
             {/* TOP NAVBAR */}
-            <div className='fixed top-0 left-0 z-[60] w-full bg-white/70 backdrop-blur-2xl border-b border-blue-100 shadow-sm'>
+            <div className='fixed top-0 left-0 z-[60] w-full bg-white/80 backdrop-blur-2xl border-b border-slate-200/80 shadow-[0_2px_10px_rgba(0,0,0,0.02)]'>
 
                 <div className='h-[64px] px-4 sm:px-6 lg:px-8 flex items-center justify-between'>
 
@@ -34,7 +33,7 @@ const Navbar = ({ activeMenu }) => {
 
                         {/* MOBILE MENU BUTTON */}
                         <button
-                            className='lg:hidden w-11 h-11 rounded-2xl flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 text-blue-700 transition-all duration-300 active:scale-95 shadow-sm'
+                            className='lg:hidden w-10 h-10 rounded-xl flex items-center justify-center bg-orange-50 hover:bg-orange-100 text-orange-600 transition-all duration-300 active:scale-95 shadow-sm border border-orange-100/50'
                             onClick={() => setOpenSideMenu(!openSideMenu)}
                         >
                             {openSideMenu
@@ -43,30 +42,22 @@ const Navbar = ({ activeMenu }) => {
                             }
                         </button>
 
-                        {/* LOGO */}
+                        {/* LOGO (Icon removed, updated to text gradient) */}
                         <div
                             onClick={() => navigate("/")}
                             className='group flex items-center gap-3 cursor-pointer select-none'
                         >
-
-                            <div className='w-11 h-11 flex items-center justify-center rounded-2xl bg-white shadow-md border border-blue-100 group-hover:scale-105 transition-all duration-300'>
-                                <img
-                                    src={logo}
-                                    alt="Collab Flow Logo"
-                                    className='w-9 h-9 object-contain'
-                                />
-                            </div>
-
-                            <div className='flex flex-col leading-tight'>
-                                <h2 className='text-[17px] sm:text-[19px] font-bold text-gray-900 group-hover:text-blue-600 transition-all duration-300'>
-                                    Collab Flow
+                            <div className='flex flex-col leading-tight justify-center'>
+                                <h2 className='text-xl md:text-2xl font-black text-slate-800 tracking-tight transition-transform duration-300 ease-out group-hover:scale-[1.02]'>
+                                    Collab{" "}
+                                    <span className="bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">
+                                        Flow
+                                    </span>
                                 </h2>
-
-                                <span className='hidden sm:block text-[11px] text-gray-500 font-medium'>
-                                    Smart Team Workspace
+                                <span className='hidden sm:block text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5'>
+                                    Smart Workspace
                                 </span>
                             </div>
-
                         </div>
 
                     </div>
@@ -75,22 +66,22 @@ const Navbar = ({ activeMenu }) => {
                     <div className='hidden sm:flex items-center gap-3'>
 
                         {/* STATUS BADGE */}
-                        <div className='flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r from-emerald-50 to-blue-50 border border-blue-100 shadow-sm'>
+                        <div className='flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm'>
 
-                            <span className='relative flex h-2.5 w-2.5'>
+                            <span className='relative flex h-2 w-2'>
                                 <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75'></span>
-                                <span className='relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500'></span>
+                                <span className='relative inline-flex rounded-full h-2 w-2 bg-emerald-500'></span>
                             </span>
 
-                            <span className='text-[12px] font-semibold text-blue-700'>
-                                Workspace Active
+                            <span className='text-[11px] font-bold text-slate-600 uppercase tracking-wide'>
+                                Active
                             </span>
 
                         </div>
 
                         {/* OPTIONAL ICON BADGE */}
-                        <div className='w-10 h-10 rounded-2xl bg-white border border-blue-100 shadow-sm flex items-center justify-center hover:shadow-md transition-all duration-300 cursor-pointer'>
-                            <LuSparkles className='text-blue-600 text-[18px]' />
+                        <div className='w-9 h-9 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center hover:shadow-md hover:border-orange-200 hover:text-orange-500 text-slate-400 transition-all duration-300 cursor-pointer'>
+                            <LuSparkles className='text-[16px] transition-colors' />
                         </div>
 
                     </div>
@@ -104,33 +95,38 @@ const Navbar = ({ activeMenu }) => {
                 {/* OVERLAY */}
                 <div
                     onClick={() => setOpenSideMenu(false)}
-                    className='absolute inset-0 bg-black/40 backdrop-blur-[4px]'
+                    className='absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity duration-300'
                 />
 
                 {/* SIDEBAR */}
-                <div className={`absolute top-0 left-0 h-screen w-[270px] max-w-[82%] bg-white/90 backdrop-blur-xl border-r border-blue-100 shadow-2xl transition-transform duration-300 ease-out flex flex-col ${openSideMenu ? "translate-x-0" : "-translate-x-full"}`}>
+                <div className={`absolute top-0 left-0 h-screen w-[270px] max-w-[82%] bg-white/95 backdrop-blur-3xl border-r border-slate-200 shadow-[20px_0_40px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col ${openSideMenu ? "translate-x-0" : "-translate-x-full"}`}>
 
                     {/* HEADER */}
-                    <div className='flex items-center justify-between px-4 h-[64px] border-b border-blue-100 bg-white/80'>
+                    <div className='flex items-center justify-between px-4 h-[64px] border-b border-slate-100'>
 
-                        <div className='flex items-center gap-3'>
+                        <div className='flex items-center gap-3 w-full justify-between'>
+
+                            <div
+                                onClick={() => {
+                                    setOpenSideMenu(false);
+                                    navigate("/");
+                                }}
+                                className='flex items-center cursor-pointer group'
+                            >
+                                <h2 className='text-[20px] font-black text-slate-800 tracking-tight transition-transform duration-300 ease-out group-hover:scale-[1.02]'>
+                                    Collab{" "}
+                                    <span className="bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">
+                                        Flow
+                                    </span>
+                                </h2>
+                            </div>
 
                             <button
                                 onClick={() => setOpenSideMenu(false)}
-                                className='w-10 h-10 rounded-2xl flex items-center justify-center bg-blue-50 text-blue-700 active:scale-95 transition-all'
+                                className='w-9 h-9 rounded-xl flex items-center justify-center bg-orange-50 hover:bg-orange-100 text-orange-600 active:scale-95 transition-all'
                             >
                                 <HiOutlineX className='text-[20px]' />
                             </button>
-
-                            <div
-                                onClick={() => navigate("/")}
-                                className='flex items-center gap-2 cursor-pointer'
-                            >
-                                <img src={logo} alt="logo" className='w-9 h-9' />
-                                <h2 className='text-[16px] font-bold text-gray-900'>
-                                    Collab Flow
-                                </h2>
-                            </div>
 
                         </div>
 
