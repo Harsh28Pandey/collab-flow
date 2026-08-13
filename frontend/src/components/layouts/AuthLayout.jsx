@@ -1,13 +1,16 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
 const AuthLayout = ({ children }) => {
+    const navigate = useNavigate();
+
     return (
         <div className='min-h-screen flex bg-[#fafaf9] overflow-hidden relative'>
 
             {/* Subtle Dot Mesh Background */}
             <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_70%_70%_at_50%_50%,#000_70%,transparent_100%)] opacity-50 pointer-events-none" />
 
-            {/* Ethereal Ambient Warm Glows */}
+            {/* Ethereal Ambient Warm Glows (Matching Home/About theme) */}
             <div className='absolute -top-40 -left-40 w-[450px] h-[450px] bg-gradient-to-br from-yellow-200/50 to-orange-100/20 blur-[140px] rounded-full pointer-events-none mix-blend-multiply' />
             <div className='absolute -bottom-40 -right-40 w-[450px] h-[450px] bg-gradient-to-tl from-orange-200/40 to-yellow-100/20 blur-[140px] rounded-full pointer-events-none mix-blend-multiply' />
 
@@ -16,8 +19,11 @@ const AuthLayout = ({ children }) => {
 
                 <div className='w-full max-w-lg'>
 
-                    {/* Logo */}
-                    <div className='mb-6'>
+                    {/* Logo (Now Clickable -> Redirects to Home) */}
+                    <div
+                        className='mb-6 cursor-pointer inline-block'
+                        onClick={() => navigate('/')}
+                    >
                         <h2 className='text-3xl font-extrabold tracking-tight text-slate-900'>
                             Collab{" "}
                             <span className='bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent'>
@@ -39,7 +45,7 @@ const AuthLayout = ({ children }) => {
 
             </div>
 
-            {/* Right Section (Branding / Visual Showcase - Perfectly balanced size, dark grid lines, 4 feature cards) */}
+            {/* Right Section (Branding / Visual Showcase - Light background with Darker Grid Lines & Compact 4-Card Grid) */}
             <div className='hidden lg:flex w-1/2 relative items-center justify-center overflow-hidden bg-[#fafaf9] border-l border-slate-200/80 px-10 xl:px-14 py-8'>
 
                 {/* Background Glows */}
