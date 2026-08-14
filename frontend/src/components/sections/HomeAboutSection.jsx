@@ -2,72 +2,131 @@ import React from "react";
 
 const HomeAboutSection = () => {
     return (
-        <section className="relative py-24 md:py-32 px-4 md:px-6 bg-[#fafaf9] overflow-hidden flex flex-col items-center">
+        <section className="relative py-16 md:py-24 px-4 md:px-6 bg-zinc-950 text-zinc-100 overflow-hidden flex flex-col items-center font-sans">
 
-            {/* Premium Subtle Dot Mesh Background */}
-            <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)] opacity-50 pointer-events-none" />
-
-            {/* Architectural Top Divider */}
-            <div className="absolute top-0 left-0 right-0 flex justify-center opacity-90">
-                <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-orange-200/50 to-transparent" />
-            </div>
+            {/* Premium Developer Grid Background */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_80%,transparent_100%)] opacity-60 pointer-events-none" />
 
             {/* Refined Ethereal Glows (Ambient lighting) */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-gradient-to-tr from-orange-100/40 to-yellow-50/20 blur-[130px] rounded-full animate-[breathe_10s_ease-in-out_infinite_alternate] pointer-events-none mix-blend-multiply" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-gradient-to-tr from-blue-600/10 to-purple-600/10 blur-[100px] rounded-full pointer-events-none mix-blend-screen" />
 
-            <div className="relative z-10 max-w-5xl mx-auto text-center">
+            <div className="relative z-10 max-w-4xl mx-auto text-center w-full">
 
-                {/* Minimalist SaaS Badge */}
-                <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white border border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] mb-8 transition-all duration-300 hover:shadow-[0_4px_12px_rgba(249,115,22,0.08)] cursor-default animate-[fadeInDown_0.8s_cubic-bezier(0.16,1,0.3,1)_both]">
-                    <span className="relative flex h-2 w-2">
-                        <span className="animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite] absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-60"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-gradient-to-r from-orange-500 to-yellow-500"></span>
+                {/* Minimalist Developer Badge */}
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 backdrop-blur-md mb-4 cursor-default animate-[fadeInDown_0.8s_ease-out_both]">
+                    <span className="relative flex h-1.5 w-1.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-400"></span>
                     </span>
-                    <span className="text-xs font-semibold tracking-wider text-slate-600 uppercase">
-                        About Us
+                    <span className="text-[10px] font-bold tracking-widest text-cyan-300 uppercase">
+                        Platform Architecture
                     </span>
                 </div>
 
                 {/* Highly Refined Heading */}
-                <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-8 text-slate-900 leading-[1.1] tracking-tight animate-[fadeInDown_0.8s_cubic-bezier(0.16,1,0.3,1)_0.1s_both]">
+                <h2 className="text-3xl md:text-5xl font-extrabold mb-8 text-white tracking-tight animate-[fadeInDown_0.8s_ease-out_0.1s_both]">
                     What is{" "}
-                    <span className="relative inline-block px-2">
-                        <span className="absolute inset-0 bg-gradient-to-r from-orange-200 to-yellow-100 blur-xl opacity-40 rounded-full" />
-                        <span className="relative bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
+                    <span className="relative inline-block px-1">
+                        {/* Glow Behind Text */}
+                        <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 blur-[25px] opacity-30 rounded-full" />
+                        {/* Gradient Text */}
+                        <span className="relative bg-gradient-to-br from-cyan-300 via-blue-500 to-purple-500 bg-clip-text text-transparent">
                             Collab Flow?
                         </span>
                     </span>
                 </h2>
 
-                {/* Clean, Readable Typography for Description */}
-                <p className="max-w-3xl mx-auto text-lg md:text-2xl text-slate-500 font-medium leading-relaxed tracking-wide animate-[fadeInUp_0.8s_cubic-bezier(0.16,1,0.3,1)_0.2s_both]">
-                    Collab Flow is a modern team collaboration platform that helps teams stay organized, communicate clearly, and manage tasks efficiently — effortlessly eliminating confusion and delays.
-                </p>
+                {/* Developer Terminal UI Container */}
+                <div className="relative mx-auto w-full max-w-3xl group animate-[fadeInUp_0.8s_ease-out_0.2s_both]">
+                    {/* Ambient Glow behind Terminal */}
+                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 rounded-2xl blur-lg opacity-20 group-hover:opacity-40 transition duration-500"></div>
+
+                    <div className="relative bg-zinc-950/80 backdrop-blur-2xl rounded-2xl border border-white/5 shadow-[0_15px_40px_rgba(0,0,0,0.7)] overflow-hidden text-left">
+
+                        {/* Terminal Header */}
+                        <div className="flex items-center px-4 py-2.5 border-b border-white/5 bg-white/[0.02]">
+                            <div className="flex gap-1.5">
+                                <div className="w-2.5 h-2.5 rounded-full bg-red-500/80 shadow-[0_0_6px_rgba(239,68,68,0.5)]"></div>
+                                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80 shadow-[0_0_6px_rgba(234,179,8,0.5)]"></div>
+                                <div className="w-2.5 h-2.5 rounded-full bg-green-500/80 shadow-[0_0_6px_rgba(34,197,94,0.5)]"></div>
+                            </div>
+                            <div className="mx-auto text-[11px] font-mono text-zinc-500 tracking-wider">
+                                collab_flow.config.ts
+                            </div>
+                        </div>
+
+                        {/* Terminal Code Body */}
+                        <div className="p-5 md:p-7 font-mono text-[12.5px] md:text-[14px] leading-relaxed overflow-x-auto scrollbar-hide">
+                            <div className="text-zinc-300">
+                                <span className="text-pink-400">import</span> {'{ '} <span className="text-cyan-300">Workspace</span> {' }'} <span className="text-pink-400">from</span> <span className="text-green-400">'@collab/core'</span>;
+                            </div>
+                            <br />
+                            <div className="text-zinc-300">
+                                <span className="text-blue-400">const</span> <span className="text-zinc-100">CollabFlow</span> <span className="text-pink-400">=</span> <span className="text-blue-400">new</span> <span className="text-yellow-200">Workspace</span>({'{'}
+                            </div>
+                            <div className="pl-4 md:pl-6 text-zinc-400">
+                                <span className="text-cyan-200">mission:</span> <span className="text-green-400">"Eliminate context switching. 100% shipping."</span>,
+                            </div>
+                            <div className="pl-4 md:pl-6 text-zinc-400">
+                                <span className="text-cyan-200">features:</span> {'['}
+                            </div>
+                            <div className="pl-8 md:pl-12 text-green-400">
+                                'Real-time Project Sync',
+                            </div>
+                            <div className="pl-8 md:pl-12 text-green-400">
+                                'Instant Code Execution',
+                            </div>
+                            <div className="pl-8 md:pl-12 text-green-400">
+                                'Seamless Task Orchestration'
+                            </div>
+                            <div className="pl-4 md:pl-6 text-zinc-400">
+                                {']'},
+                            </div>
+                            <div className="pl-4 md:pl-6 text-zinc-400">
+                                <span className="text-cyan-200">performance:</span> <span className="text-purple-400">"Zero Lag"</span>,
+                            </div>
+                            <div className="pl-4 md:pl-6 text-zinc-400">
+                                <span className="text-cyan-200">status:</span> <span className="text-green-400">"Ready to deploy"</span>
+                            </div>
+                            <div className="text-zinc-300">
+                                {'}'});
+                            </div>
+                            <br />
+                            <div className="text-zinc-300">
+                                <span className="text-pink-400">export default</span> <span className="text-zinc-100">CollabFlow</span>;
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Sophisticated Decorative Divider */}
-                <div className="mt-16 flex items-center justify-center gap-4 opacity-80 animate-[fadeInUp_0.8s_cubic-bezier(0.16,1,0.3,1)_0.3s_both]">
-                    <div className="h-[1px] w-24 bg-gradient-to-r from-transparent to-orange-300/80" />
+                <div className="mt-12 flex items-center justify-center gap-4 opacity-80 animate-[fadeInUp_0.8s_ease-out_0.3s_both]">
+                    <div className="h-[1px] w-20 bg-gradient-to-r from-transparent to-blue-500/80" />
                     <div className="relative flex items-center justify-center">
-                        <div className="absolute w-6 h-6 bg-orange-200/50 rounded-full blur-sm" />
-                        <div className="w-2 h-2 rounded-full bg-gradient-to-r from-orange-400 to-yellow-400 shadow-[0_0_12px_rgba(249,115,22,0.6)]" />
+                        <div className="absolute w-5 h-5 bg-blue-500/30 rounded-full blur-md" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
                     </div>
-                    <div className="h-[1px] w-24 bg-gradient-to-l from-transparent to-yellow-300/80" />
+                    <div className="h-[1px] w-20 bg-gradient-to-l from-transparent to-purple-500/80" />
                 </div>
+
             </div>
 
             {/* Premium Developer Keyframes */}
             <style>{`
                 @keyframes fadeInDown {
-                    from { opacity: 0; transform: translateY(-24px); filter: blur(8px); }
+                    from { opacity: 0; transform: translateY(-15px); filter: blur(6px); }
                     to { opacity: 1; transform: translateY(0); filter: blur(0); }
                 }
                 @keyframes fadeInUp {
-                    from { opacity: 0; transform: translateY(32px); filter: blur(8px); }
+                    from { opacity: 0; transform: translateY(15px); filter: blur(6px); }
                     to { opacity: 1; transform: translateY(0); filter: blur(0); }
                 }
-                @keyframes breathe {
-                    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-                    100% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.5; }
+                .scrollbar-hide::-webkit-scrollbar {
+                    display: none;
+                }
+                .scrollbar-hide {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
                 }
             `}</style>
         </section>

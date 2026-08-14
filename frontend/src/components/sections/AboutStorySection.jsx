@@ -1,77 +1,82 @@
 import React from "react";
+import { LuTerminal, LuCode } from "react-icons/lu";
 
 const AboutStorySection = () => {
     return (
-        <section className="relative py-24 md:py-32 px-4 md:px-6 bg-[#fafaf9] overflow-hidden flex flex-col items-center">
+        <section className="relative py-16 md:py-24 px-4 md:px-6 bg-zinc-950 text-zinc-100 overflow-hidden flex flex-col items-center font-sans">
 
-            {/* Premium Subtle Dot Mesh Background */}
-            <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)] opacity-50 pointer-events-none" />
+            {/* Premium Developer Grid Background */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_80%,transparent_100%)] opacity-60 pointer-events-none" />
 
-            {/* Architectural Top Divider (Seamless connection) */}
-            <div className="absolute top-0 left-0 right-0 flex justify-center opacity-90">
-                <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-orange-200/50 to-transparent" />
+            {/* Architectural Top Divider (Neon Glow) */}
+            <div className="absolute top-0 left-0 right-0 flex justify-center opacity-70">
+                <div className="h-[1px] w-full max-w-4xl bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
             </div>
 
-            {/* Refined Ethereal Glows (Ambient Warm Lighting) */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-gradient-to-tr from-yellow-200/30 to-orange-100/20 blur-[130px] rounded-full animate-[breathe_10s_ease-in-out_infinite_alternate] pointer-events-none mix-blend-multiply" />
+            {/* Refined Ethereal Glows (Ambient lighting) */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-gradient-to-tr from-blue-600/10 via-indigo-600/5 to-purple-600/10 blur-[100px] rounded-full pointer-events-none mix-blend-screen" />
 
-            <div className="relative z-10 max-w-5xl mx-auto text-center">
+            <div className="relative z-10 max-w-4xl mx-auto text-center w-full">
 
-                {/* Minimalist SaaS Badge */}
-                <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white border border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] mb-8 transition-all duration-300 hover:shadow-[0_4px_12px_rgba(249,115,22,0.08)] cursor-default animate-[fadeInDown_0.8s_cubic-bezier(0.16,1,0.3,1)_both]">
-                    <span className="relative flex h-2 w-2">
-                        <span className="animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite] absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-60"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-gradient-to-r from-orange-500 to-yellow-500"></span>
+                {/* Minimalist Developer Badge */}
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 backdrop-blur-md mb-4 cursor-default animate-[fadeInDown_0.8s_ease-out_both]">
+                    <span className="relative flex h-1.5 w-1.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-400"></span>
                     </span>
-                    <span className="text-xs font-semibold tracking-wider text-slate-600 uppercase">
-                        Our Story
+                    <span className="text-[10px] font-bold tracking-widest text-cyan-300 uppercase">
+                        Our Genesis Story
                     </span>
                 </div>
 
                 {/* Highly Refined Heading */}
-                <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-8 text-slate-900 leading-[1.1] tracking-tight animate-[fadeInDown_0.8s_cubic-bezier(0.16,1,0.3,1)_0.1s_both]">
+                <h2 className="text-3xl md:text-5xl font-extrabold mb-6 text-white tracking-tight animate-[fadeInDown_0.8s_ease-out_0.1s_both]">
                     How It All{" "}
-                    <span className="relative inline-block px-2">
-                        {/* Soft glow behind text */}
-                        <span className="absolute inset-0 bg-gradient-to-r from-orange-200 to-yellow-100 blur-xl opacity-40 rounded-full" />
-
-                        {/* Crisp Text Gradient */}
-                        <span className="relative bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
+                    <span className="relative inline-block px-1">
+                        <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 blur-[25px] opacity-30 rounded-full" />
+                        <span className="relative bg-gradient-to-br from-cyan-300 via-blue-500 to-purple-500 bg-clip-text text-transparent">
                             Began
                         </span>
                     </span>
                 </h2>
 
-                {/* Clean, Readable Typography for Story Text */}
-                <p className="max-w-3xl mx-auto text-lg md:text-2xl text-slate-500 font-medium leading-relaxed tracking-wide animate-[fadeInUp_0.8s_cubic-bezier(0.16,1,0.3,1)_0.2s_both]">
-                    Collab Flow started as a simple idea to solve everyday team problems — scattered communication, missed tasks, and lack of coordination. We built a platform where everything stays structured, simple, and effortlessly efficient.
+                {/* Clean Typography for Story Text */}
+                <p className="max-w-2xl mx-auto text-base md:text-lg text-zinc-400 font-medium leading-relaxed tracking-wide animate-[fadeInUp_0.8s_ease-out_0.2s_both]">
+                    Collab Flow started as a simple idea to solve everyday engineering friction — context switching, delayed approvals, and scattered chats. We engineered a platform where everything stays structured, lightning-fast, and effortlessly efficient.
                 </p>
 
-                {/* Sophisticated Decorative Divider */}
-                <div className="mt-16 flex items-center justify-center gap-4 opacity-80 animate-[fadeInUp_0.8s_cubic-bezier(0.16,1,0.3,1)_0.3s_both]">
-                    <div className="h-[1px] w-24 bg-gradient-to-r from-transparent to-orange-300/80" />
-                    <div className="relative flex items-center justify-center">
-                        <div className="absolute w-6 h-6 bg-orange-200/50 rounded-full blur-sm" />
-                        <div className="w-2 h-2 rounded-full bg-gradient-to-r from-orange-400 to-yellow-400 shadow-[0_0_12px_rgba(249,115,22,0.6)]" />
+                {/* Developer / Creator Credit Box */}
+                <div className="mt-8 inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-zinc-900/40 border border-white/5 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.5)] animate-[fadeInUp_0.8s_ease-out_0.25s_both]">
+                    <div className="w-8 h-8 rounded-xl bg-zinc-950 border border-white/10 flex items-center justify-center text-cyan-400 shadow-inner">
+                        <LuCode size={16} />
                     </div>
-                    <div className="h-[1px] w-24 bg-gradient-to-l from-transparent to-yellow-300/80" />
+                    <div className="text-left font-mono text-xs">
+                        <div className="text-zinc-500">Backend & UI Developer</div>
+                        <div className="text-zinc-200 font-bold">Harsh Pandey</div>
+                    </div>
+                </div>
+
+                {/* Sophisticated Decorative Divider */}
+                <div className="mt-10 flex items-center justify-center gap-4 opacity-80 animate-[fadeInUp_0.8s_ease-out_0.3s_both]">
+                    <div className="h-[1px] w-20 bg-gradient-to-r from-transparent to-blue-500/80" />
+                    <div className="relative flex items-center justify-center">
+                        <div className="absolute w-5 h-5 bg-blue-500/30 rounded-full blur-md" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
+                    </div>
+                    <div className="h-[1px] w-20 bg-gradient-to-l from-transparent to-purple-500/80" />
                 </div>
 
             </div>
 
-            {/* Premium Developer Keyframes */}
+            {/* Advanced Pro-Level Keyframes */}
             <style>{`
                 @keyframes fadeInDown {
-                    from { opacity: 0; transform: translateY(-24px); filter: blur(8px); }
+                    from { opacity: 0; transform: translateY(-15px); filter: blur(6px); }
                     to { opacity: 1; transform: translateY(0); filter: blur(0); }
                 }
                 @keyframes fadeInUp {
-                    from { opacity: 0; transform: translateY(32px); filter: blur(8px); }
+                    from { opacity: 0; transform: translateY(15px); filter: blur(6px); }
                     to { opacity: 1; transform: translateY(0); filter: blur(0); }
-                }
-                @keyframes breathe {
-                    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-                    100% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.5; }
                 }
             `}</style>
         </section>

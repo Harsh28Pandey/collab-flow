@@ -12,26 +12,26 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #fafaf9;
+  background: #09090b;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #f97316, #eab308);
+  background: linear-gradient(180deg, #38bdf8, #6366f1);
   border-radius: 10px;
-  border: 1px solid #fafaf9;
+  border: 1px solid #09090b;
   transition: all 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #ea580c, #ca8a04);
+  background: linear-gradient(180deg, #0ea5e9, #4f46e5);
 }
 
 /* Firefox */
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #f97316 #fafaf9;
+  scrollbar-color: #38bdf8 #09090b;
 }
 
 
@@ -43,8 +43,8 @@
   --font-display: "Poppins", sans-serif;
   --breakpoint-3xl: 1920px;
 
-  --color-primary: #f97316;
-  --color-secondary: #eab308;
+  --color-primary: #38bdf8;
+  --color-secondary: #6366f1;
 }
 
 
@@ -58,8 +58,8 @@
   }
 
   body {
-    background-color: #fafaf9;
-    color: #0f172a;
+    background-color: #09090b;
+    color: #f4f4f5;
     overflow-x: hidden;
   }
 }
@@ -70,12 +70,12 @@
    ========================================================= */
 
 .input-box {
-  @apply w-full flex justify-between gap-3 text-sm text-slate-900 bg-white/80 rounded-2xl px-4 py-3 mb-4 mt-3 border border-slate-200 outline-none transition-all duration-300;
+  @apply w-full flex justify-between gap-3 text-sm text-zinc-100 bg-zinc-900/80 rounded-2xl px-4 py-3 mb-4 mt-3 border border-white/10 outline-none transition-all duration-300;
 }
 
 .input-box:focus {
-  border-color: #f97316;
-  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
 }
 
 
@@ -84,14 +84,14 @@
    ========================================================= */
 
 .btn-primary {
-  @apply w-full text-sm font-bold text-white bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 px-4 py-3 rounded-2xl my-2 transition-all duration-300 ease-out cursor-pointer;
+  @apply w-full text-sm font-bold text-white bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 px-4 py-3 rounded-2xl my-2 transition-all duration-300 ease-out cursor-pointer;
 
-  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.3);
+  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(249, 115, 22, 0.4);
+  box-shadow: 0 6px 25px rgba(56, 189, 248, 0.4);
 }
 
 .btn-primary:active {
@@ -101,8 +101,8 @@
 .btn-primary:focus {
   outline: none;
   box-shadow:
-    0 0 0 2px #fb923c,
-    0 0 0 4px #ffffff;
+    0 0 0 2px #38bdf8,
+    0 0 0 4px #09090b;
 }
 
 
@@ -111,17 +111,18 @@
    ========================================================= */
 
 .card {
-  @apply bg-white/80 backdrop-blur-xl p-6 rounded-[2rem] border border-white transition-all duration-500;
+  @apply bg-zinc-900/80 backdrop-blur-xl p-6 rounded-[2rem] border border-white/5 transition-all duration-500;
 
   box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.03),
-    inset 0 1px 1px rgba(255, 255, 255, 1);
+    0 4px 24px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05);
 }
 
 .card:hover {
+  border-color: rgba(56, 189, 248, 0.3);
   box-shadow:
-    0 20px 40px rgba(249, 115, 22, 0.08),
-    inset 0 1px 1px rgba(255, 255, 255, 1);
+    0 20px 40px rgba(0, 0, 0, 0.8),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
 
@@ -130,12 +131,13 @@
    ========================================================= */
 
 .card-btn {
-  @apply flex items-center gap-3 text-[13px] font-semibold text-slate-700 bg-slate-100 px-4 py-2 rounded-2xl border border-slate-200/60 cursor-pointer transition-all duration-300;
+  @apply flex items-center gap-3 text-[13px] font-semibold text-zinc-300 bg-zinc-900 px-4 py-2 rounded-2xl border border-white/5 cursor-pointer transition-all duration-300;
 }
 
 .card-btn:hover {
-  color: #ea580c;
-  background-color: #fff7ed;
+  color: #38bdf8;
+  background-color: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.3);
 }
 
 
@@ -144,7 +146,7 @@
    ========================================================= */
 
 .card-btn-fill {
-  @apply flex items-center gap-3 text-[12px] font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 px-4 py-2 rounded-2xl border border-orange-500 cursor-pointer shadow-sm transition-all duration-300;
+  @apply flex items-center gap-3 text-[12px] font-semibold text-white bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 rounded-2xl border border-cyan-500/30 cursor-pointer shadow-sm transition-all duration-300;
 }
 
 .card-btn-fill:hover {
@@ -157,9 +159,9 @@
    ========================================================= */
 
 .form-card {
-  @apply bg-white/80 backdrop-blur-xl p-8 rounded-[2.5rem] border border-slate-200/80;
+  @apply bg-zinc-900/80 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/5;
 
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
 }
 
 
@@ -168,16 +170,16 @@
    ========================================================= */
 
 .form-input {
-  @apply w-full text-sm text-slate-900 outline-none bg-white border border-slate-200 px-4 py-3.5 rounded-2xl mt-2 transition-all duration-300;
+  @apply w-full text-sm text-zinc-100 outline-none bg-zinc-900 border border-white/10 px-4 py-3.5 rounded-2xl mt-2 transition-all duration-300;
 }
 
 .form-input::placeholder {
-  color: #94a3b8;
+  color: #71717a;
 }
 
 .form-input:focus {
-  border-color: #f97316;
-  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.25);
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
 }
 
 
@@ -187,7 +189,7 @@
 
 .custom-date-input::-webkit-calendar-picker-indicator {
   cursor: pointer;
-  filter: sepia(100%) hue-rotate(330deg) saturate(500%);
+  filter: invert(100%) hue-rotate(180deg) saturate(200%);
 }
 
 
@@ -196,14 +198,14 @@
    ========================================================= */
 
 .add-btn {
-  @apply w-full flex items-center justify-center gap-2 text-sm md:text-base font-bold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-2xl px-6 py-3 transition-all duration-300 ease-out cursor-pointer;
+  @apply w-full flex items-center justify-center gap-2 text-sm md:text-base font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl px-6 py-3 transition-all duration-300 ease-out cursor-pointer;
 
-  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.3);
+  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
 }
 
 .add-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(249, 115, 22, 0.4);
+  box-shadow: 0 6px 25px rgba(56, 189, 248, 0.4);
 }
 
 .add-btn:active {
@@ -216,14 +218,14 @@
    ========================================================= */
 
 .download-btn {
-  @apply inline-flex items-center gap-2 text-xs md:text-[13px] font-semibold text-amber-900 bg-amber-100/80 px-3 py-2 rounded-2xl border border-amber-200 cursor-pointer transition-all duration-300 ease-out;
+  @apply inline-flex items-center gap-2 text-xs md:text-[13px] font-semibold text-cyan-300 bg-cyan-500/10 px-3 py-2 rounded-2xl border border-cyan-500/20 cursor-pointer transition-all duration-300 ease-out;
 }
 
 .download-btn:hover {
-  background-color: #fde68a;
-  border-color: #fbbf24;
-  color: #451a03;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background-color: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
 .download-btn:active {
@@ -236,14 +238,15 @@
    ========================================================= */
 
 .user-card {
-  @apply bg-white/80 backdrop-blur-xl p-6 rounded-[2rem] border border-white transition-all duration-500 ease-out relative overflow-hidden;
+  @apply bg-zinc-900/80 backdrop-blur-xl p-6 rounded-[2rem] border border-white/5 transition-all duration-500 ease-out relative overflow-hidden;
 
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
 }
 
 .user-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(249, 115, 22, 0.08);
+  border-color: rgba(56, 189, 248, 0.3);
+  box-shadow: 0 20px 40px rgba(56, 189, 248, 0.1);
 }
 
 

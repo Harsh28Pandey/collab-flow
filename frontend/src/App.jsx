@@ -43,6 +43,7 @@ import AdminCalendar from './pages/Admin/AdminCalendar.jsx'
 import ManageExpenses from './pages/Admin/ManageExpenses.jsx'
 import ManageHolidays from './pages/Admin/ManageHolidays.jsx'
 import MyHolidays from './pages/User/MyHolidays.jsx'
+import Playground from './pages/Landing/Playground.jsx'
 
 
 const App = () => {
@@ -56,6 +57,7 @@ const App = () => {
                         {/* Public Routes */}
                         <Route path='/' element={<Home />} />
                         <Route path='/features' element={<Features />} />
+                        <Route path='/playground' element={<Playground />} />
                         <Route path='/about' element={<About />} />
 
                         {/* Auth Routes */}

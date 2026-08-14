@@ -24,7 +24,7 @@ const Features = () => {
             <AnimatedFlow />
 
             {/* PRODUCT VISUAL */}
-            <FeaturesProductVisualSection />
+            {/* <FeaturesProductVisualSection /> */}
 
             {/* CTA SECTION */}
             <CTASection />
