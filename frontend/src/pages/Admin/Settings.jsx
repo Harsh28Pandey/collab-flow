@@ -161,8 +161,6 @@ const Settings = () => {
 
     // ==========================================
     // UPDATE PROFILE
-    // Backend already has /api/auth/upload-image
-    // So direct backend upload use karo
     // ==========================================
     const updateProfile = async () => {
 
@@ -173,9 +171,7 @@ const Settings = () => {
 
             let finalImageUrl = savedImageUrl;
 
-            // ======================================
             // STEP 1: Upload image to backend
-            // ======================================
             if (newImageFile) {
 
                 const imageFormData = new FormData();
@@ -199,9 +195,7 @@ const Settings = () => {
                     uploadRes.data?.imageUrl || "";
             }
 
-            // ======================================
             // STEP 2: Update profile
-            // ======================================
             const res = await axiosInstance.put(
                 API_PATHS.SETTINGS.UPDATE_SETTINGS,
                 {
@@ -211,9 +205,7 @@ const Settings = () => {
                 }
             );
 
-            // ======================================
             // STEP 3: Update local states
-            // ======================================
             setSavedImageUrl(finalImageUrl);
             setPreviewImage(finalImageUrl);
 
@@ -248,8 +240,8 @@ const Settings = () => {
     };
 
     const Skeleton = ({ className }) => (
-        <div className={`relative overflow-hidden bg-gray-200 rounded-xl ${className}`}>
-            <div className="absolute inset-0 skeleton-shimmer" />
+        <div className={`relative overflow-hidden bg-zinc-900/60 border border-white/5 rounded-xl ${className}`}>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
         </div>
     );
 
@@ -263,20 +255,20 @@ const Settings = () => {
     return (
         <DashboardLayout activeMenu="Settings">
 
-            {/* TOAST */}
+            {/* TOAST (Glassmorphism Style) */}
             {toast.show && (
                 <div className="fixed top-5 inset-x-0 z-[9999] flex justify-center px-4 pointer-events-none toast-enter">
-                    <div className={`pointer-events-auto min-w-[280px] max-w-[420px] w-full px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border ${toast.type === "success"
-                        ? "bg-green-50 border-green-200 text-green-700"
-                        : "bg-red-50 border-red-200 text-red-700"
+                    <div className={`pointer-events-auto min-w-[280px] max-w-[420px] w-full px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border backdrop-blur-xl ${toast.type === "success"
+                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                            : "bg-rose-500/10 border-rose-500/30 text-rose-400"
                         }`}
                     >
                         {toast.type === "success"
-                            ? <CheckCircle2 size={22} />
-                            : <XCircle size={22} />
+                            ? <CheckCircle2 size={22} className="shrink-0" />
+                            : <XCircle size={22} className="shrink-0" />
                         }
 
-                        <p className="text-sm font-medium">
+                        <p className="text-sm font-mono font-bold leading-tight">
                             {toast.message}
                         </p>
                     </div>
@@ -287,30 +279,31 @@ const Settings = () => {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
 
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">
+                    <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
                         Settings
                     </h1>
 
-                    <p className="text-sm text-gray-500 mt-1">
-                        Manage your account settings
+                    {/* ALWAYS VISIBLE DESCRIPTION */}
+                    <p className="text-xs sm:text-sm text-zinc-400 mt-1 font-mono">
+                        Manage your account settings and preferences.
                     </p>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-100 rounded-2xl px-5 py-4 flex items-center gap-4">
+                <div className="bg-zinc-950/60 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-4 flex items-center gap-4 shadow-inner">
 
-                    <div className="h-12 w-12 rounded-2xl bg-blue-100 flex items-center justify-center">
+                    <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/25 flex items-center justify-center shadow-inner shrink-0">
                         <ShieldCheck
                             size={22}
-                            className="text-blue-600"
+                            className="text-cyan-400 stroke-[2.5]"
                         />
                     </div>
 
                     <div>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-[10px] sm:text-xs font-mono text-zinc-400 uppercase tracking-wider font-bold">
                             Account Status
                         </p>
 
-                        <h3 className="font-bold text-gray-900">
+                        <h3 className="font-mono font-black text-white mt-0.5 text-sm sm:text-base">
                             Secure & Active
                         </h3>
                     </div>
@@ -321,19 +314,19 @@ const Settings = () => {
 
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
-                    <div className="bg-white rounded-3xl border border-gray-200 p-6 min-h-[650px]">
+                    <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
 
                         <div className="flex flex-col items-center">
 
-                            <Skeleton className="h-32 w-32 rounded-full animate-pulse" />
+                            <Skeleton className="h-32 w-32 !rounded-full" />
 
-                            <Skeleton className="h-6 w-40 mt-5 animate-pulse" />
+                            <Skeleton className="h-6 w-40 mt-5 !rounded-lg" />
 
-                            <Skeleton className="h-4 w-52 mt-3 animate-pulse" />
+                            <Skeleton className="h-4 w-52 mt-3 !rounded-md" />
 
-                            <div className="w-full mt-6 space-y-4">
-                                <Skeleton className="h-20 w-full rounded-2xl animate-pulse" />
-                                <Skeleton className="h-20 w-full rounded-2xl animate-pulse" />
+                            <div className="w-full mt-8 space-y-4">
+                                <Skeleton className="h-24 w-full !rounded-2xl" />
+                                <Skeleton className="h-24 w-full !rounded-2xl" />
                             </div>
 
                         </div>
@@ -341,48 +334,48 @@ const Settings = () => {
 
                     <div className="xl:col-span-2 space-y-6">
 
-                        <div className="bg-white rounded-3xl border border-gray-200 p-6 min-h-[420px]">
+                        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
 
                             <div className="flex items-center justify-between mb-8">
 
                                 <div className="space-y-3">
-                                    <Skeleton className="h-6 w-52 animate-pulse" />
-                                    <Skeleton className="h-4 w-40 animate-pulse" />
+                                    <Skeleton className="h-6 w-52 !rounded-lg" />
+                                    <Skeleton className="h-4 w-40 !rounded-md" />
                                 </div>
 
-                                <Skeleton className="h-12 w-12 rounded-2xl animate-pulse" />
+                                <Skeleton className="h-12 w-12 !rounded-2xl" />
 
                             </div>
 
                             <div className="grid md:grid-cols-2 gap-5">
 
-                                <Skeleton className="h-12 w-full animate-pulse" />
-                                <Skeleton className="h-12 w-full animate-pulse" />
-                                <Skeleton className="h-12 w-full animate-pulse" />
-                                <Skeleton className="h-12 w-full animate-pulse" />
+                                <Skeleton className="h-12 w-full !rounded-2xl" />
+                                <Skeleton className="h-12 w-full !rounded-2xl" />
+                                <Skeleton className="h-12 w-full !rounded-2xl" />
+                                <Skeleton className="h-12 w-full !rounded-2xl" />
 
                             </div>
 
-                            <div className="flex justify-end mt-6">
-                                <Skeleton className="h-12 w-40 rounded-2xl animate-pulse" />
+                            <div className="flex justify-end mt-8">
+                                <Skeleton className="h-12 w-40 !rounded-2xl" />
                             </div>
 
                         </div>
 
-                        <div className="bg-white rounded-3xl border border-gray-200 p-6 min-h-[220px]">
+                        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
 
                             <div className="flex items-center justify-between mb-8">
 
                                 <div className="space-y-3">
-                                    <Skeleton className="h-6 w-52 animate-pulse" />
-                                    <Skeleton className="h-4 w-40 animate-pulse" />
+                                    <Skeleton className="h-6 w-52 !rounded-lg" />
+                                    <Skeleton className="h-4 w-40 !rounded-md" />
                                 </div>
 
-                                <Skeleton className="h-12 w-12 rounded-2xl animate-pulse" />
+                                <Skeleton className="h-12 w-12 !rounded-2xl" />
 
                             </div>
 
-                            <Skeleton className="h-12 w-44 rounded-2xl animate-pulse" />
+                            <Skeleton className="h-12 w-44 !rounded-2xl" />
 
                         </div>
                     </div>
@@ -390,24 +383,26 @@ const Settings = () => {
 
             ) : (
 
-                <div className={`grid grid-cols-1 xl:grid-cols-3 gap-6 transition-all duration-500 ${pageVisible
+                <div className={`grid grid-cols-1 xl:grid-cols-3 gap-6 transition-all duration-500 ease-out ${pageVisible
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-5"
                     }`}
                 >
 
-                    {/* LEFT */}
-                    <div className="bg-white rounded-3xl border border-gray-200 p-6">
+                    {/* LEFT PANEL: PROFILE PIC & PREVIEW */}
+                    <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)] h-fit">
 
                         <div className="flex flex-col items-center text-center">
 
-                            <div className="relative">
+                            <div className="relative group">
+                                {/* Glow Effect Behind Avatar */}
+                                <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
 
                                 {showPreview ? (
                                     <img
                                         src={previewImage}
                                         alt="profile"
-                                        className="h-32 w-32 rounded-full object-cover border-4 border-blue-100"
+                                        className="relative h-32 w-32 rounded-full object-cover border-[3px] border-zinc-950 bg-zinc-900 shadow-xl z-10"
                                         onError={(e) => {
                                             e.target.style.display = "none";
                                             e.target.nextSibling.style.display = "flex";
@@ -415,9 +410,9 @@ const Settings = () => {
                                     />
                                 ) : null}
 
-                                {/* FALLBACK */}
+                                {/* FALLBACK AVATAR */}
                                 <div
-                                    className="h-32 w-32 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white items-center justify-center text-4xl font-bold border-4 border-blue-100"
+                                    className="relative h-32 w-32 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 text-zinc-950 items-center justify-center text-4xl font-black border-[3px] border-zinc-950 shadow-xl z-10"
                                     style={{
                                         display: showPreview
                                             ? "none"
@@ -427,10 +422,9 @@ const Settings = () => {
                                     {name?.charAt(0)?.toUpperCase() || "U"}
                                 </div>
 
-                                <label className="absolute bottom-1 right-1 h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-lg cursor-pointer">
-
-                                    <Camera size={18} />
-
+                                {/* UPLOAD BUTTON */}
+                                <label className="absolute bottom-1 right-1 h-10 w-10 rounded-full bg-zinc-900 border border-white/10 text-cyan-400 hover:text-white hover:bg-zinc-800 flex items-center justify-center shadow-lg cursor-pointer transition-all z-20 hover:scale-105 active:scale-95">
+                                    <Camera size={16} className="stroke-[2.5]" />
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -442,40 +436,40 @@ const Settings = () => {
                             </div>
 
                             {newImageFile && (
-                                <p className="text-xs text-blue-600 mt-2 font-medium">
-                                    ✓ New image selected — save karo
+                                <p className="text-[11px] sm:text-xs font-mono text-emerald-400 mt-4 font-bold tracking-wide bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+                                    ✓ New image selected. Update to save.
                                 </p>
                             )}
 
-                            <h2 className="mt-5 text-xl font-bold text-gray-900">
+                            <h2 className="mt-5 text-xl font-mono font-black text-white tracking-wide">
                                 {name || "No Name"}
                             </h2>
 
-                            <p className="text-sm text-gray-500 mt-1 break-all">
+                            <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-1 break-all">
                                 {email || "No Email"}
                             </p>
 
-                            <div className="w-full mt-5 space-y-3">
+                            <div className="w-full mt-8 space-y-4">
 
-                                <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 text-left">
+                                <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-4 text-left shadow-inner">
 
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-[10px] sm:text-xs font-mono font-bold text-zinc-500 uppercase tracking-wider mb-1">
                                         Team Name
                                     </p>
 
-                                    <h4 className="text-sm font-semibold text-gray-900 mt-1">
+                                    <h4 className="text-sm sm:text-base font-mono font-bold text-white break-all">
                                         {teamName || "No Team"}
                                     </h4>
 
                                 </div>
 
-                                <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 text-left">
+                                <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-4 text-left shadow-inner">
 
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-[10px] sm:text-xs font-mono font-bold text-zinc-500 uppercase tracking-wider mb-1">
                                         Team Code
                                     </p>
 
-                                    <h4 className="text-sm font-semibold text-gray-900 mt-1 break-all">
+                                    <h4 className="text-sm sm:text-base font-mono font-bold text-cyan-400 tracking-wider break-all">
                                         {teamCode || "No Code"}
                                     </h4>
 
@@ -485,27 +479,28 @@ const Settings = () => {
                         </div>
                     </div>
 
-                    {/* RIGHT */}
+                    {/* RIGHT PANEL: EDIT FORMS */}
                     <div className="xl:col-span-2 space-y-6">
 
-                        <div className="bg-white rounded-3xl border border-gray-200 p-6">
+                        {/* SECTION 1: PROFILE INFO */}
+                        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
 
-                            <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-start sm:items-center justify-between mb-8 gap-4">
 
                                 <div>
-                                    <h2 className="text-xl font-bold text-gray-900">
+                                    <h2 className="text-lg sm:text-xl font-mono font-black text-white tracking-wide">
                                         Profile Information
                                     </h2>
 
-                                    <p className="text-sm text-gray-500 mt-1">
-                                        Update your details
+                                    <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-1">
+                                        Update your personal and team details.
                                     </p>
                                 </div>
 
-                                <div className="h-12 w-12 rounded-2xl bg-blue-100 flex items-center justify-center">
+                                <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/25 flex items-center justify-center shrink-0 shadow-inner">
                                     <User
-                                        size={22}
-                                        className="text-blue-600"
+                                        size={20}
+                                        className="text-cyan-400 stroke-[2.5]"
                                     />
                                 </div>
 
@@ -514,211 +509,161 @@ const Settings = () => {
                             <div className="grid md:grid-cols-2 gap-5">
 
                                 <div>
-
-                                    <label className="text-sm font-medium text-gray-700 block mb-2">
+                                    <label className="text-xs sm:text-sm font-mono font-bold text-zinc-300 block mb-2 uppercase tracking-wider">
                                         Name
                                     </label>
 
                                     <div className="relative">
-
                                         <User
-                                            size={18}
-                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                                            size={16}
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 stroke-[2.5]"
                                         />
 
                                         <input
                                             type="text"
                                             value={name}
                                             onChange={(e) => setName(e.target.value)}
-                                            className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                            className="w-full h-12 pl-11 pr-4 rounded-2xl border border-white/10 bg-zinc-900/80 outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-sm font-mono text-white transition-all shadow-inner placeholder-zinc-600"
+                                            placeholder="Enter your name"
                                         />
-
                                     </div>
                                 </div>
 
                                 <div>
-
-                                    <label className="text-sm font-medium text-gray-700 block mb-2">
+                                    <label className="text-xs sm:text-sm font-mono font-bold text-zinc-300 block mb-2 uppercase tracking-wider">
                                         Team Name
                                     </label>
 
                                     <div className="relative">
-
                                         <Users
-                                            size={18}
-                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                                            size={16}
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-purple-400 stroke-[2.5]"
                                         />
 
                                         <input
                                             type="text"
                                             value={teamName}
                                             onChange={(e) => setTeamName(e.target.value)}
-                                            className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                            className="w-full h-12 pl-11 pr-4 rounded-2xl border border-white/10 bg-zinc-900/80 outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 text-sm font-mono text-white transition-all shadow-inner placeholder-zinc-600"
+                                            placeholder="Enter team name"
                                         />
-
                                     </div>
                                 </div>
 
                                 <div>
-
-                                    <label className="text-sm font-medium text-gray-700 block mb-2">
-                                        Email
+                                    <label className="text-xs sm:text-sm font-mono font-bold text-zinc-300 block mb-2 uppercase tracking-wider">
+                                        Email <span className="text-zinc-600 font-normal normal-case">(Read-only)</span>
                                     </label>
 
                                     <div className="relative">
-
                                         <Mail
-                                            size={18}
-                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                                            size={16}
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 stroke-[2.5]"
                                         />
 
                                         <input
                                             type="text"
                                             value={email}
                                             disabled
-                                            className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 bg-gray-100 text-gray-500 text-sm"
+                                            className="w-full h-12 pl-11 pr-4 rounded-2xl border border-white/5 bg-zinc-900/40 text-zinc-500 text-sm font-mono shadow-inner cursor-not-allowed"
                                         />
-
                                     </div>
                                 </div>
 
                                 <div>
-
-                                    <label className="text-sm font-medium text-gray-700 block mb-2">
-                                        Team Code
+                                    <label className="text-xs sm:text-sm font-mono font-bold text-zinc-300 block mb-2 uppercase tracking-wider">
+                                        Team Code <span className="text-zinc-600 font-normal normal-case">(Read-only)</span>
                                     </label>
 
                                     <div className="relative">
-
                                         <KeyRound
-                                            size={18}
-                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                                            size={16}
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 stroke-[2.5]"
                                         />
 
                                         <input
                                             type="text"
                                             value={teamCode}
                                             disabled
-                                            className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 bg-gray-100 text-gray-500 text-sm"
+                                            className="w-full h-12 pl-11 pr-4 rounded-2xl border border-white/5 bg-zinc-900/40 text-zinc-500 text-sm font-mono shadow-inner cursor-not-allowed"
                                         />
-
                                     </div>
                                 </div>
 
                             </div>
 
-                            <div className="flex justify-end mt-6">
+                            <div className="flex justify-end mt-8 pt-6 border-t border-white/5">
 
-                                <button
-                                    onClick={updateProfile}
-                                    disabled={saving}
-                                    className="cursor-pointer h-12 px-6 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 text-sm font-semibold transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
-                                >
-
-                                    {saving ? (
-                                        <>
-                                            <Loader2
-                                                size={18}
-                                                className="animate-spin"
-                                            />
-                                            Uploading...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Save size={18} />
-                                            Update Profile
-                                        </>
-                                    )}
-
-                                </button>
+                                <div className="relative group cursor-pointer w-full sm:w-auto">
+                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
+                                    <button
+                                        onClick={updateProfile}
+                                        disabled={saving}
+                                        className="relative w-full sm:w-auto cursor-pointer h-12 px-8 rounded-2xl bg-zinc-950 text-white flex items-center justify-center gap-2 text-xs sm:text-sm font-mono font-bold transition-all border border-white/10 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg"
+                                    >
+                                        {saving ? (
+                                            <>
+                                                <Loader2 size={16} className="animate-spin text-cyan-400" />
+                                                Saving...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Save size={16} className="text-cyan-400 stroke-[2.5]" />
+                                                Update Profile
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
 
                             </div>
+
                         </div>
 
-                        <div className="bg-white rounded-3xl border border-gray-200 p-6">
+                        {/* SECTION 2: PASSWORD SECURITY */}
+                        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
 
-                            <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-start sm:items-center justify-between mb-6 gap-4">
 
                                 <div>
-
-                                    <h2 className="text-xl font-bold text-gray-900">
+                                    <h2 className="text-lg sm:text-xl font-mono font-black text-white tracking-wide">
                                         Password & Security
                                     </h2>
 
-                                    <p className="text-sm text-gray-500 mt-1">
-                                        Reset password securely
+                                    <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-1">
+                                        Reset your password securely via email.
                                     </p>
-
                                 </div>
 
-                                <div className="h-12 w-12 rounded-2xl bg-red-100 flex items-center justify-center">
-
+                                <div className="h-12 w-12 rounded-2xl bg-rose-500/10 border border-rose-500/25 flex items-center justify-center shrink-0 shadow-inner">
                                     <Lock
-                                        size={22}
-                                        className="text-red-500"
+                                        size={20}
+                                        className="text-rose-400 stroke-[2.5]"
                                     />
-
                                 </div>
 
                             </div>
 
                             <button
                                 onClick={sendOtp}
-                                className="cursor-pointer h-12 px-5 rounded-2xl bg-red-500 hover:bg-red-600 text-white flex items-center gap-2 text-sm font-semibold transition-all duration-200"
+                                className="cursor-pointer h-11 px-6 rounded-2xl bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 flex items-center justify-center sm:justify-start gap-2 text-xs sm:text-sm font-mono font-bold transition-all shadow-inner active:scale-95 w-full sm:w-auto"
                             >
-
-                                <Lock size={18} />
-
+                                <Lock size={15} className="stroke-[2.5]" />
                                 Change Password
-
                             </button>
 
+                            {error && (
+                                <div className="mt-5 border border-rose-500/20 bg-rose-500/10 rounded-2xl px-5 py-3 text-xs sm:text-sm font-mono font-bold text-rose-400 shadow-inner">
+                                    &gt; {error}
+                                </div>
+                            )}
+
                         </div>
-
-                        {error && (
-                            <div className="border border-red-200 bg-red-50 rounded-2xl px-5 py-4 text-sm text-red-600">
-                                {error}
-                            </div>
-                        )}
-
                     </div>
                 </div>
             )}
 
             <style>{`
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(-16px);
-                    }
-
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-
-                .toast-enter {
-                    animation: fadeIn 0.3s ease;
-                }
-
-                .skeleton-shimmer {
-                    background:
-                        linear-gradient(
-                            90deg,
-                            rgba(255,255,255,0) 0%,
-                            rgba(255,255,255,0.6) 50%,
-                            rgba(255,255,255,0) 100%
-                        );
-
-                    animation: shimmer 1.5s infinite;
-                }
-
                 @keyframes shimmer {
-                    0% {
-                        transform: translateX(-100%);
-                    }
-
                     100% {
                         transform: translateX(100%);
                     }

@@ -14,27 +14,33 @@ const ActionButtons = ({
 
     return (
 
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
 
+            {/* View Button */}
             <button
                 onClick={() => onView(row)}
-                className="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100"
+                title="View Details"
+                className="cursor-pointer h-9 w-9 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-cyan-400 hover:text-cyan-300 flex items-center justify-center transition-all shadow-inner active:scale-95"
             >
-                <Eye size={16} />
+                <Eye size={15} className="stroke-[2.5]" />
             </button>
 
+            {/* Approve Button */}
             <button
                 onClick={() => onApprove(row)}
-                className="p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100"
+                title="Approve"
+                className="cursor-pointer h-9 w-9 rounded-xl border border-emerald-500/20 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 hover:text-emerald-300 flex items-center justify-center transition-all shadow-inner active:scale-95"
             >
-                <Check size={16} />
+                <Check size={15} className="stroke-[3]" />
             </button>
 
+            {/* Reject Button */}
             <button
                 onClick={() => onReject(row)}
-                className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100"
+                title="Reject"
+                className="cursor-pointer h-9 w-9 rounded-xl border border-rose-500/20 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 flex items-center justify-center transition-all shadow-inner active:scale-95"
             >
-                <X size={16} />
+                <X size={15} className="stroke-[3]" />
             </button>
 
         </div>

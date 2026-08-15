@@ -7,7 +7,7 @@ const SearchBar = ({ value, onChange }) => {
 
             <Search
                 size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400"
             />
 
             <input
@@ -15,7 +15,7 @@ const SearchBar = ({ value, onChange }) => {
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="Search Employee..."
-                className="w-full rounded-2xl border border-gray-300 bg-white py-3 pl-11 pr-4 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition"
+                className="w-full h-11 rounded-2xl border border-white/10 bg-zinc-950/80 backdrop-blur-xl py-3 pl-11 pr-4 text-xs sm:text-sm font-mono text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 transition-all shadow-inner"
             />
 
         </div>

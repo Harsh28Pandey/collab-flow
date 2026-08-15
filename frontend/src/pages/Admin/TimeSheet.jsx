@@ -1,3 +1,4 @@
+// src/pages/Timesheet.jsx
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
 import { Plus, Users, Clock3, ClipboardList, CheckCircle, Download } from "lucide-react";
@@ -52,23 +53,6 @@ const Timesheet = () => {
         timesheet: null,
     });
 
-    // const getAllUsers = async () => {
-    //     try {
-    //         const response = await axiosInstance.get(
-    //             API_PATHS.USERS.GET_ALL_USERS
-    //         );
-
-    //         if (response.data?.length > 0) {
-    //             setAllUsers(response.data);
-    //         } else {
-    //             setAllUsers([]);
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //         setAllUsers([]);
-    //     }
-    // };
-
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -92,7 +76,6 @@ const Timesheet = () => {
 
     useEffect(() => {
         fetchData();
-        // getAllUsers();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search]);
 
@@ -187,98 +170,109 @@ const Timesheet = () => {
 
             <div className="space-y-6">
 
-                {/* Header */}
-
+                {/* ───────────────── HEADER ───────────────── */}
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
-                    <div>
-
-                        <h1 className="text-3xl font-bold text-gray-900">
+                    <div className="min-w-0">
+                        <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight truncate">
                             Timesheets
                         </h1>
 
-                        <p className="text-gray-500 mt-1">
-                            Manage employee work logs and approvals
+                        {/* Description visible in both mobile and desktop */}
+                        <p className="text-xs sm:text-sm text-zinc-400 mt-1 font-mono">
+                            Manage employee work logs and approvals.
                         </p>
-
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-3">
+                    <div className="flex flex-col md:flex-row gap-3 items-stretch sm:items-center w-full lg:w-auto">
 
-                        <SearchBar
-                            value={search}
-                            onChange={setSearch}
-                        />
+                        {/* Search Bar - Note: Assuming SearchBar has been styled internally, if not you can wrap or pass custom class to it */}
+                        <div className="flex-1 min-w-0">
+                            <SearchBar
+                                value={search}
+                                onChange={setSearch}
+                            // You might need to update SearchBar component's internal style to match dark mode, 
+                            // otherwise it will use default style.
+                            />
+                        </div>
 
-                        <button
-                            onClick={handleExportReport}
-                            disabled={timesheets.length === 0}
-                            className="border border-green-200 bg-green-50 hover:bg-green-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all text-green-700 rounded-2xl px-5 py-3 flex items-center justify-center gap-2 shadow-sm"
-                        >
-                            <Download size={18} />
-                            Export
-                        </button>
+                        <div className="flex items-center gap-3">
+                            {/* Export Button */}
+                            <button
+                                onClick={handleExportReport}
+                                disabled={timesheets.length === 0}
+                                className="flex-1 sm:flex-none h-11 px-4 sm:px-5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 font-mono font-bold flex items-center justify-center gap-2 text-xs sm:text-sm shadow-inner transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                            >
+                                <Download size={16} className="stroke-[2.5]" />
+                                <span className="hidden sm:inline">Export</span>
+                            </button>
 
-                        <button
-                            onClick={() => setOpenCreate(true)}
-                            className="bg-blue-600 hover:bg-blue-700 cursor-pointer transition-all text-white rounded-2xl px-5 py-3 flex items-center justify-center gap-2 shadow-md"
-                        >
-                            <Plus size={18} />
-                            Create Timesheet
-                        </button>
+                            {/* Create Button */}
+                            <div className="relative group cursor-pointer flex-1 sm:flex-none">
+                                <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
+                                <button
+                                    onClick={() => setOpenCreate(true)}
+                                    className="relative w-full sm:w-auto h-11 px-4 sm:px-6 rounded-2xl bg-zinc-950 text-white flex items-center justify-center gap-2 text-xs sm:text-sm font-mono font-bold border border-white/10 transition-all cursor-pointer active:scale-95 shadow-lg text-nowrap"
+                                >
+                                    <Plus size={16} className="text-cyan-400 stroke-[3]" />
+                                    <span>Create <span className="hidden sm:inline">Timesheet</span></span>
+                                </button>
+                            </div>
+                        </div>
 
                     </div>
-
                 </div>
 
-                {/* Summary Cards */}
+                {/* ───────────────── SUMMARY CARDS ───────────────── */}
+                <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
 
-                <div className="grid grid-cols-2 xl:grid-cols-4 gap-5">
-
+                    {/* Wrapping SummaryCards in Glassy Container if their internal style isn't modified */}
                     <SummaryCard
                         title="Employees"
                         value={allUsers.length}
-                        icon={<Users />}
+                        icon={<Users className="text-cyan-400" size={18} />}
+                    // Tip: Update internal SummaryCard CSS to fit dark bento style, or pass classes if allowed.
                     />
 
                     <SummaryCard
-                        title="Hours"
+                        title="Total Hours"
                         value={stats.totalHours || 0}
-                        icon={<Clock3 />}
+                        icon={<Clock3 className="text-purple-400" size={18} />}
                     />
 
                     <SummaryCard
                         title="Pending"
                         value={stats.pending || 0}
-                        icon={<ClipboardList />}
+                        icon={<ClipboardList className="text-amber-400" size={18} />}
                     />
 
                     <SummaryCard
                         title="Approved"
                         value={stats.approved || 0}
-                        icon={<CheckCircle />}
+                        icon={<CheckCircle className="text-emerald-400" size={18} />}
                     />
 
                 </div>
 
-                {/* Body */}
-
-                <div className="bg-white rounded-3xl border border-gray-200 p-4 sm:p-5">
+                {/* ───────────────── BODY LIST ───────────────── */}
+                <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-4 sm:p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
 
                     {loading ? (
                         <TimesheetSkeleton />
                     ) : timesheets.length === 0 ? (
-                        <div className="border border-dashed border-gray-300 rounded-3xl py-16 text-center">
-                            <ClipboardList size={32} className="mx-auto text-gray-400 mb-3" />
-                            <p className="text-sm font-medium text-gray-600">
-                                No timesheets found
-                            </p>
-                            <p className="text-xs text-gray-400 mt-1">
-                                Create a new timesheet to get started
+                        <div className="border border-dashed border-white/10 rounded-[2rem] py-20 px-6 flex flex-col items-center justify-center text-center">
+                            <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-5 shadow-[0_0_15px_rgba(56,189,248,0.15)]">
+                                <ClipboardList size={28} className="text-cyan-400" />
+                            </div>
+                            <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">
+                                No Timesheets Found
+                            </h3>
+                            <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-2">
+                                Create a new timesheet to get started tracking work logs.
                             </p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                             {timesheets.map((timesheet) => (
                                 <Timesheetcard
                                     key={timesheet._id}
@@ -293,6 +287,7 @@ const Timesheet = () => {
 
                 </div>
 
+                {/* ───────────────── MODALS ───────────────── */}
                 <CreateTimesheetModal
                     open={openCreate}
                     onClose={() => setOpenCreate(false)}

@@ -46,8 +46,6 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
     const [loadingEmployees, setLoadingEmployees] = useState(true);
 
     // FIELD-LEVEL ERRORS
-    // Shape: { employeeId, date, project, attendance, workMode, clockIn, clockOut,
-    //          breakMinutes, overtimeHours, notes, tasks: { [index]: { title, hours } } }
     const [errors, setErrors] = useState({});
 
     const [toast, setToast] = useState("");
@@ -258,7 +256,6 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
         } catch (err) {
             console.log(err);
 
-            // Surface backend field-level errors (if any) onto the form
             const backendErrors = err?.response?.data?.errors;
 
             if (backendErrors) {
@@ -278,68 +275,75 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
 
     if (!open) return null;
 
-    // Shared input style helper — adds red ring when that field has an error
     const inputClass = (hasError) =>
-        `w-full h-11 px-4 rounded-2xl border focus:outline-none focus:ring-2 text-sm ${hasError
-            ? "border-red-300 focus:ring-red-400"
-            : "border-gray-200 focus:ring-blue-500"
+        `w-full h-11 px-4 rounded-2xl border focus:outline-none focus:ring-2 text-xs sm:text-sm font-mono transition-all shadow-inner [color-scheme:dark] ${hasError
+            ? "border-rose-500/50 focus:ring-rose-500/50 bg-rose-500/5 text-white"
+            : "border-white/10 bg-zinc-900/80 focus:ring-cyan-500/50 focus:border-cyan-400 text-white placeholder-zinc-600"
         }`;
 
     return (
         <>
             {/* TOAST */}
             {toast && (
-                <div className="fixed top-5 right-5 z-[10000] bg-green-600 text-white px-5 py-3 rounded-2xl shadow-xl text-sm font-medium animate-[slideDown_.3s_ease]">
-                    {toast}
+                <div className="fixed top-5 inset-x-0 z-[10000] flex justify-center px-4 pointer-events-none animate-[slideDown_.3s_ease]">
+                    <div className="pointer-events-auto min-w-[280px] max-w-[420px] w-full px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border backdrop-blur-xl bg-emerald-500/10 border-emerald-500/30 text-emerald-400">
+                        <ClipboardCheck size={22} className="shrink-0" />
+                        <p className="text-sm font-mono font-bold leading-tight">
+                            {toast}
+                        </p>
+                    </div>
                 </div>
             )}
 
-            <div className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm overflow-y-auto">
+            {/* RESPONSIVE PLACEMENT FIX: safe margin/padding for mobile viewports */}
+            <div className="fixed inset-0 z-[9999] flex items-start sm:items-center justify-center p-3 sm:p-5 pt-8 sm:pt-5 bg-zinc-950/85 backdrop-blur-md overflow-y-auto animate-fadeIn">
 
                 {/* MODAL WRAPPER */}
-                <div className="min-h-screen flex items-center justify-center p-3 sm:p-5">
+                <div className="relative w-full max-w-2xl max-h-[85vh] sm:max-h-[80vh] my-auto flex flex-col bg-zinc-950/90 backdrop-blur-3xl border border-white/10 rounded-[1.75rem] sm:rounded-[2.25rem] shadow-[0_25px_70px_rgba(0,0,0,0.95)] animate-modalPop overflow-hidden">
 
-                    {/* MODAL */}
-                    <div className="w-full max-w-2xl bg-white rounded-[26px] shadow-2xl overflow-hidden animate-[modalPop_.25s_ease]">
+                    {/* Top Ambient Cyber Glow Line */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_15px_rgba(56,189,248,0.8)]"></div>
 
-                        {/* HEADER */}
-                        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                    {/* HEADER */}
+                    <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-white/5 shrink-0">
 
-                            <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
 
-                                <div className="h-11 w-11 rounded-2xl bg-blue-100 flex items-center justify-center shrink-0">
-                                    <ClipboardCheck size={22} className="text-blue-600" />
-                                </div>
-
-                                <div>
-                                    <h2 className="text-lg sm:text-xl font-bold text-gray-900">
-                                        Create Timesheet
-                                    </h2>
-
-                                    <p className="text-xs sm:text-sm text-gray-500">
-                                        Fill today's work details
-                                    </p>
-                                </div>
+                            <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0 shadow-inner">
+                                <ClipboardCheck size={20} className="text-cyan-400 sm:w-[20px] sm:h-[20px]" />
                             </div>
 
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="cursor-pointer h-10 w-10 rounded-2xl hover:bg-gray-100 transition flex items-center justify-center"
-                            >
-                                <X size={20} className="text-gray-600" />
-                            </button>
+                            <div className="min-w-0">
+                                <h2 className="text-base sm:text-lg font-mono font-black text-white truncate tracking-wide">
+                                    Create Timesheet
+                                </h2>
+
+                                <p className="text-[11px] sm:text-xs font-mono text-zinc-400 mt-0.5 truncate">
+                                    Fill today's work details
+                                </p>
+                            </div>
                         </div>
 
-                        <form onSubmit={handleSubmit} noValidate>
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="cursor-pointer h-8 w-8 sm:h-9 sm:w-9 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 transition-all duration-200 flex items-center justify-center shrink-0 shadow-inner"
+                        >
+                            <X size={16} className="text-zinc-400 hover:text-white" />
+                        </button>
+                    </div>
 
-                            {/* BODY */}
-                            <div className="p-5 space-y-5 max-h-[75vh] overflow-y-auto custom-scrollbar">
+                    <form onSubmit={handleSubmit} noValidate className="flex-1 overflow-hidden flex flex-col">
 
-                                {/* WORK DETAILS */}
-                                <div className="border border-gray-200 rounded-3xl p-4">
+                        {/* BODY */}
+                        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 custom-scrollbar">
+                            <div className="space-y-4">
 
-                                    <h3 className="text-base font-semibold text-gray-900 mb-4">
+                                {/* WORK DETAILS SECTION */}
+                                <div className="bg-zinc-900/40 border border-white/5 rounded-3xl p-4 sm:p-5 shadow-inner">
+
+                                    <h3 className="text-sm font-mono font-black text-white mb-4 tracking-wide flex items-center gap-2">
+                                        <div className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]"></div>
                                         Work Details
                                     </h3>
 
@@ -347,8 +351,8 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
 
                                         {/* EMPLOYEE */}
                                         <div className="sm:col-span-2">
-                                            <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
-                                                <Users size={16} />
+                                            <label className="text-xs font-mono font-bold text-zinc-300 flex items-center gap-2 mb-1.5 uppercase tracking-wider">
+                                                <Users size={14} className="text-cyan-400" />
                                                 Employee
                                             </label>
 
@@ -356,30 +360,30 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                                 value={employeeId}
                                                 onChange={handleFieldChange(setEmployeeId, "employeeId")}
                                                 disabled={loadingEmployees}
-                                                className={`${inputClass(errors.employeeId)} bg-white`}
+                                                className={inputClass(errors.employeeId)}
                                             >
-                                                <option value="">
+                                                <option value="" className="bg-zinc-900 text-zinc-400">
                                                     {loadingEmployees ? "Loading employees..." : "Select Employee"}
                                                 </option>
 
                                                 {employees.map((emp) => (
-                                                    <option key={emp._id} value={emp._id}>
+                                                    <option key={emp._id} value={emp._id} className="bg-zinc-900 text-white">
                                                         {emp.name} {emp.email ? `(${emp.email})` : ""}
                                                     </option>
                                                 ))}
                                             </select>
 
                                             {errors.employeeId && (
-                                                <p className="text-xs text-red-600 mt-1.5">
-                                                    {errors.employeeId}
+                                                <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">
+                                                    &gt; {errors.employeeId}
                                                 </p>
                                             )}
                                         </div>
 
                                         {/* DATE */}
                                         <div>
-                                            <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
-                                                <Calendar size={16} />
+                                            <label className="text-xs font-mono font-bold text-zinc-300 flex items-center gap-2 mb-1.5 uppercase tracking-wider">
+                                                <Calendar size={14} className="text-cyan-400" />
                                                 Date
                                             </label>
 
@@ -391,16 +395,16 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                             />
 
                                             {errors.date && (
-                                                <p className="text-xs text-red-600 mt-1.5">
-                                                    {errors.date}
+                                                <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">
+                                                    &gt; {errors.date}
                                                 </p>
                                             )}
                                         </div>
 
                                         {/* PROJECT */}
                                         <div>
-                                            <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
-                                                <FolderKanban size={16} />
+                                            <label className="text-xs font-mono font-bold text-zinc-300 flex items-center gap-2 mb-1.5 uppercase tracking-wider">
+                                                <FolderKanban size={14} className="text-purple-400" />
                                                 Project Name
                                             </label>
 
@@ -413,72 +417,70 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                             />
 
                                             {errors.project && (
-                                                <p className="text-xs text-red-600 mt-1.5">
-                                                    {errors.project}
+                                                <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">
+                                                    &gt; {errors.project}
                                                 </p>
                                             )}
                                         </div>
 
                                         {/* ATTENDANCE */}
                                         <div>
-                                            <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
-                                                <ClipboardCheck size={16} />
+                                            <label className="text-xs font-mono font-bold text-zinc-300 flex items-center gap-2 mb-1.5 uppercase tracking-wider">
+                                                <ClipboardCheck size={14} className="text-emerald-400" />
                                                 Attendance
                                             </label>
 
                                             <select
                                                 value={attendance}
                                                 onChange={handleFieldChange(setAttendance, "attendance")}
-                                                className={`${inputClass(errors.attendance)} bg-white`}
+                                                className={inputClass(errors.attendance)}
                                             >
-                                                <option value="">Select Attendance</option>
-
+                                                <option value="" className="bg-zinc-900 text-zinc-400">Select Attendance</option>
                                                 {ATTENDANCE_OPTIONS.map((opt) => (
-                                                    <option key={opt} value={opt}>
+                                                    <option key={opt} value={opt} className="bg-zinc-900 text-white">
                                                         {opt}
                                                     </option>
                                                 ))}
                                             </select>
 
                                             {errors.attendance && (
-                                                <p className="text-xs text-red-600 mt-1.5">
-                                                    {errors.attendance}
+                                                <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">
+                                                    &gt; {errors.attendance}
                                                 </p>
                                             )}
                                         </div>
 
                                         {/* WORK MODE */}
                                         <div>
-                                            <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
-                                                <FolderKanban size={16} />
+                                            <label className="text-xs font-mono font-bold text-zinc-300 flex items-center gap-2 mb-1.5 uppercase tracking-wider">
+                                                <FolderKanban size={14} className="text-amber-400" />
                                                 Work Mode
                                             </label>
 
                                             <select
                                                 value={workMode}
                                                 onChange={handleFieldChange(setWorkMode, "workMode")}
-                                                className={`${inputClass(errors.workMode)} bg-white`}
+                                                className={inputClass(errors.workMode)}
                                             >
-                                                <option value="">Select Work Mode</option>
-
+                                                <option value="" className="bg-zinc-900 text-zinc-400">Select Work Mode</option>
                                                 {WORK_MODE_OPTIONS.map((opt) => (
-                                                    <option key={opt} value={opt}>
+                                                    <option key={opt} value={opt} className="bg-zinc-900 text-white">
                                                         {opt}
                                                     </option>
                                                 ))}
                                             </select>
 
                                             {errors.workMode && (
-                                                <p className="text-xs text-red-600 mt-1.5">
-                                                    {errors.workMode}
+                                                <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">
+                                                    &gt; {errors.workMode}
                                                 </p>
                                             )}
                                         </div>
 
                                         {/* CLOCK IN */}
                                         <div>
-                                            <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
-                                                <LogIn size={16} />
+                                            <label className="text-xs font-mono font-bold text-zinc-300 flex items-center gap-2 mb-1.5 uppercase tracking-wider">
+                                                <LogIn size={14} className="text-emerald-400" />
                                                 Clock In
                                             </label>
 
@@ -490,16 +492,16 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                             />
 
                                             {errors.clockIn && (
-                                                <p className="text-xs text-red-600 mt-1.5">
-                                                    {errors.clockIn}
+                                                <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">
+                                                    &gt; {errors.clockIn}
                                                 </p>
                                             )}
                                         </div>
 
                                         {/* CLOCK OUT */}
                                         <div>
-                                            <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
-                                                <LogOut size={16} />
+                                            <label className="text-xs font-mono font-bold text-zinc-300 flex items-center gap-2 mb-1.5 uppercase tracking-wider">
+                                                <LogOut size={14} className="text-rose-400" />
                                                 Clock Out
                                             </label>
 
@@ -511,16 +513,16 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                             />
 
                                             {errors.clockOut && (
-                                                <p className="text-xs text-red-600 mt-1.5">
-                                                    {errors.clockOut}
+                                                <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">
+                                                    &gt; {errors.clockOut}
                                                 </p>
                                             )}
                                         </div>
 
                                         {/* BREAK MINUTES */}
                                         <div>
-                                            <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
-                                                <Coffee size={16} />
+                                            <label className="text-xs font-mono font-bold text-zinc-300 flex items-center gap-2 mb-1.5 uppercase tracking-wider">
+                                                <Coffee size={14} className="text-orange-400" />
                                                 Break (minutes)
                                             </label>
 
@@ -535,16 +537,16 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                             />
 
                                             {errors.breakMinutes && (
-                                                <p className="text-xs text-red-600 mt-1.5">
-                                                    {errors.breakMinutes}
+                                                <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">
+                                                    &gt; {errors.breakMinutes}
                                                 </p>
                                             )}
                                         </div>
 
                                         {/* OVERTIME HOURS */}
                                         <div>
-                                            <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
-                                                <TimerReset size={16} />
+                                            <label className="text-xs font-mono font-bold text-zinc-300 flex items-center gap-2 mb-1.5 uppercase tracking-wider">
+                                                <TimerReset size={14} className="text-indigo-400" />
                                                 Overtime (hours)
                                             </label>
 
@@ -559,61 +561,60 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                             />
 
                                             {errors.overtimeHours && (
-                                                <p className="text-xs text-red-600 mt-1.5">
-                                                    {errors.overtimeHours}
+                                                <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">
+                                                    &gt; {errors.overtimeHours}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {/* NOTES */}
+                                        <div className="sm:col-span-2">
+                                            <label className="text-xs font-mono font-bold text-zinc-300 flex items-center gap-2 mb-1.5 uppercase tracking-wider">
+                                                <StickyNote size={14} className="text-cyan-400" />
+                                                Notes
+                                            </label>
+
+                                            <textarea
+                                                rows={2}
+                                                value={notes}
+                                                onChange={handleFieldChange(setNotes, "notes")}
+                                                placeholder="Describe today's work..."
+                                                className={`${inputClass(errors.notes)} h-auto py-2.5 resize-none`}
+                                            />
+
+                                            {errors.notes && (
+                                                <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">
+                                                    &gt; {errors.notes}
                                                 </p>
                                             )}
                                         </div>
                                     </div>
-
-                                    {/* NOTES */}
-                                    <div className="mt-4">
-                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
-                                            <StickyNote size={16} />
-                                            Notes
-                                        </label>
-
-                                        <textarea
-                                            rows={3}
-                                            value={notes}
-                                            onChange={handleFieldChange(setNotes, "notes")}
-                                            placeholder="Describe today's work..."
-                                            className={`${inputClass(errors.notes)} h-auto py-3 resize-none`}
-                                        />
-
-                                        {errors.notes && (
-                                            <p className="text-xs text-red-600 mt-1.5">
-                                                {errors.notes}
-                                            </p>
-                                        )}
-                                    </div>
                                 </div>
 
-                                {/* DAILY TASKS */}
-                                <div className="border border-gray-200 rounded-3xl p-4">
+                                {/* DAILY TASKS SECTION */}
+                                <div className="bg-zinc-900/40 border border-white/5 rounded-3xl p-4 sm:p-5 shadow-inner">
 
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
-                                            <ClipboardCheck size={18} />
+                                    <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                                        <h3 className="text-sm font-mono font-black text-white tracking-wide flex items-center gap-2">
+                                            <div className="h-2 w-2 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.8)]"></div>
                                             Daily Tasks
                                         </h3>
 
                                         <button
                                             type="button"
                                             onClick={addTask}
-                                            className="cursor-pointer flex items-center gap-1.5 px-3.5 h-9 bg-blue-600 text-white text-xs sm:text-sm font-medium rounded-xl hover:bg-blue-700 transition-all"
+                                            className="cursor-pointer flex items-center gap-1.5 px-3 h-8 bg-zinc-800 border border-white/10 hover:border-cyan-500/30 hover:bg-zinc-800 text-cyan-400 text-[11px] sm:text-xs font-mono font-bold rounded-xl transition-all shadow-inner active:scale-95"
                                         >
-                                            <Plus size={15} />
+                                            <Plus size={14} className="stroke-[3]" />
                                             Add Task
                                         </button>
                                     </div>
 
                                     <div className="space-y-3">
-
                                         {tasks.map((task, index) => (
                                             <div
                                                 key={index}
-                                                className="border border-gray-200 rounded-2xl p-3"
+                                                className="bg-zinc-950/50 border border-white/5 rounded-2xl p-3 shadow-inner group transition-all hover:border-white/10"
                                             >
                                                 <div className="flex flex-col sm:flex-row gap-3">
                                                     <div className="flex-1">
@@ -624,21 +625,18 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                                             onChange={(e) =>
                                                                 handleTaskChange(index, "title", e.target.value)
                                                             }
-                                                            className={`w-full h-10 px-3 rounded-xl border focus:outline-none focus:ring-2 text-sm ${errors.tasks?.[index]?.title
-                                                                    ? "border-red-300 focus:ring-red-400"
-                                                                    : "border-gray-200 focus:ring-blue-500"
-                                                                }`}
+                                                            className={inputClass(errors.tasks?.[index]?.title)}
                                                         />
 
                                                         {errors.tasks?.[index]?.title && (
-                                                            <p className="text-xs text-red-600 mt-1.5">
-                                                                {errors.tasks[index].title}
+                                                            <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">
+                                                                &gt; {errors.tasks[index].title}
                                                             </p>
                                                         )}
                                                     </div>
 
                                                     <div className="flex items-start gap-2">
-                                                        <div className="w-full sm:w-24">
+                                                        <div className="w-full sm:w-28">
                                                             <input
                                                                 type="number"
                                                                 step="0.5"
@@ -648,15 +646,12 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                                                 onChange={(e) =>
                                                                     handleTaskChange(index, "hours", e.target.value)
                                                                 }
-                                                                className={`w-full h-10 px-3 rounded-xl border focus:outline-none focus:ring-2 text-sm ${errors.tasks?.[index]?.hours
-                                                                        ? "border-red-300 focus:ring-red-400"
-                                                                        : "border-gray-200 focus:ring-blue-500"
-                                                                    }`}
+                                                                className={inputClass(errors.tasks?.[index]?.hours)}
                                                             />
 
                                                             {errors.tasks?.[index]?.hours && (
-                                                                <p className="text-xs text-red-600 mt-1.5 whitespace-nowrap">
-                                                                    {errors.tasks[index].hours}
+                                                                <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold whitespace-nowrap">
+                                                                    &gt; {errors.tasks[index].hours}
                                                                 </p>
                                                             )}
                                                         </div>
@@ -665,9 +660,9 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                                             type="button"
                                                             onClick={() => removeTask(index)}
                                                             disabled={tasks.length === 1}
-                                                            className="cursor-pointer h-10 w-10 shrink-0 rounded-xl hover:bg-red-100 disabled:opacity-40 disabled:cursor-not-allowed text-red-500 flex items-center justify-center transition"
+                                                            className="cursor-pointer h-11 w-11 shrink-0 rounded-2xl bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 disabled:opacity-40 disabled:cursor-not-allowed text-rose-400 flex items-center justify-center transition-all shadow-inner active:scale-95"
                                                         >
-                                                            <Trash2 size={17} />
+                                                            <Trash2 size={16} />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -675,90 +670,99 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                         ))}
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* SUBMIT (SERVER) ERROR */}
-                            {errors.submit && (
-                                <div className="px-5 pb-3">
-                                    <div className="border border-red-200 bg-red-50 rounded-2xl px-4 py-3 text-sm text-red-600">
-                                        {errors.submit}
+                                {/* SUBMIT (SERVER) ERROR */}
+                                {errors.submit && (
+                                    <div className="border border-rose-500/20 bg-rose-500/10 rounded-2xl px-4 py-3 text-xs sm:text-sm font-mono font-bold text-rose-400 shadow-inner">
+                                        &gt; {errors.submit}
                                     </div>
-                                </div>
-                            )}
+                                )}
+                            </div>
+                        </div>
 
-                            {/* FOOTER */}
-                            <div className="border-t border-gray-100 px-5 py-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
+                        {/* FOOTER */}
+                        <div className="border-t border-white/5 px-4 sm:px-6 py-3 sm:py-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 shrink-0 bg-zinc-950/40">
 
-                                <button
-                                    type="button"
-                                    onClick={onClose}
-                                    className="cursor-pointer h-11 px-5 rounded-2xl border border-gray-200 hover:bg-gray-50 transition-all text-sm font-medium text-gray-700"
-                                >
-                                    Cancel
-                                </button>
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="cursor-pointer h-10 px-6 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 transition-all text-xs sm:text-sm font-mono font-bold text-zinc-300 hover:text-white shadow-inner"
+                            >
+                                Cancel
+                            </button>
 
+                            <div className="relative group cursor-pointer w-full sm:w-auto">
+                                <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
                                 <button
                                     type="submit"
                                     disabled={creating}
-                                    className="cursor-pointer h-11 px-5 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-70 transition-all text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-blue-100"
+                                    className="relative w-full sm:w-auto cursor-pointer h-10 px-7 rounded-2xl bg-zinc-950 hover:bg-zinc-900 disabled:opacity-70 transition-all duration-300 text-white text-xs sm:text-sm font-mono font-bold flex items-center justify-center gap-2 border border-white/10 shadow-lg active:scale-95"
                                 >
                                     {creating ? (
                                         <>
-                                            <Loader2 size={17} className="animate-spin" />
+                                            <Loader2 size={15} className="animate-spin text-cyan-400" />
                                             Creating...
                                         </>
                                     ) : (
                                         <>
-                                            <ClipboardCheck size={17} />
+                                            <ClipboardCheck size={15} className="text-cyan-400" />
                                             Create Timesheet
                                         </>
                                     )}
                                 </button>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
-
-                {/* ANIMATIONS + SCROLLBAR */}
-                <style>
-                    {`
-                        @keyframes modalPop {
-                            from {
-                                opacity: 0;
-                                transform: scale(0.96);
-                            }
-                            to {
-                                opacity: 1;
-                                transform: scale(1);
-                            }
-                        }
-
-                        @keyframes slideDown {
-                            from {
-                                opacity: 0;
-                                transform: translateY(-20px);
-                            }
-                            to {
-                                opacity: 1;
-                                transform: translateY(0);
-                            }
-                        }
-
-                        .custom-scrollbar::-webkit-scrollbar {
-                            width: 6px;
-                        }
-
-                        .custom-scrollbar::-webkit-scrollbar-thumb {
-                            background: #cbd5e1;
-                            border-radius: 999px;
-                        }
-
-                        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                            background: #94a3b8;
-                        }
-                    `}
-                </style>
             </div>
+
+            {/* ANIMATIONS + SCROLLBAR */}
+            <style>
+                {`
+                    @keyframes modalPop {
+                        from {
+                            opacity: 0;
+                            transform: scale(0.96) translateY(10px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: scale(1) translateY(0);
+                        }
+                    }
+
+                    @keyframes slideDown {
+                        from {
+                            opacity: 0;
+                            transform: translateY(-20px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
+
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+
+                    .animate-modalPop { animation: modalPop .25s ease; }
+                    .animate-fadeIn { animation: fadeIn .2s ease; }
+
+                    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+                    .custom-scrollbar::-webkit-scrollbar-thumb {
+                        background: rgba(255, 255, 255, 0.1);
+                        border-radius: 999px;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-track {
+                        background: transparent;
+                    }
+                    .custom-scrollbar {
+                        scrollbar-width: thin;
+                        scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+                    }
+                `}
+            </style>
         </>
     );
 };
