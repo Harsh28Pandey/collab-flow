@@ -8,7 +8,6 @@ import {
     LuFileSpreadsheet,
     LuSearch,
     LuPlus,
-    LuLayoutGrid,
     LuListFilter,
     LuRefreshCcw
 } from 'react-icons/lu';
@@ -315,12 +314,13 @@ const ManageTasks = () => {
                                 Manage Tasks
                             </h1>
 
-                            <p className='hidden sm:block text-sm text-zinc-400 mt-1 font-mono'>
+                            {/* Removed 'hidden sm:block' so it shows on mobile too */}
+                            <p className='text-sm text-zinc-400 mt-1 font-mono'>
                                 Organize, track and manage team productivity.
                             </p>
                         </div>
 
-                        <div className='flex items-center gap-3 flex-shrink-0'>
+                        <div className='flex flex-wrap items-center gap-3 flex-shrink-0'>
 
                             <button
                                 onClick={getAllTasks}
@@ -340,14 +340,15 @@ const ManageTasks = () => {
                                 <span className='hidden sm:inline'>Export</span>
                             </button>
 
-                            <div className="relative group cursor-pointer">
+                            <div className="relative group cursor-pointer flex-1 sm:flex-none">
                                 <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
                                 <button
                                     onClick={() => navigate("/admin/create-task")}
-                                    className='relative h-10 px-4 sm:h-11 sm:px-6 rounded-2xl bg-zinc-950 text-white flex items-center gap-2 text-sm font-mono font-bold border border-white/10 transition-all cursor-pointer active:scale-95'
+                                    className='relative w-full sm:w-auto h-10 px-4 sm:h-11 sm:px-6 rounded-2xl bg-zinc-950 text-white flex items-center justify-center gap-2 text-sm font-mono font-bold border border-white/10 transition-all cursor-pointer active:scale-95'
                                 >
                                     <LuPlus className='text-lg stroke-[3] text-cyan-400' />
-                                    <span className='hidden sm:inline'>Create Task</span>
+                                    {/* Removed 'hidden sm:inline' so "Create Task" always shows */}
+                                    <span>Create Task</span>
                                 </button>
                             </div>
 
