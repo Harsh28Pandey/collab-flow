@@ -1,3 +1,4 @@
+// src/pages/Admin/ManageHolidays.jsx
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
 import axiosInstance from "../../utils/axiosInstance.js";
@@ -10,17 +11,24 @@ import {
     RefreshCcw, Search, X, Check, Ban, CheckCircle2, AlertCircle, Loader2,
     CalendarCheck, MessageSquareText, UserRound, Inbox,
 } from "lucide-react";
+import TaskStatusTabs from "../../components/TaskStatusTabs.jsx";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SKELETON / TOAST
+// SKELETON / TOAST (Dark Mode Cyber Pulse)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const Skeleton = () => (
     <div className="space-y-4 animate-pulse">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[...Array(4)].map((_, i) => <div key={i} className="h-[68px] bg-gray-100 rounded-2xl" />)}
+            {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-[76px] bg-zinc-900/60 border border-white/5 rounded-2xl" />
+            ))}
         </div>
-        {[...Array(3)].map((_, i) => <div key={i} className="h-36 bg-gray-100 rounded-3xl" />)}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-5">
+            {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-44 bg-zinc-950/60 border border-white/10 rounded-[2rem]" />
+            ))}
+        </div>
     </div>
 );
 
@@ -34,11 +42,11 @@ const Toast = ({ toast, onClose }) => {
     const ok = toast.type === "success";
     return (
         <div className="fixed top-5 right-5 z-[10001] animate-[toastIn_.25s_ease]">
-            <div className={`flex items-center gap-2.5 pl-4 pr-3 py-3 rounded-2xl shadow-xl border text-sm font-medium
-                ${ok ? "bg-blue-600 border-blue-700 text-white" : "bg-red-600 border-red-700 text-white"}`}>
-                {ok ? <CheckCircle2 size={17} /> : <AlertCircle size={17} />}
+            <div className={`flex items-center gap-2.5 pl-4 pr-3 py-3 rounded-2xl shadow-xl border text-xs sm:text-sm font-mono font-bold
+                ${ok ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 backdrop-blur-xl" : "bg-rose-500/10 border-rose-500/30 text-rose-400 backdrop-blur-xl"}`}>
+                {ok ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
                 {toast.message}
-                <button type="button" onClick={onClose} className="cursor-pointer ml-1 h-6 w-6 rounded-lg hover:bg-white/20 flex items-center justify-center">
+                <button type="button" onClick={onClose} className="cursor-pointer ml-1 h-6 w-6 rounded-lg hover:bg-white/10 flex items-center justify-center transition-all">
                     <X size={14} />
                 </button>
             </div>
@@ -59,34 +67,39 @@ const ReviewModal = ({ request, action, onClose, onConfirm, submitting }) => {
     const isApprove = action === "Approved";
 
     return (
-        <div className="fixed inset-0 z-[10000] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-            <div className="w-full max-w-md bg-white rounded-[26px] shadow-2xl p-6 animate-[modalPop_.2s_ease]" onClick={e => e.stopPropagation()}>
-                <div className={`h-12 w-12 rounded-2xl flex items-center justify-center mx-auto mb-4 ${isApprove ? "bg-green-100" : "bg-red-100"}`}>
-                    {isApprove ? <Check size={22} className="text-green-600" /> : <Ban size={22} className="text-red-600" />}
+        <div className="fixed inset-0 z-[10000] bg-zinc-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn" onClick={onClose}>
+            <div className="relative w-full max-w-md bg-zinc-950/95 backdrop-blur-3xl rounded-[2rem] border border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.95)] p-6 sm:p-7 animate-[modalPop_.25s_ease] overflow-hidden" onClick={e => e.stopPropagation()}>
+
+                {/* Top Glow Line */}
+                <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-${isApprove ? 'emerald' : 'rose'}-500 to-transparent shadow-[0_0_12px_rgba(${isApprove ? '16,185,129' : '244,63,94'},0.8)]`}></div>
+
+                <div className={`h-14 w-14 rounded-2xl flex items-center justify-center mx-auto mb-5 border shadow-inner ${isApprove ? "bg-emerald-500/10 border-emerald-500/20" : "bg-rose-500/10 border-rose-500/20"}`}>
+                    {isApprove ? <Check size={24} className="text-emerald-400 stroke-[3]" /> : <Ban size={24} className="text-rose-400 stroke-[3]" />}
                 </div>
-                <h3 className="text-base font-bold text-gray-900 text-center">
+
+                <h3 className="text-lg sm:text-xl font-mono font-black text-white text-center tracking-wide">
                     {isApprove ? "Approve" : "Reject"} this request?
                 </h3>
-                <p className="text-sm text-gray-500 text-center mt-1.5">
-                    {request.user?.name || "This employee"}'s {request.leaveType} for {formatDateRange(request.fromDate, request.toDate)} ({request.totalDays} day{request.totalDays !== 1 ? "s" : ""}).
+                <p className="text-xs sm:text-sm font-mono text-zinc-400 text-center mt-2 leading-relaxed">
+                    {request.user?.name || "This employee"}'s <span className="text-white font-bold">{request.leaveType}</span> for {formatDateRange(request.fromDate, request.toDate)} ({request.totalDays} day{request.totalDays !== 1 ? "s" : ""}).
                 </p>
 
-                <div className="mt-4">
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">Remarks <span className="text-gray-400 font-normal">(optional)</span></label>
+                <div className="mt-6">
+                    <label className="block text-xs font-mono font-bold text-zinc-300 mb-2 uppercase tracking-wider">Remarks <span className="text-zinc-500 font-normal">(optional)</span></label>
                     <textarea rows={3} value={remarks} onChange={e => setRemarks(e.target.value)}
                         placeholder={isApprove ? "e.g. Approved, enjoy your time off!" : "e.g. Team is short-staffed that week"}
-                        className="w-full h-auto py-3 px-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none" />
+                        className="w-full h-auto py-3 px-4 rounded-2xl border border-white/10 bg-zinc-900/80 outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-xs sm:text-sm font-mono text-white placeholder-zinc-600 transition-all shadow-inner resize-none" />
                 </div>
 
-                <div className="flex items-center gap-3 mt-6">
+                <div className="flex items-center gap-3 mt-7 pt-5 border-t border-white/5">
                     <button type="button" onClick={onClose} disabled={submitting}
-                        className="cursor-pointer flex-1 h-11 rounded-2xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition disabled:opacity-60">
+                        className="cursor-pointer flex-1 h-11 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs sm:text-sm font-mono font-bold transition-all shadow-inner disabled:opacity-60">
                         Cancel
                     </button>
                     <button type="button" onClick={() => onConfirm(remarks)} disabled={submitting}
-                        className={`cursor-pointer flex-1 h-11 rounded-2xl text-white text-sm font-semibold transition disabled:opacity-60 flex items-center justify-center gap-2
-                            ${isApprove ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"}`}>
-                        {submitting && <Loader2 size={15} className="animate-spin" />}
+                        className={`cursor-pointer flex-1 h-11 rounded-2xl text-white text-xs sm:text-sm font-mono font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 border disabled:opacity-60
+                            ${isApprove ? "bg-emerald-500/20 hover:bg-emerald-500/30 border-emerald-500/30 text-emerald-400" : "bg-rose-500/20 hover:bg-rose-500/30 border-rose-500/30 text-rose-400"}`}>
+                        {submitting && <Loader2 size={14} className="animate-spin" />}
                         {isApprove ? "Approve" : "Reject"}
                     </button>
                 </div>
@@ -96,7 +109,7 @@ const ReviewModal = ({ request, action, onClose, onConfirm, submitting }) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// REQUEST CARD
+// REQUEST CARD (Bento Glassmorphism)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const RequestCard = ({ h, onReview }) => {
@@ -106,56 +119,73 @@ const RequestCard = ({ h, onReview }) => {
     const StatusIcon = statusStyle.icon;
     const initials = (h.user?.name || "?").split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
 
+    // Mapping light-mode colors to dark-mode bento styles safely
+    const getBadgeStyle = (status) => {
+        switch (status) {
+            case "Approved": return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+            case "Rejected": return "bg-rose-500/10 text-rose-400 border-rose-500/20";
+            default: return "bg-amber-500/10 text-amber-400 border-amber-500/20"; // Pending
+        }
+    };
+
     return (
-        <div className="rounded-3xl border border-gray-200 bg-white p-5">
-            <div className="flex items-start justify-between gap-3 flex-wrap">
-                <div className="flex items-start gap-3 min-w-0">
-                    <div className="h-11 w-11 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 font-bold text-sm">
-                        {initials || <UserRound size={16} />}
+        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-5 hover:border-white/20 transition-all duration-300 relative shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col justify-between">
+
+            <div>
+                {/* User Info & Status */}
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                    <div className="flex items-start gap-3 min-w-0">
+                        <div className="h-11 w-11 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center shrink-0 font-mono font-black text-xs shadow-inner">
+                            {initials || <UserRound size={16} />}
+                        </div>
+                        <div className="min-w-0">
+                            <p className="text-sm font-mono font-bold text-white truncate tracking-wide">{h.user?.name || "Unknown employee"}</p>
+                            <p className="text-[11px] font-mono text-zinc-400 truncate mt-0.5">{h.user?.email}</p>
+                        </div>
                     </div>
-                    <div className="min-w-0">
-                        <p className="text-sm font-bold text-gray-900 truncate">{h.user?.name || "Unknown employee"}</p>
-                        <p className="text-xs text-gray-400 truncate">{h.user?.email}</p>
+                    <span className={`flex items-center gap-1.5 text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg border shadow-inner shrink-0 ${getBadgeStyle(h.status)}`}>
+                        <StatusIcon size={12} className="stroke-[2.5]" /> {h.status}
+                    </span>
+                </div>
+
+                {/* Leave Details */}
+                <div className="flex items-center gap-3 mt-5 bg-zinc-900/50 border border-white/5 rounded-2xl p-3 shadow-inner">
+                    <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0 border bg-indigo-500/10 border-indigo-500/20 text-indigo-400">
+                        <TypeIcon size={16} className="stroke-[2.5]" />
+                    </div>
+                    <div>
+                        <p className="text-[13px] font-mono font-bold text-white">{h.leaveType}</p>
+                        <p className="text-[11px] font-mono text-zinc-400 mt-0.5">{formatDateRange(h.fromDate, h.toDate)} · {h.totalDays} day{h.totalDays !== 1 ? "s" : ""}</p>
                     </div>
                 </div>
-                <span className={`flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full border shrink-0 ${statusStyle.badge}`}>
-                    <StatusIcon size={12} /> {h.status}
-                </span>
+
+                <p className="text-xs sm:text-sm font-mono text-zinc-300 mt-4 leading-relaxed line-clamp-3">
+                    <span className="text-zinc-500 font-bold mr-1">Reason:</span>{h.reason}
+                </p>
+
+                {h.status !== "Pending" && h.adminRemarks && (
+                    <div className="flex items-start gap-2.5 mt-4 rounded-xl border border-white/5 bg-zinc-900/80 p-3 shadow-inner">
+                        <MessageSquareText size={14} className="text-cyan-400 shrink-0 mt-0.5" />
+                        <p className="text-[11px] font-mono text-zinc-300 leading-relaxed">
+                            <span className="font-bold text-cyan-400">Your note: </span> {h.adminRemarks}
+                            {h.reviewedBy?.name && <span className="text-zinc-500 block mt-1">Reviewed by {h.reviewedBy.name}</span>}
+                        </p>
+                    </div>
+                )}
             </div>
 
-            <div className="flex items-center gap-2.5 mt-4">
-                <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 border ${typeStyle.badge}`}>
-                    <TypeIcon size={15} />
-                </div>
-                <div>
-                    <p className="text-sm font-semibold text-gray-900">{h.leaveType}</p>
-                    <p className="text-xs text-gray-500">{formatDateRange(h.fromDate, h.toDate)} · {h.totalDays} day{h.totalDays !== 1 ? "s" : ""}</p>
-                </div>
-            </div>
-
-            <p className="text-sm text-gray-600 mt-3 leading-relaxed">{h.reason}</p>
-
-            {h.status !== "Pending" && h.adminRemarks && (
-                <div className="flex items-start gap-2 mt-3 rounded-2xl border border-gray-100 bg-gray-50/70 p-3">
-                    <MessageSquareText size={14} className="text-gray-400 shrink-0 mt-0.5" />
-                    <p className="text-xs text-gray-600">
-                        <span className="font-semibold text-gray-700">Your note:</span> {h.adminRemarks}
-                        {h.reviewedBy?.name && <span className="text-gray-400"> · reviewed by {h.reviewedBy.name}</span>}
-                    </p>
-                </div>
-            )}
-
-            <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
-                <p className="text-[11px] text-gray-400">Applied on {fmtDate(h.createdAt)}</p>
+            {/* Footer / Actions */}
+            <div className="flex items-center justify-between mt-5 pt-4 border-t border-white/5">
+                <p className="text-[10px] font-mono text-zinc-500 font-bold">Applied: {fmtDate(h.createdAt)}</p>
                 {h.status === "Pending" && (
                     <div className="flex items-center gap-2">
                         <button type="button" onClick={() => onReview(h, "Rejected")}
-                            className="cursor-pointer h-9 px-3.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold flex items-center gap-1.5 transition">
-                            <Ban size={13} /> Reject
+                            className="cursor-pointer h-8 sm:h-9 px-3.5 rounded-xl border border-rose-500/20 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-[11px] sm:text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-inner active:scale-95">
+                            <Ban size={12} className="stroke-[3]" /> Reject
                         </button>
                         <button type="button" onClick={() => onReview(h, "Approved")}
-                            className="cursor-pointer h-9 px-3.5 rounded-xl border border-green-200 bg-green-50 hover:bg-green-100 text-green-700 text-xs font-semibold flex items-center gap-1.5 transition">
-                            <Check size={13} /> Approve
+                            className="cursor-pointer h-8 sm:h-9 px-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[11px] sm:text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-inner active:scale-95">
+                            <Check size={12} className="stroke-[3]" /> Approve
                         </button>
                     </div>
                 )}
@@ -168,14 +198,10 @@ const RequestCard = ({ h, onReview }) => {
 // MAIN ADMIN HOLIDAYS PAGE
 // ─────────────────────────────────────────────────────────────────────────────
 
-// "All" is now first in the tab order, so it renders as the leftmost/first tab.
-const FILTER_TABS = ["All", "Pending", "Approved", "Rejected"];
-
 const ManageHolidays = () => {
     const [holidays, setHolidays] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    // "All" is now the default active filter on page load.
     const [statusFilter, setStatusFilter] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -217,6 +243,14 @@ const ManageHolidays = () => {
         rejected: holidays.filter(h => h.status === "Rejected").length,
     }), [holidays]);
 
+    // Format tabs data for TaskStatusTabs
+    const TABS = useMemo(() => [
+        { label: "All", count: stats.total },
+        { label: "Pending", count: stats.pending },
+        { label: "Approved", count: stats.approved },
+        { label: "Rejected", count: stats.rejected },
+    ], [stats]);
+
     const openReview = (h, action) => { setReviewTarget(h); setReviewAction(action); };
 
     const handleReviewConfirm = async (remarks) => {
@@ -240,82 +274,97 @@ const ManageHolidays = () => {
 
     return (
         <DashboardLayout activeMenu="Manage Holidays">
-            <div className="space-y-5">
+            <div className="space-y-6">
 
-                {/* HEADER */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Manage Holidays</h1>
-                        <p className="text-sm text-gray-500 mt-1">Review and approve your team's time-off requests</p>
+                {/* ───────────────── HEADER ───────────────── */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="min-w-0">
+                        <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight truncate">Manage Holidays</h1>
+                        {/* Always visible description */}
+                        <p className="text-xs sm:text-sm text-zinc-400 mt-1 font-mono">Review and approve your team's time-off requests</p>
                     </div>
-                    <button type="button" onClick={() => fetchHolidays({ isRefresh: true })} disabled={loading || refreshing}
-                        className="cursor-pointer h-11 px-4 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-60 text-gray-700 flex items-center gap-2 text-sm font-medium transition-all self-start sm:self-auto">
-                        <RefreshCcw size={16} className={refreshing ? "animate-spin" : ""} />
-                        Refresh
-                    </button>
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                        <button type="button" onClick={() => fetchHolidays({ isRefresh: true })} disabled={loading || refreshing}
+                            className="cursor-pointer h-10 px-4 sm:h-11 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 disabled:opacity-60 text-zinc-300 hover:text-white flex items-center justify-center gap-2 text-sm font-mono font-bold transition-all shadow-inner">
+                            <RefreshCcw size={16} className={refreshing ? "animate-spin text-cyan-400" : "text-cyan-400"} />
+                            {/* Always visible refresh text */}
+                            <span>{refreshing ? "Refreshing" : "Refresh"}</span>
+                        </button>
+                    </div>
                 </div>
 
                 {loading ? <Skeleton /> : (
                     <>
-                        {/* STAT PILLS */}
+                        {/* ───────────────── STAT PILLS ───────────────── */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                            <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
-                                <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Total Requests</p>
-                                <p className="text-lg font-bold text-gray-900 mt-1">{stats.total}</p>
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-2xl px-4 py-3.5 shadow-inner">
+                                <p className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Total Requests</p>
+                                <p className="text-xl font-mono font-black text-white mt-1">{stats.total}</p>
                             </div>
-                            <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
-                                <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Pending</p>
-                                <p className="text-lg font-bold text-amber-600 mt-1">{stats.pending}</p>
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-amber-500/20 rounded-2xl px-4 py-3.5 shadow-inner relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/10 blur-xl rounded-full"></div>
+                                <p className="text-[10px] font-mono text-amber-500/70 uppercase tracking-wider relative z-10">Pending</p>
+                                <p className="text-xl font-mono font-black text-amber-400 mt-1 relative z-10">{stats.pending}</p>
                             </div>
-                            <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
-                                <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Approved</p>
-                                <p className="text-lg font-bold text-green-600 mt-1">{stats.approved}</p>
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-emerald-500/20 rounded-2xl px-4 py-3.5 shadow-inner relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 blur-xl rounded-full"></div>
+                                <p className="text-[10px] font-mono text-emerald-500/70 uppercase tracking-wider relative z-10">Approved</p>
+                                <p className="text-xl font-mono font-black text-emerald-400 mt-1 relative z-10">{stats.approved}</p>
                             </div>
-                            <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
-                                <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Rejected</p>
-                                <p className="text-lg font-bold text-red-600 mt-1">{stats.rejected}</p>
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-rose-500/20 rounded-2xl px-4 py-3.5 shadow-inner relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-16 h-16 bg-rose-500/10 blur-xl rounded-full"></div>
+                                <p className="text-[10px] font-mono text-rose-500/70 uppercase tracking-wider relative z-10">Rejected</p>
+                                <p className="text-xl font-mono font-black text-rose-400 mt-1 relative z-10">{stats.rejected}</p>
                             </div>
                         </div>
 
-                        {/* FILTERS + SEARCH */}
+                        {/* ───────────────── FILTERS + SEARCH ───────────────── */}
                         {hasData && (
-                            <div className="bg-white border border-gray-200 rounded-3xl p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-                                <div className="flex items-center gap-1 bg-gray-100 rounded-2xl p-1 overflow-x-auto">
-                                    {FILTER_TABS.map(tab => (
-                                        <button key={tab} type="button" onClick={() => setStatusFilter(tab)}
-                                            className={`cursor-pointer px-4 h-9 rounded-xl text-xs font-semibold transition-all whitespace-nowrap
-                                                ${statusFilter === tab ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
-                                            {tab}{tab !== "All" && ` (${holidays.filter(h => h.status === tab).length})`}
-                                        </button>
-                                    ))}
-                                </div>
-                                <div className="relative flex-1 min-w-[180px]">
-                                    <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 py-2">
+
+                                {/* Search Bar on Left */}
+                                <div className="relative flex-1 max-w-xl">
+                                    <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400" />
                                     <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                                        placeholder="Search employee, reason or leave type..."
-                                        className="w-full h-10 pl-10 pr-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+                                        placeholder="Search employee, reason or type..."
+                                        className="w-full h-12 pl-11 pr-4 rounded-2xl border border-white/10 bg-zinc-950/80 backdrop-blur-xl outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-xs sm:text-sm font-mono text-white placeholder-zinc-500 transition-all shadow-inner" />
                                 </div>
+
+                                {/* Tabs / Filters on Right (Clean Inline Style) */}
+                                <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 xl:mx-0 xl:px-0">
+                                    <div className="min-w-max">
+                                        <TaskStatusTabs
+                                            tabs={TABS}
+                                            activeTab={statusFilter}
+                                            setActiveTab={setStatusFilter}
+                                        />
+                                    </div>
+                                </div>
+
                             </div>
                         )}
 
-                        {/* LIST */}
+                        {/* ───────────────── LIST ───────────────── */}
                         {!hasData ? (
-                            <div className="bg-white border border-dashed border-gray-300 rounded-3xl py-16 text-center">
-                                <div className="h-16 w-16 rounded-3xl bg-blue-50 flex items-center justify-center mx-auto mb-4">
-                                    <Inbox size={28} className="text-blue-400" />
+                            <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center backdrop-blur-xl mt-6">
+                                <div className="w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(56,189,248,0.15)]">
+                                    <Inbox size={36} className="text-cyan-400" />
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-800">No holiday requests</h3>
-                                <p className="text-sm text-gray-500 mt-2 max-w-sm mx-auto">
+                                <h3 className="text-xl md:text-2xl font-black text-white tracking-tight">No holiday requests</h3>
+                                <p className="text-zinc-400 max-w-md mt-2 leading-relaxed font-mono text-xs sm:text-sm">
                                     When your team applies for time off, their requests will show up here for approval.
                                 </p>
                             </div>
                         ) : filtered.length === 0 ? (
-                            <div className="bg-white border border-dashed border-gray-300 rounded-3xl py-14 text-center">
-                                <CalendarCheck size={26} className="mx-auto text-gray-300 mb-2" />
-                                <p className="text-sm text-gray-500">No {statusFilter !== "All" ? statusFilter.toLowerCase() : ""} requests found</p>
+                            <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center backdrop-blur-xl mt-6">
+                                <div className="h-16 w-16 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center mb-4">
+                                    <CalendarCheck size={26} className="text-zinc-500" />
+                                </div>
+                                <p className="text-sm font-mono font-bold text-white">No {statusFilter !== "All" ? statusFilter : "matching"} requests found</p>
+                                <p className="text-xs font-mono text-zinc-500 mt-1">Try a different search term or filter.</p>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-2">
                                 {filtered.map(h => <RequestCard key={h._id} h={h} onReview={openReview} />)}
                             </div>
                         )}
@@ -333,8 +382,12 @@ const ManageHolidays = () => {
             <Toast toast={toast} onClose={() => setToast(null)} />
 
             <style>{`
-                @keyframes modalPop { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
+                @keyframes modalPop { from { opacity:0; transform:scale(.96) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
                 @keyframes toastIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                .animate-fadeIn { animation: fadeIn .2s ease; }
+                .scrollbar-hide::-webkit-scrollbar { display: none; }
+                .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
             `}</style>
         </DashboardLayout>
     );
