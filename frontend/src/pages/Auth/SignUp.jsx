@@ -1,4 +1,3 @@
-// src/pages/SignUp.jsx
 import React, { useContext, useState } from 'react';
 import AuthLayout from '../../components/layouts/AuthLayout.jsx';
 import { validateEmail } from '../../utils/helper.js';

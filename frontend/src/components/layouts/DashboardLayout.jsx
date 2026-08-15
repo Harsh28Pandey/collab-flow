@@ -1,4 +1,3 @@
-// src/components/layouts/DashboardLayout.jsx
 import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../context/userContext.jsx';
 import Navbar from './Navbar.jsx';

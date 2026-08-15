@@ -1,4 +1,3 @@
-// src/components/playground/PlaygroundTopology.jsx
 import React from "react";
 import { LuServer } from "react-icons/lu";
 

@@ -1,28 +1,25 @@
 import React from 'react'
 
-const AvatarGroup = ({ avatars, maxVisible = 3 }) => {
+const AvatarGroup = ({ avatars = [], maxVisible = 3 }) => {
     return (
         <div className='flex items-center'>
             {avatars.slice(0, maxVisible).map((avatar, index) => {
 
-                // image ya naam dono cases handle karo
                 const imageUrl = typeof avatar === 'string' ? avatar : avatar?.image;
                 const name = typeof avatar === 'object' ? avatar?.name : "";
                 const firstLetter = name ? name.charAt(0).toUpperCase() : "?";
 
                 return imageUrl ? (
-                    // agar image hai toh image dikhao
                     <img
                         key={index}
                         src={imageUrl}
                         alt={`Avatar ${index}`}
-                        className='w-9 h-9 rounded-full border-2 border-white -ml-3 first:ml-0'
+                        className='w-9 h-9 rounded-full object-cover border-2 border-zinc-950 bg-zinc-900 -ml-3 first:ml-0 shadow-md'
                     />
                 ) : (
-                    // agar image nahi hai toh pehla letter dikhao
                     <div
                         key={index}
-                        className='w-9 h-9 flex items-center justify-center bg-primary text-white text-sm font-medium rounded-full border-2 border-white -ml-3 first:ml-0'
+                        className='w-9 h-9 flex items-center justify-center bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 text-white text-xs font-mono font-bold rounded-full border-2 border-zinc-950 -ml-3 first:ml-0 shadow-md uppercase'
                     >
                         {firstLetter}
                     </div>
@@ -30,7 +27,7 @@ const AvatarGroup = ({ avatars, maxVisible = 3 }) => {
             })}
 
             {avatars.length > maxVisible && (
-                <div className='w-9 h-9 flex items-center justify-center bg-blue-100 text-sm font-medium rounded-full border-2 border-white -ml-3'>
+                <div className='w-9 h-9 flex items-center justify-center bg-zinc-900 border-2 border-zinc-950 text-cyan-400 text-xs font-mono font-black rounded-full -ml-3 shadow-md z-10'>
                     +{avatars.length - maxVisible}
                 </div>
             )}
@@ -38,4 +35,4 @@ const AvatarGroup = ({ avatars, maxVisible = 3 }) => {
     )
 }
 
-export default AvatarGroup
+export default AvatarGroup;

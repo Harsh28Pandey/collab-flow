@@ -1,4 +1,3 @@
-// src/components/playground/PlaygroundMetrics.jsx
 import React, { useState, useEffect } from "react";
 import { LuGauge, LuZap, LuActivity } from "react-icons/lu";
 

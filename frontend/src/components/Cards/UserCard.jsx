@@ -15,18 +15,15 @@ const UserCard = ({ userInfo }) => {
 
     return (
 
-        <div className='group relative overflow-hidden bg-gradient-to-br from-white to-blue-50 border border-blue-100 hover:border-blue-300 rounded-3xl p-3.5 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer'>
+        <div className='group relative overflow-hidden bg-zinc-950/60 backdrop-blur-3xl border border-white/10 hover:border-cyan-500/40 rounded-[2rem] p-4 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_20px_50px_rgba(56,189,248,0.15)] transition-all duration-300 cursor-pointer select-none'>
 
-            {/* Glow */}
-
-            <div className='absolute top-0 right-0 w-20 h-20 bg-blue-100/40 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500'></div>
+            {/* Ambient Glow Orb */}
+            <div className='absolute top-0 right-0 w-28 h-28 bg-cyan-500/10 blur-[60px] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none'></div>
 
             {/* Header */}
-
-            <div className='relative flex items-center gap-3 min-w-0'>
+            <div className='relative flex items-center gap-3.5 min-w-0'>
 
                 {/* Profile */}
-
                 <div className='relative flex-shrink-0'>
 
                     {userInfo?.profileImageUrl ? (
@@ -34,36 +31,35 @@ const UserCard = ({ userInfo }) => {
                         <img
                             src={userInfo?.profileImageUrl}
                             alt="profile"
-                            className='w-12 h-12 rounded-xl object-cover border-2 border-white shadow-sm'
+                            className='w-12 h-12 rounded-2xl object-cover border border-white/10 shadow-md group-hover:border-cyan-500/50 transition-colors'
                         />
 
                     ) : (
 
-                        <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-sky-400 flex items-center justify-center text-white text-sm font-bold shadow-sm border-2 border-white'>
+                        <div className='w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 flex items-center justify-center text-white text-sm font-bold shadow-md border border-white/10 uppercase font-mono'>
                             {getInitial(userInfo?.name)}
                         </div>
 
                     )}
 
-                    {/* Online Dot */}
-
-                    <div className='absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white'></div>
+                    {/* Online Dot Beacon */}
+                    <div className='absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-zinc-950 shadow-[0_0_8px_rgba(16,185,129,0.8)]'></div>
 
                 </div>
 
                 {/* User Info */}
-
                 <div className='min-w-0 flex-1'>
 
-                    <h3 className='text-sm font-bold text-gray-900 truncate'>
+                    <h3 className='text-sm font-bold text-white truncate tracking-tight group-hover:text-cyan-400 transition-colors'>
                         {userInfo?.name}
                     </h3>
 
-                    <p className='text-[11px] text-gray-600 truncate mt-0.5'>
+                    <p className='text-[11px] text-zinc-400 font-mono truncate mt-0.5'>
                         {userInfo?.email}
                     </p>
 
-                    <div className='mt-1.5 inline-flex items-center bg-blue-100 text-blue-700 text-[9px] font-semibold px-2 py-0.5 rounded-full'>
+                    <div className='mt-2 inline-flex items-center gap-1.5 bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 text-[9px] font-mono font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-inner'>
+                        <span className='w-1 h-1 rounded-full bg-cyan-400 animate-pulse'></span>
                         Team Member
                     </div>
 
@@ -72,38 +68,36 @@ const UserCard = ({ userInfo }) => {
             </div>
 
             {/* Divider */}
-
-            <div className='h-px bg-gradient-to-r from-transparent via-blue-100 to-transparent my-3'></div>
+            <div className='h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-3.5'></div>
 
             {/* Stats */}
-
             <div className='grid grid-cols-3 gap-2'>
 
                 <StatCard
                     label="Pending"
                     count={userInfo?.pendingTasks || 0}
                     icon={<LuClock3 />}
-                    bg="from-violet-50 to-violet-100"
-                    text="text-violet-700"
-                    border="border-violet-200"
+                    bg="bg-purple-500/10"
+                    text="text-purple-400"
+                    border="border-purple-500/20"
                 />
 
                 <StatCard
                     label="Progress"
                     count={userInfo?.inProgressTasks || 0}
                     icon={<LuLoader />}
-                    bg="from-sky-50 to-sky-100"
-                    text="text-sky-700"
-                    border="border-sky-200"
+                    bg="bg-cyan-500/10"
+                    text="text-cyan-400"
+                    border="border-cyan-500/20"
                 />
 
                 <StatCard
                     label="Done"
                     count={userInfo?.completedTasks || 0}
                     icon={<LuCheckCheck />}
-                    bg="from-emerald-50 to-emerald-100"
-                    text="text-emerald-700"
-                    border="border-emerald-200"
+                    bg="bg-emerald-500/10"
+                    text="text-emerald-400"
+                    border="border-emerald-500/20"
                 />
 
             </div>
@@ -128,18 +122,18 @@ const StatCard = ({
     return (
 
         <div
-            className={`bg-gradient-to-br ${bg} border ${border} rounded-2xl p-2 text-center transition-all duration-300 hover:scale-[1.02]`}
+            className={`${bg} border ${border} rounded-2xl p-2.5 text-center transition-all duration-300 hover:scale-[1.02] shadow-inner backdrop-blur-md`}
         >
 
-            <div className={`flex justify-center text-sm mb-0.5 ${text}`}>
+            <div className={`flex justify-center text-sm mb-1 ${text}`}>
                 {icon}
             </div>
 
-            <h4 className={`text-base font-bold ${text}`}>
+            <h4 className={`text-base font-mono font-black ${text} tracking-tight drop-shadow-sm`}>
                 {count}
             </h4>
 
-            <p className='text-[9px] font-semibold text-gray-600 truncate'>
+            <p className='text-[9px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate mt-0.5'>
                 {label}
             </p>
 

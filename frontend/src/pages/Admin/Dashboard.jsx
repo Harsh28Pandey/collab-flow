@@ -8,39 +8,39 @@ import { API_PATHS } from "../../utils/apiPaths.js";
 import moment from "moment";
 import InfoCard from '../../components/Cards/InfoCard.jsx';
 import { addThousandSeparator } from '../../utils/helper.js';
-import { LuArrowRight } from 'react-icons/lu';
+import { LuArrowRight, LuZap, LuCode, LuTerminal } from 'react-icons/lu';
 import TaskListTable from '../../components/TaskListTable.jsx';
 import CustomPieChart from '../../components/Charts/CustomPieChart.jsx';
 import CustomBarChart from '../../components/Charts/CustomBarChart.jsx';
 
-// Updated Colors for Charts to match the warm theme
-const COLORS = ["#f97316", "#eab308", "#22c55e"];
+// Updated Developer Neon Colors for Charts
+const COLORS = ["#38bdf8", "#8b5cf6", "#10b981"]; // Cyan, Purple, Emerald
 
-// ─── Skeleton Components ──────────────────────────────────────────────────────
+// ─── Skeleton Components (Dark Mode Cyber Pulse) ──────────────────────────────
 
 const SkeletonBlock = ({ className }) => (
-    <div className={`bg-gradient-to-r from-slate-100 via-orange-50 to-slate-100 bg-[length:200%_100%] animate-shimmer rounded-xl ${className}`} />
+    <div className={`bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 bg-[length:200%_100%] animate-shimmer rounded-xl border border-white/5 ${className}`} />
 );
 
 const DashboardSkeleton = () => (
-    <div className='space-y-5 my-5'>
+    <div className='space-y-6 my-2'>
 
         {/* Welcome card skeleton */}
-        <div className='bg-white/70 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)]'>
-            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
-                <div className='space-y-2.5'>
-                    <SkeletonBlock className='h-7 w-56' />
-                    <SkeletonBlock className='h-3.5 w-36' />
+        <div className='bg-zinc-950/60 backdrop-blur-3xl border border-white/10 p-6 sm:p-8 rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.5)]'>
+            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+                <div className='space-y-3'>
+                    <SkeletonBlock className='h-8 w-64 rounded-xl' />
+                    <SkeletonBlock className='h-4 w-40 rounded-md' />
                 </div>
-                <SkeletonBlock className='h-9 w-40 rounded-full' />
+                <SkeletonBlock className='h-10 w-48 rounded-full' />
             </div>
 
             {/* Info cards skeleton */}
-            <div className='grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mt-5'>
+            <div className='grid grid-cols-2 md:grid-cols-4 gap-4 mt-8'>
                 {[...Array(4)].map((_, i) => (
-                    <div key={i} className='rounded-2xl p-4 space-y-3 border border-slate-100'>
-                        <SkeletonBlock className='h-3 w-20' />
-                        <SkeletonBlock className='h-7 w-12' />
+                    <div key={i} className='rounded-2xl p-5 space-y-4 border border-white/5 bg-zinc-900/40'>
+                        <SkeletonBlock className='h-4 w-24 rounded-md' />
+                        <SkeletonBlock className='h-8 w-16 rounded-lg' />
                     </div>
                 ))}
             </div>
@@ -49,22 +49,22 @@ const DashboardSkeleton = () => (
         {/* Charts skeleton */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             {[...Array(2)].map((_, i) => (
-                <div key={i} className='bg-white/70 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-4'>
-                    <SkeletonBlock className='h-4 w-36' />
-                    <SkeletonBlock className='h-52 w-full rounded-2xl' />
+                <div key={i} className='bg-zinc-950/60 backdrop-blur-3xl border border-white/10 p-6 rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.5)] space-y-5'>
+                    <SkeletonBlock className='h-5 w-40 rounded-md' />
+                    <SkeletonBlock className='h-56 w-full rounded-2xl' />
                 </div>
             ))}
         </div>
 
         {/* Table skeleton */}
-        <div className='bg-white/70 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-3'>
-            <div className='flex items-center justify-between'>
-                <SkeletonBlock className='h-5 w-28' />
-                <SkeletonBlock className='h-5 w-16' />
+        <div className='bg-zinc-950/60 backdrop-blur-3xl border border-white/10 p-6 rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.5)] space-y-4'>
+            <div className='flex items-center justify-between mb-2'>
+                <SkeletonBlock className='h-6 w-36 rounded-md' />
+                <SkeletonBlock className='h-8 w-24 rounded-xl' />
             </div>
-            <SkeletonBlock className='h-10 w-full rounded-xl' />
-            {[...Array(5)].map((_, i) => (
-                <SkeletonBlock key={i} className='h-12 w-full rounded-xl' />
+            <SkeletonBlock className='h-12 w-full rounded-xl bg-zinc-900/60' />
+            {[...Array(4)].map((_, i) => (
+                <SkeletonBlock key={i} className='h-14 w-full rounded-xl' />
             ))}
         </div>
     </div>
@@ -132,7 +132,7 @@ const Dashboard = () => {
                 100% { background-position: -200% 0; }
             }
             .animate-shimmer {
-                animation: shimmer 1.5s infinite linear;
+                animation: shimmer 2s infinite linear;
             }
         `;
         document.head.appendChild(style);
@@ -146,150 +146,154 @@ const Dashboard = () => {
                 <DashboardSkeleton />
             ) : (
                 <>
-                    <div className='bg-white/70 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-6 sm:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.03)] my-5'>
-                        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+                    {/* Main Welcome Bento Box */}
+                    <div className='relative bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-6 sm:p-8 shadow-[0_15px_50px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.05)] overflow-hidden'>
+
+                        {/* Ambient Card Glow */}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[80px] rounded-full pointer-events-none -z-10" />
+
+                        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 relative z-10'>
                             <div>
-                                <h2 className='text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight'>
-                                    Welcome Back, {user?.name}! <span className="inline-block hover:animate-bounce cursor-default">👋</span>
+                                <h2 className='text-2xl md:text-3xl font-black text-white tracking-tight flex items-center gap-2'>
+                                    Welcome Back, {user?.name} <span className="inline-block hover:animate-bounce cursor-default text-cyan-400"><LuZap size={24} /></span>
                                 </h2>
-                                <p className='text-xs md:text-sm text-slate-500 mt-1.5 font-semibold tracking-wide'>
-                                    {moment().format("dddd, Do MMM YYYY")}
+                                <p className='text-xs md:text-sm text-zinc-400 mt-1.5 font-mono tracking-wide'>
+                                    System Time: {moment().format("ddd, DD MMM YYYY | HH:mm A")}
                                 </p>
                             </div>
 
-                            {/* Team Badge */}
+                            {/* Team Node Badge */}
                             {user?.teamName && (
-                                <div className='flex items-center gap-2 bg-orange-50 border border-orange-100 px-4 py-2 rounded-full self-start sm:self-auto shadow-sm'>
-                                    <div className='w-2 h-2 rounded-full bg-orange-500 animate-pulse'></div>
-                                    <span className='text-xs font-bold text-orange-700 tracking-wide'>
-                                        {user.teamName}
+                                <div className='flex items-center gap-2.5 bg-zinc-900/80 border border-white/10 px-4 py-2.5 rounded-full self-start sm:self-auto shadow-inner'>
+                                    <div className='w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.8)]'></div>
+                                    <span className='text-[11px] font-bold font-mono text-cyan-300 tracking-wider uppercase'>
+                                        Node: {user.teamName}
                                     </span>
-                                    <span className='text-xs text-orange-400 font-semibold'>
-                                        • {user.teamCode}
+                                    <span className='text-[11px] text-zinc-500 font-mono border-l border-white/10 pl-2.5'>
+                                        ID: {user.teamCode}
                                     </span>
                                 </div>
                             )}
                         </div>
 
-                        {/* Info Cards */}
+                        {/* Info Metrics Cards */}
                         {dashboardData?.charts?.taskDistribution?.All > 0 ? (
-                            <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-5 mt-6'>
+                            <div className='grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-8 relative z-10'>
                                 <InfoCard
-                                    label="Total Tasks"
+                                    label="Total Operations"
                                     value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.All || 0)}
-                                    color="bg-slate-800"
+                                    color="bg-blue-500/20 text-blue-400 border border-blue-500/30"
                                 />
                                 <InfoCard
-                                    label="Pending Tasks"
+                                    label="Pending Queues"
                                     value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.Pending || 0)}
-                                    color="bg-orange-500"
+                                    color="bg-orange-500/20 text-orange-400 border border-orange-500/30"
                                 />
                                 <InfoCard
-                                    label="In Progress Tasks"
+                                    label="Active Threads"
                                     value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.InProgress || 0)}
-                                    color="bg-amber-500"
+                                    color="bg-purple-500/20 text-purple-400 border border-purple-500/30"
                                 />
                                 <InfoCard
-                                    label="Completed Tasks"
+                                    label="Compiled Tasks"
                                     value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.Completed || 0)}
-                                    color="bg-yellow-500"
+                                    color="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
                                 />
 
                                 <InfoCard
-                                    label="Total Groups"
-                                    value={addThousandSeparator(
-                                        dashboardData?.overview?.totalGroups || 0
-                                    )}
-                                    color="bg-rose-500"
+                                    label="Total Clusters"
+                                    value={addThousandSeparator(dashboardData?.overview?.totalGroups || 0)}
+                                    color="bg-rose-500/20 text-rose-400 border border-rose-500/30"
                                 />
-
                                 <InfoCard
-                                    label="Total Files"
-                                    value={addThousandSeparator(
-                                        dashboardData?.overview?.totalFiles || 0
-                                    )}
-                                    color="bg-fuchsia-500"
+                                    label="File Repositories"
+                                    value={addThousandSeparator(dashboardData?.overview?.totalFiles || 0)}
+                                    color="bg-indigo-500/20 text-indigo-400 border border-indigo-500/30"
                                 />
-
                                 <InfoCard
-                                    label="Active Polls"
-                                    value={addThousandSeparator(
-                                        dashboardData?.overview?.activePolls || 0
-                                    )}
-                                    color="bg-emerald-500"
+                                    label="Active Sockets"
+                                    value={addThousandSeparator(dashboardData?.overview?.activePolls || 0)}
+                                    color="bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
                                 />
-
                                 <InfoCard
-                                    label="Closed Polls"
-                                    value={addThousandSeparator(
-                                        dashboardData?.overview?.closedPolls || 0
-                                    )}
-                                    color="bg-slate-400"
+                                    label="Terminated Sockets"
+                                    value={addThousandSeparator(dashboardData?.overview?.closedPolls || 0)}
+                                    color="bg-zinc-500/20 text-zinc-400 border border-zinc-500/30"
                                 />
                             </div>
                         ) : (
-                            /* Empty State */
-                            <div className='flex flex-col items-center justify-center py-12 px-4 mt-6 bg-slate-50/50 rounded-3xl border border-slate-100 border-dashed'>
-                                <div className='w-20 h-20 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center mb-6 shadow-sm'>
-                                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                                        <rect x="6" y="8" width="28" height="4" rx="2" fill="#fed7aa" />
-                                        <rect x="6" y="16" width="20" height="4" rx="2" fill="#fed7aa" />
-                                        <rect x="6" y="24" width="24" height="4" rx="2" fill="#fed7aa" />
-                                        <circle cx="32" cy="28" r="8" fill="#f97316" />
-                                        <path d="M29 28L31 30L35 26" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
+                            /* Empty State Terminal UI */
+                            <div className='flex flex-col items-center justify-center py-14 px-4 mt-8 bg-zinc-900/50 rounded-[1.5rem] border border-white/5 border-dashed relative z-10'>
+                                <div className='w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(56,189,248,0.15)]'>
+                                    <LuCode size={28} className='text-cyan-400' />
                                 </div>
-                                <h3 className='text-lg md:text-xl font-extrabold text-slate-800 text-center mb-2 tracking-tight'>
-                                    No Tasks Yet — Let's Get Started! 🚀
+                                <h3 className='text-lg md:text-xl font-bold text-white text-center mb-2 tracking-tight'>
+                                    Terminal Idle — Awaiting First Execution
                                 </h3>
-                                <p className='text-sm text-slate-500 font-medium text-center max-w-sm leading-relaxed mb-8'>
-                                    Your dashboard will show task stats, charts, and progress once you create your first task. Start by assigning a task to your team.
+                                <p className='text-xs sm:text-sm text-zinc-500 font-mono text-center max-w-md leading-relaxed mb-8'>
+                                    &gt; System metrics, live charts, and operational queues will deploy here upon task initialization.
                                 </p>
-                                <button
-                                    onClick={() => navigate("/admin/create-task")}
-                                    className='flex items-center gap-2 bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 hover:opacity-95 text-white text-sm font-bold px-6 py-3.5 rounded-2xl shadow-[0_8px_24px_rgba(249,115,22,0.25)] hover:shadow-[0_12px_32px_rgba(249,115,22,0.35)] hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer'
-                                >
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                        <path d="M8 3V13M3 8H13" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
-                                    </svg>
-                                    Create First Task
-                                </button>
+
+                                <div className="relative group cursor-pointer">
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur-lg opacity-40 group-hover:opacity-100 transition duration-500"></div>
+                                    <button
+                                        onClick={() => navigate("/admin/create-task")}
+                                        className='relative flex items-center gap-2 bg-zinc-950 text-white text-sm font-mono font-bold px-6 py-3.5 rounded-xl border border-white/10 hover:border-cyan-500/50 active:scale-95 transition-all duration-300'
+                                    >
+                                        Initialize Workspace
+                                        <LuArrowRight className="text-cyan-400" />
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </div>
 
-                    {/* Charts + Recent Tasks */}
+                    {/* Charts + Recent Tasks Data Visualizations */}
                     {dashboardData?.charts?.taskDistribution?.All > 0 && (
-                        <div className='grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 my-4 md:my-6'>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 my-6'>
 
                             {/* Task Distribution Chart */}
-                            <div className='bg-white/70 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-5 sm:p-6 shadow-[0_10px_40px_rgba(0,0,0,0.03)]'>
-                                <div className='flex items-center justify-between mb-4'>
-                                    <h5 className='font-bold text-slate-800 tracking-tight'>Task Distribution</h5>
+                            <div className='bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]'>
+                                <div className='flex items-center justify-between mb-6'>
+                                    <h5 className='font-bold text-white tracking-tight flex items-center gap-2'>
+                                        <div className='w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]'></div>
+                                        Task Distribution
+                                    </h5>
                                 </div>
                                 <CustomPieChart data={pieChartData} colors={COLORS} />
                             </div>
 
                             {/* Task Priority Chart */}
-                            <div className='bg-white/70 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-5 sm:p-6 shadow-[0_10px_40px_rgba(0,0,0,0.03)]'>
-                                <div className='flex items-center justify-between mb-4'>
-                                    <h5 className='font-bold text-slate-800 tracking-tight'>Task Priority Levels</h5>
+                            <div className='bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]'>
+                                <div className='flex items-center justify-between mb-6'>
+                                    <h5 className='font-bold text-white tracking-tight flex items-center gap-2'>
+                                        <div className='w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)]'></div>
+                                        Execution Priorities
+                                    </h5>
                                 </div>
                                 <CustomBarChart data={barChartData} />
                             </div>
 
-                            {/* Recent Tasks Table */}
-                            <div className='md:col-span-2 bg-white/70 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-5 sm:p-6 shadow-[0_10px_40px_rgba(0,0,0,0.03)]'>
-                                <div className='flex items-center justify-between mb-5'>
-                                    <h5 className='text-lg font-extrabold text-slate-800 tracking-tight'>Recent Tasks</h5>
+                            {/* Recent Tasks Table Box */}
+                            <div className='md:col-span-2 bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]'>
+                                <div className='flex items-center justify-between mb-6'>
+                                    <h5 className='text-lg font-bold text-white tracking-tight flex items-center gap-2'>
+                                        <LuTerminal className="text-cyan-400" />
+                                        Recent Operations
+                                    </h5>
                                     <button
-                                        className='flex items-center gap-1.5 text-sm font-bold text-orange-600 hover:text-orange-700 bg-orange-50 hover:bg-orange-100 px-4 py-2 rounded-xl transition-all cursor-pointer'
+                                        className='flex items-center gap-1.5 text-xs font-mono font-bold text-cyan-300 hover:text-white bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 px-4 py-2 rounded-xl transition-all cursor-pointer active:scale-95'
                                         onClick={onSeeMore}
                                     >
-                                        See All <LuArrowRight className='text-base' />
+                                        Execute.All() <LuArrowRight size={14} />
                                     </button>
                                 </div>
-                                <TaskListTable tableData={dashboardData?.recentTasks || []} />
+
+                                {/* Inner Table Wrapper for dark mode compatibility */}
+                                <div className='rounded-xl overflow-hidden border border-white/5'>
+                                    <TaskListTable tableData={dashboardData?.recentTasks || []} />
+                                </div>
+
                             </div>
 
                         </div>

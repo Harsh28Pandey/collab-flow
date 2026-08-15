@@ -1,4 +1,3 @@
-// src/pages/VerifyOTP.jsx
 import axios from "axios";
 import {
     CheckCircle,

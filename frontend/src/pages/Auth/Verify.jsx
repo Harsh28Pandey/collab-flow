@@ -1,4 +1,3 @@
-// src/pages/Verify.jsx
 import axiosInstance from '../../utils/axiosInstance.js'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'

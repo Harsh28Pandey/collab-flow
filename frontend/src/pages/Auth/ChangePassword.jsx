@@ -1,4 +1,3 @@
-// src/pages/ChangePassword.jsx
 import { Eye, EyeOff, Loader2, LockKeyhole, ArrowLeft } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";

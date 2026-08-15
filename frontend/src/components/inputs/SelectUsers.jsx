@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import DashboardLayout from '../../components/layouts/DashboardLayout.jsx';
+import { PRIORITY_DATA } from "../../utils/data.js";
 import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPaths';
 import { LuUsers, LuCheck } from 'react-icons/lu';
@@ -70,23 +72,24 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers }) => {
             {/* Add Members Button */}
             {selectedUserAvatars.length === 0 && (
 
-                <button
-                    className='card-btn cursor-pointer'
-                    onClick={() => setIsModalOpen(true)}
-                >
-
-                    <LuUsers className='text-sm' />
-
-                    Add Members
-
-                </button>
+                <div className="relative group cursor-pointer inline-block w-full">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
+                    <button
+                        type="button"
+                        className='relative w-full h-12 px-4 rounded-2xl bg-zinc-950 hover:bg-zinc-900 text-white text-xs sm:text-sm font-mono font-bold border border-white/10 flex items-center justify-center gap-2 transition-all duration-300 shadow-lg active:scale-95 cursor-pointer text-nowrap'
+                        onClick={() => setIsModalOpen(true)}
+                    >
+                        <LuUsers className='text-cyan-400 text-base stroke-[2.5]' />
+                        Add Members
+                    </button>
+                </div>
             )}
 
             {/* Selected Users */}
             {selectedUserAvatars.length > 0 && (
 
                 <div
-                    className='cursor-pointer'
+                    className='cursor-pointer inline-block'
                     onClick={() => setIsModalOpen(true)}
                 >
 
@@ -105,7 +108,7 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers }) => {
                 title="Select Users"
             >
 
-                <div className='space-y-3 h-[60vh] overflow-y-auto pr-1'>
+                <div className='space-y-3 h-[60vh] overflow-y-auto pr-1 custom-side-scroll'>
 
                     {allUsers.map((user) => {
 
@@ -119,11 +122,11 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers }) => {
                                 onClick={() =>
                                     toggleUserSelection(user._id)
                                 }
-                                className={`flex items-center gap-3 p-3 rounded-2xl border transition-all duration-200 cursor-pointer
+                                className={`flex items-center gap-3.5 p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer backdrop-blur-xl
                                     
                                     ${isSelected
-                                        ? 'border-blue-500 bg-blue-50 shadow-sm'
-                                        : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
+                                        ? 'border-cyan-500/50 bg-cyan-500/10 shadow-[0_0_15px_rgba(56,189,248,0.15)]'
+                                        : 'border-white/5 hover:border-white/20 bg-zinc-900/60 hover:bg-zinc-900'
                                     }
                                 `}
                             >
@@ -134,12 +137,12 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers }) => {
                                     <img
                                         src={user.profileImageUrl}
                                         alt={user.name}
-                                        className='w-11 h-11 rounded-full object-cover border border-gray-200 shrink-0'
+                                        className='w-11 h-11 rounded-full object-cover border border-white/10 shrink-0 shadow-sm'
                                     />
 
                                 ) : (
 
-                                    <div className='w-11 h-11 flex items-center justify-center bg-primary text-white text-sm font-bold rounded-full shrink-0'>
+                                    <div className='w-11 h-11 flex items-center justify-center bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 text-white text-xs font-mono font-black rounded-full shrink-0 shadow-sm uppercase'>
 
                                         {user.name
                                             ? user.name.charAt(0).toUpperCase()
@@ -151,11 +154,11 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers }) => {
                                 {/* User Info */}
                                 <div className='flex-1 min-w-0'>
 
-                                    <p className='font-semibold text-sm text-gray-900 truncate'>
+                                    <p className='font-mono font-bold text-xs sm:text-sm text-white truncate tracking-wide'>
                                         {user.name}
                                     </p>
 
-                                    <p className='text-xs text-gray-500 truncate'>
+                                    <p className='text-[11px] font-mono text-zinc-400 truncate mt-0.5'>
                                         {user.email}
                                     </p>
 
@@ -163,11 +166,11 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers }) => {
 
                                 {/* Selected Check */}
                                 <div
-                                    className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all
+                                    className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all shadow-inner
                                         
                                         ${isSelected
-                                            ? 'bg-blue-600 border-blue-600'
-                                            : 'border-gray-300 bg-white'
+                                            ? 'bg-cyan-500 border-cyan-400 text-zinc-950'
+                                            : 'border-white/10 bg-zinc-950 text-transparent'
                                         }
                                     `}
                                 >
@@ -175,7 +178,7 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers }) => {
                                     {isSelected && (
                                         <LuCheck
                                             size={14}
-                                            className='text-white'
+                                            className='stroke-[3]'
                                         />
                                     )}
 
@@ -187,21 +190,26 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers }) => {
                 </div>
 
                 {/* Footer Buttons */}
-                <div className='flex justify-end gap-3 pt-5'>
+                <div className='flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-5 mt-4 border-t border-white/5'>
 
                     <button
-                        className='card-btn cursor-pointer'
+                        type="button"
+                        className='w-full sm:w-auto h-12 px-6 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs sm:text-sm font-mono font-bold transition-all cursor-pointer shadow-inner'
                         onClick={() => setIsModalOpen(false)}
                     >
                         Cancel
                     </button>
 
-                    <button
-                        className='card-btn-fill cursor-pointer'
-                        onClick={handleAssign}
-                    >
-                        Done
-                    </button>
+                    <div className="relative group cursor-pointer w-full sm:w-auto">
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
+                        <button
+                            type="button"
+                            className='relative w-full sm:w-auto h-12 px-7 rounded-2xl bg-zinc-950 hover:bg-zinc-900 text-white text-xs sm:text-sm font-mono font-bold border border-white/10 transition-all shadow-lg active:scale-95 cursor-pointer text-nowrap'
+                            onClick={handleAssign}
+                        >
+                            Done
+                        </button>
+                    </div>
 
                 </div>
 
@@ -210,4 +218,4 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers }) => {
     )
 }
 
-export default SelectUsers
+export default SelectUsers;

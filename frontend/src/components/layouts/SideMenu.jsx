@@ -1,4 +1,3 @@
-// src/components/layouts/SideMenu.jsx
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { UserContext } from '../../context/userContext.jsx';
 

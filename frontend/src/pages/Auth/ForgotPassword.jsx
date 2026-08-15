@@ -1,4 +1,3 @@
-// src/pages/ForgotPassword.jsx
 import axiosInstance from "../../utils/axiosInstance.js";
 import { CheckCircle, Loader2, Mail, ArrowLeft } from "lucide-react";
 import React, { useState } from "react";

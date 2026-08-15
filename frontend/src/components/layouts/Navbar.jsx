@@ -1,4 +1,3 @@
-// src/components/layouts/Navbar.jsx (or src/components/Navbar.jsx)
 import React, { useEffect, useState } from 'react';
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import { LuZap, LuTerminal } from "react-icons/lu";

@@ -1,4 +1,3 @@
-// src/components/sections/PlaygroundTerminal.jsx
 import React, { useState } from "react";
 import { LuTerminal, LuPlay, LuRefreshCw, LuCheck, LuWorkflow, LuGitMerge } from "react-icons/lu";
 

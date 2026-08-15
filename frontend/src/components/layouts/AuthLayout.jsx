@@ -1,4 +1,3 @@
-// src/components/layouts/AuthLayout.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LuZap, LuTerminal, LuWorkflow, LuGitMerge, LuCheck } from "react-icons/lu";

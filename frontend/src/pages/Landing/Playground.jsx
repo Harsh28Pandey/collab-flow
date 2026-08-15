@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import { LuTerminal, LuActivity, LuWorkflow, LuGauge, LuCpu, LuShield, LuZap } from "react-icons/lu";
 import Navbar from "./Navbar";
 import PlaygroundTerminal from "../../components/sections/PlaygroundTerminal";

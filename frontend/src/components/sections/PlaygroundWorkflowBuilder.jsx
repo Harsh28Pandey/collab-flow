@@ -1,4 +1,3 @@
-// src/components/playground/PlaygroundWorkflowBuilder.jsx
 import React, { useState } from "react";
 import { LuWorkflow, LuCheck, LuArrowRight } from "react-icons/lu";
 
