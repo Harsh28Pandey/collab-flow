@@ -17,24 +17,24 @@ const MONTHS = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"];
 
 const PRIORITY = {
-    High: { dot: "bg-red-500", badge: "bg-red-50 text-red-700 border-red-200", pill: "bg-red-500" },
-    Medium: { dot: "bg-amber-500", badge: "bg-amber-50 text-amber-700 border-amber-200", pill: "bg-amber-500" },
-    Low: { dot: "bg-green-500", badge: "bg-green-50 text-green-700 border-green-200", pill: "bg-green-500" },
+    High: { dot: "bg-rose-500", badge: "bg-rose-500/10 text-rose-400 border-rose-500/20", pill: "bg-rose-500" },
+    Medium: { dot: "bg-amber-500", badge: "bg-amber-500/10 text-amber-400 border-amber-500/20", pill: "bg-amber-500" },
+    Low: { dot: "bg-emerald-500", badge: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20", pill: "bg-emerald-500" },
 };
 
 const STATUS_BADGE = {
-    "Pending": "bg-amber-50 text-amber-700 border-amber-200",
-    "In Progress": "bg-blue-50 text-blue-700 border-blue-200",
-    "Completed": "bg-green-50 text-green-700 border-green-200",
+    "Pending": "bg-amber-500/10 text-amber-400 border-amber-500/20",
+    "In Progress": "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+    "Completed": "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
 };
 
 // admin-created event "type" -> color + icon
 const EVENT_TYPE_STYLE = {
-    Meeting: { solid: "bg-blue-600", badge: "bg-blue-50 text-blue-700 border-blue-200", icon: Users },
-    Holiday: { solid: "bg-amber-500", badge: "bg-amber-50 text-amber-700 border-amber-200", icon: CalendarDays },
-    Announcement: { solid: "bg-purple-600", badge: "bg-purple-50 text-purple-700 border-purple-200", icon: Megaphone },
-    Deadline: { solid: "bg-red-500", badge: "bg-red-50 text-red-700 border-red-200", icon: AlertCircle },
-    Event: { solid: "bg-indigo-600", badge: "bg-indigo-50 text-indigo-700 border-indigo-200", icon: Sparkles },
+    Meeting: { solid: "bg-blue-500", badge: "bg-blue-500/10 text-blue-400 border-blue-500/20", icon: Users },
+    Holiday: { solid: "bg-emerald-500", badge: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20", icon: CalendarDays },
+    Announcement: { solid: "bg-purple-500", badge: "bg-purple-500/10 text-purple-400 border-purple-500/20", icon: Megaphone },
+    Deadline: { solid: "bg-rose-500", badge: "bg-rose-500/10 text-rose-400 border-rose-500/20", icon: AlertCircle },
+    Event: { solid: "bg-indigo-500", badge: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20", icon: Sparkles },
 };
 
 const fmt = (d, opts) => new Date(d).toLocaleDateString("en-IN", opts);
@@ -45,25 +45,29 @@ const startOfWeek = (d) => { const dt = new Date(d); dt.setDate(dt.getDate() - d
 const to12h = (t) => { if (!t) return ""; const [h, m] = t.split(":").map(Number); const period = h >= 12 ? "PM" : "AM"; const hh = h % 12 === 0 ? 12 : h % 12; return `${hh}:${String(m).padStart(2, "0")} ${period}`; };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SKELETON
+// SKELETON (Dark Mode Cyber Pulse)
 // ─────────────────────────────────────────────────────────────────────────────
 
+const SkeletonBlock = ({ className }) => (
+    <div className={`bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 bg-[length:200%_100%] animate-shimmer rounded-xl border border-white/5 ${className}`} />
+);
+
 const Skeleton = () => (
-    <div className="animate-pulse space-y-4">
+    <div className="animate-pulse space-y-5">
         <div className="flex items-center justify-between">
-            <div className="h-7 w-40 bg-gray-200 rounded-xl" />
-            <div className="flex gap-2">
-                <div className="h-9 w-9 bg-gray-200 rounded-xl" />
-                <div className="h-9 w-20 bg-gray-200 rounded-xl" />
-                <div className="h-9 w-9 bg-gray-200 rounded-xl" />
+            <SkeletonBlock className="h-8 w-48 rounded-xl" />
+            <div className="flex gap-2.5">
+                <SkeletonBlock className="h-10 w-10 rounded-xl" />
+                <SkeletonBlock className="h-10 w-24 rounded-xl" />
+                <SkeletonBlock className="h-10 w-10 rounded-xl" />
             </div>
         </div>
-        <div className="grid grid-cols-7 gap-1">
-            {DAYS.map(d => <div key={d} className="h-7 bg-gray-100 rounded-lg" />)}
+        <div className="grid grid-cols-7 gap-1.5">
+            {DAYS.map(d => <SkeletonBlock key={d} className="h-8 rounded-lg" />)}
         </div>
         {[...Array(5)].map((_, r) => (
-            <div key={r} className="grid grid-cols-7 gap-1">
-                {[...Array(7)].map((_, c) => <div key={c} className="h-20 sm:h-24 bg-gray-100 rounded-2xl" />)}
+            <div key={r} className="grid grid-cols-7 gap-1.5">
+                {[...Array(7)].map((_, c) => <SkeletonBlock key={c} className="h-24 sm:h-28 rounded-2xl" />)}
             </div>
         ))}
     </div>
@@ -72,11 +76,11 @@ const Skeleton = () => (
 const SidebarSkeleton = () => (
     <div className="animate-pulse space-y-3">
         {[...Array(4)].map((_, i) => (
-            <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl">
-                <div className="h-8 w-8 bg-gray-200 rounded-xl shrink-0" />
-                <div className="flex-1 space-y-1.5">
-                    <div className="h-3 w-3/4 bg-gray-200 rounded-full" />
-                    <div className="h-2.5 w-1/2 bg-gray-100 rounded-full" />
+            <div key={i} className="flex items-center gap-3 p-3 bg-zinc-900/50 border border-white/5 rounded-2xl">
+                <SkeletonBlock className="h-10 w-10 rounded-xl shrink-0" />
+                <div className="flex-1 space-y-2">
+                    <SkeletonBlock className="h-3 w-3/4 rounded-full" />
+                    <SkeletonBlock className="h-2.5 w-1/2 rounded-full" />
                 </div>
             </div>
         ))}
@@ -93,55 +97,58 @@ const DayModal = ({ date, events, onClose }) => {
     const tss = events.filter(e => e.type === "timesheet");
     const evs = events.filter(e => e.type === "event");
     return (
-        <div className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-            <div className="w-full max-w-lg bg-white rounded-[26px] shadow-2xl max-h-[85vh] flex flex-col animate-[modalPop_.2s_ease]" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[9999] bg-zinc-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn" onClick={onClose}>
+            <div className="w-full max-w-lg bg-zinc-950/95 backdrop-blur-3xl rounded-[2rem] border border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.95)] max-h-[85vh] flex flex-col animate-[modalPop_.2s_ease] relative overflow-hidden" onClick={e => e.stopPropagation()}>
+
+                {/* Top Glow Line */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent shadow-[0_0_15px_rgba(34,211,238,0.8)]"></div>
 
                 {/* Header */}
-                <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                    <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-2xl bg-blue-100 flex items-center justify-center shrink-0">
-                            <CalendarDays size={20} className="text-blue-600" />
+                <div className="flex items-center justify-between px-6 py-5 border-b border-white/5 shrink-0">
+                    <div className="flex items-center gap-3.5">
+                        <div className="h-11 w-11 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0 shadow-inner">
+                            <CalendarDays size={20} className="text-cyan-400 stroke-[2.5]" />
                         </div>
                         <div>
-                            <h2 className="text-base font-bold text-gray-900">
+                            <h2 className="text-base font-mono font-black text-white tracking-wide">
                                 {fmt(date, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
                             </h2>
-                            <p className="text-xs text-gray-500 mt-0.5">{events.length} event{events.length !== 1 ? "s" : ""}</p>
+                            <p className="text-xs font-mono text-zinc-400 mt-0.5">{events.length} event{events.length !== 1 ? "s" : ""}</p>
                         </div>
                     </div>
-                    <button type="button" onClick={onClose} className="cursor-pointer h-9 w-9 rounded-2xl hover:bg-gray-100 flex items-center justify-center transition">
-                        <X size={18} className="text-gray-500" />
+                    <button type="button" onClick={onClose} className="cursor-pointer h-9 w-9 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 flex items-center justify-center transition shadow-inner">
+                        <X size={16} className="text-zinc-400 hover:text-white" />
                     </button>
                 </div>
 
                 {/* Body */}
-                <div className="overflow-y-auto flex-1 p-5 space-y-5 custom-scrollbar">
+                <div className="overflow-y-auto flex-1 p-6 space-y-6 custom-scrollbar">
 
                     {evs.length > 0 && (
                         <div>
-                            <div className="flex items-center gap-2 mb-3">
-                                <Megaphone size={15} className="text-indigo-600" />
-                                <h3 className="text-sm font-semibold text-gray-800">Events & Announcements ({evs.length})</h3>
+                            <div className="flex items-center gap-2.5 mb-3.5">
+                                <Megaphone size={16} className="text-indigo-400 stroke-[2.5]" />
+                                <h3 className="text-xs sm:text-sm font-mono font-bold text-zinc-300 uppercase tracking-wider">Events & Announcements ({evs.length})</h3>
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-3">
                                 {evs.map(e => {
                                     const style = EVENT_TYPE_STYLE[e.eventType] || EVENT_TYPE_STYLE.Event;
                                     const Icon = style.icon;
                                     return (
-                                        <div key={e.id} className="rounded-2xl p-3.5 border border-gray-200 bg-gray-50/70">
-                                            <div className="flex items-start justify-between gap-2">
-                                                <div className="flex items-start gap-2.5 min-w-0">
-                                                    <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 border ${style.badge}`}>
-                                                        <Icon size={14} />
+                                        <div key={e.id} className="rounded-2xl p-4 border border-white/5 bg-zinc-900/50 shadow-inner">
+                                            <div className="flex items-start justify-between gap-3">
+                                                <div className="flex items-start gap-3 min-w-0">
+                                                    <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 border shadow-inner ${style.badge}`}>
+                                                        <Icon size={16} className="stroke-[2.5]" />
                                                     </div>
-                                                    <div className="min-w-0">
-                                                        <p className="text-sm font-medium text-gray-900 leading-snug break-words">{e.title}</p>
-                                                        <p className="text-xs text-gray-500 mt-0.5">{to12h(e.time)}</p>
+                                                    <div className="min-w-0 mt-0.5">
+                                                        <p className="text-sm font-mono font-bold text-white leading-snug break-words">{e.title}</p>
+                                                        <p className="text-[11px] font-mono text-zinc-500 mt-1">{to12h(e.time)}</p>
                                                     </div>
                                                 </div>
-                                                <span className={`shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full border ${style.badge}`}>{e.eventType}</span>
+                                                <span className={`shrink-0 text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg border shadow-inner uppercase tracking-wider ${style.badge}`}>{e.eventType}</span>
                                             </div>
-                                            {e.description && <p className="text-xs text-gray-600 mt-2 leading-relaxed">{e.description}</p>}
+                                            {e.description && <p className="text-xs font-mono text-zinc-400 mt-3 leading-relaxed border-t border-white/5 pt-3">{e.description}</p>}
                                         </div>
                                     );
                                 })}
@@ -151,26 +158,26 @@ const DayModal = ({ date, events, onClose }) => {
 
                     {tasks.length > 0 && (
                         <div>
-                            <div className="flex items-center gap-2 mb-3">
-                                <ClipboardCheck size={15} className="text-blue-600" />
-                                <h3 className="text-sm font-semibold text-gray-800">Tasks Due ({tasks.length})</h3>
+                            <div className="flex items-center gap-2.5 mb-3.5">
+                                <ClipboardCheck size={16} className="text-cyan-400 stroke-[2.5]" />
+                                <h3 className="text-xs sm:text-sm font-mono font-bold text-zinc-300 uppercase tracking-wider">Tasks Due ({tasks.length})</h3>
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-3">
                                 {tasks.map(t => {
                                     const pc = PRIORITY[t.priority] || PRIORITY.Low;
                                     const sc = STATUS_BADGE[t.status] || STATUS_BADGE["Pending"];
                                     return (
-                                        <div key={t.id} className={`rounded-2xl p-3.5 border ${t.overdue ? "bg-red-50 border-red-200" : "bg-blue-50 border-blue-100"}`}>
-                                            <div className="flex items-start justify-between gap-2">
-                                                <p className="text-sm font-medium text-gray-900 leading-snug">{t.title}</p>
-                                                <span className={`shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full border ${sc}`}>{t.status}</span>
+                                        <div key={t.id} className={`rounded-2xl p-4 border shadow-inner ${t.overdue ? "bg-rose-500/5 border-rose-500/20" : "bg-cyan-500/5 border-cyan-500/20"}`}>
+                                            <div className="flex items-start justify-between gap-3">
+                                                <p className="text-sm font-mono font-bold text-white leading-snug">{t.title}</p>
+                                                <span className={`shrink-0 text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg border shadow-inner uppercase tracking-wider ${sc}`}>{t.status}</span>
                                             </div>
-                                            <div className="flex items-center gap-2 mt-2">
-                                                <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full border ${pc.badge}`}>
-                                                    <span className={`h-1.5 w-1.5 rounded-full ${pc.dot}`} />
-                                                    {t.priority} Priority
+                                            <div className="flex items-center gap-2.5 mt-3">
+                                                <span className={`inline-flex items-center gap-1.5 text-[10px] font-mono font-bold px-2 py-1 rounded-lg border shadow-inner uppercase tracking-wider ${pc.badge}`}>
+                                                    <span className={`h-1.5 w-1.5 rounded-full shadow-inner ${pc.dot}`} />
+                                                    {t.priority}
                                                 </span>
-                                                {t.overdue && <span className="text-[11px] font-semibold text-red-600">⚠ Overdue</span>}
+                                                {t.overdue && <span className="text-[10px] font-mono font-bold text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-1 rounded-lg uppercase tracking-wider">⚠ Overdue</span>}
                                             </div>
                                         </div>
                                     );
@@ -181,15 +188,15 @@ const DayModal = ({ date, events, onClose }) => {
 
                     {tss.length > 0 && (
                         <div>
-                            <div className="flex items-center gap-2 mb-3">
-                                <Clock3 size={15} className="text-green-600" />
-                                <h3 className="text-sm font-semibold text-gray-800">Timesheets ({tss.length})</h3>
+                            <div className="flex items-center gap-2.5 mb-3.5">
+                                <Clock3 size={16} className="text-emerald-400 stroke-[2.5]" />
+                                <h3 className="text-xs sm:text-sm font-mono font-bold text-zinc-300 uppercase tracking-wider">Timesheets ({tss.length})</h3>
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-3">
                                 {tss.map(ts => (
-                                    <div key={ts.id} className="bg-green-50 border border-green-100 rounded-2xl p-3.5">
-                                        <p className="text-sm font-medium text-gray-900">{ts.title}</p>
-                                        <p className="text-xs text-gray-500 mt-1">{ts.hours} hrs · {ts.workMode}</p>
+                                    <div key={ts.id} className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4 shadow-inner">
+                                        <p className="text-sm font-mono font-bold text-white">{ts.title}</p>
+                                        <p className="text-[11px] font-mono text-zinc-500 mt-1.5"><span className="text-emerald-400 font-bold">{ts.hours} hrs</span> · {ts.workMode}</p>
                                     </div>
                                 ))}
                             </div>
@@ -197,9 +204,9 @@ const DayModal = ({ date, events, onClose }) => {
                     )}
 
                     {events.length === 0 && (
-                        <div className="text-center py-10">
-                            <CalendarDays size={32} className="mx-auto text-gray-300 mb-3" />
-                            <p className="text-sm text-gray-500">No events on this day</p>
+                        <div className="text-center py-12">
+                            <CalendarDays size={36} className="mx-auto text-zinc-600 mb-4" />
+                            <p className="text-sm font-mono font-bold text-zinc-400">No events on this day</p>
                         </div>
                     )}
                 </div>
@@ -215,7 +222,7 @@ const DayModal = ({ date, events, onClose }) => {
 const WeekView = ({ weekStart, eventMap, today, onDayClick }) => {
     const days = [...Array(7)].map((_, i) => { const d = new Date(weekStart); d.setDate(weekStart.getDate() + i); return d; });
     return (
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-1.5">
             {days.map((d, i) => {
                 const key = dateKey(d);
                 const events = eventMap[key] || [];
@@ -225,23 +232,23 @@ const WeekView = ({ weekStart, eventMap, today, onDayClick }) => {
                 const isToday = isSameDay(d, today);
                 return (
                     <button key={i} type="button" onClick={() => onDayClick(d, events)}
-                        className={`cursor-pointer rounded-2xl p-2 min-h-[120px] text-left flex flex-col transition-all
-                            ${isToday ? "bg-blue-600" : events.length > 0 ? "bg-blue-50 border border-blue-200 hover:bg-blue-100" : "bg-gray-50 border border-transparent hover:bg-gray-100"}`}>
-                        <div className="mb-2">
-                            <span className={`text-[10px] font-semibold uppercase ${isToday ? "text-white/70" : "text-gray-400"}`}>{DAYS[d.getDay()]}</span>
-                            <p className={`text-lg font-bold leading-tight ${isToday ? "text-white" : "text-gray-800"}`}>{d.getDate()}</p>
+                        className={`cursor-pointer rounded-2xl p-2 sm:p-3 min-h-[140px] text-left flex flex-col transition-all duration-300 shadow-inner
+                            ${isToday ? "bg-blue-600/20 border border-blue-500/30 hover:bg-blue-600/30" : events.length > 0 ? "bg-zinc-800/60 border border-white/10 hover:bg-zinc-800" : "bg-zinc-900/30 border border-transparent hover:border-white/5 hover:bg-zinc-900/60"}`}>
+                        <div className="mb-3">
+                            <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${isToday ? "text-blue-300" : "text-zinc-500"}`}>{DAYS[d.getDay()]}</span>
+                            <p className={`text-xl font-mono font-black leading-tight mt-0.5 ${isToday ? "text-blue-400" : "text-white"}`}>{d.getDate()}</p>
                         </div>
-                        <div className="flex flex-col gap-1 w-full">
+                        <div className="flex flex-col gap-1.5 w-full">
                             {evs.slice(0, 1).map(e => (
-                                <span key={e.id} className={`text-[10px] font-medium px-1.5 py-0.5 rounded-lg truncate ${isToday ? "bg-white/20 text-white" : "bg-indigo-600 text-white"}`}>{e.title}</span>
+                                <span key={e.id} className={`text-[10px] font-mono font-bold px-2 py-1 rounded-lg truncate border shadow-inner ${isToday ? "bg-blue-500/30 text-blue-200 border-blue-500/20" : "bg-indigo-500/20 text-indigo-300 border-indigo-500/20"}`}>{e.title}</span>
                             ))}
                             {tasks.slice(0, 2).map(e => (
-                                <span key={e.id} className={`text-[10px] font-medium px-1.5 py-0.5 rounded-lg truncate ${isToday ? "bg-white/20 text-white" : e.overdue ? "bg-red-500 text-white" : "bg-blue-600 text-white"}`}>{e.title}</span>
+                                <span key={e.id} className={`text-[10px] font-mono font-bold px-2 py-1 rounded-lg truncate border shadow-inner ${isToday ? "bg-blue-500/30 text-blue-200 border-blue-500/20" : e.overdue ? "bg-rose-500/20 text-rose-300 border-rose-500/20" : "bg-cyan-500/20 text-cyan-300 border-cyan-500/20"}`}>{e.title}</span>
                             ))}
                             {tss.slice(0, 1).map(e => (
-                                <span key={e.id} className={`text-[10px] font-medium px-1.5 py-0.5 rounded-lg truncate ${isToday ? "bg-white/20 text-white" : "bg-green-600 text-white"}`}>{e.title}</span>
+                                <span key={e.id} className={`text-[10px] font-mono font-bold px-2 py-1 rounded-lg truncate border shadow-inner ${isToday ? "bg-blue-500/30 text-blue-200 border-blue-500/20" : "bg-emerald-500/20 text-emerald-300 border-emerald-500/20"}`}>{e.title}</span>
                             ))}
-                            {events.length > 4 && <span className={`text-[10px] ${isToday ? "text-white/70" : "text-gray-400"}`}>+{events.length - 4} more</span>}
+                            {events.length > 4 && <span className={`text-[10px] font-mono font-bold mt-1 ${isToday ? "text-blue-300/70" : "text-zinc-500"}`}>+{events.length - 4} more</span>}
                         </div>
                     </button>
                 );
@@ -271,31 +278,38 @@ const HeatmapView = ({ year, eventMap }) => {
     }, [year, eventMap]);
 
     const maxCount = useMemo(() => Math.max(1, ...Object.values(eventMap).map(e => e.length)), [eventMap]);
-    const shade = (n) => { if (!n) return "bg-gray-100"; const r = n / maxCount; if (r < 0.25) return "bg-blue-200"; if (r < 0.5) return "bg-blue-400"; if (r < 0.75) return "bg-blue-500"; return "bg-blue-700"; };
+    const shade = (n) => { 
+        if (!n) return "bg-zinc-800/50 border border-white/5"; 
+        const r = n / maxCount; 
+        if (r < 0.25) return "bg-cyan-900/50 border border-cyan-500/20 shadow-[0_0_10px_rgba(8,145,178,0.2)]"; 
+        if (r < 0.5) return "bg-cyan-700/60 border border-cyan-400/30 shadow-[0_0_10px_rgba(8,145,178,0.4)]"; 
+        if (r < 0.75) return "bg-cyan-500/80 border border-cyan-300/40 shadow-[0_0_12px_rgba(34,211,238,0.6)]"; 
+        return "bg-cyan-400 border border-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.8)]"; 
+    };
 
     return (
-        <div className="space-y-3">
-            <p className="text-xs text-gray-500">Each square = 1 day. Darker = more events.</p>
-            <div className="overflow-x-auto pb-2">
-                <div className="flex gap-1 min-w-max">
+        <div className="space-y-4">
+            <p className="text-xs font-mono text-zinc-500 uppercase tracking-wider">Each square = 1 day. Brighter = more activity.</p>
+            <div className="overflow-x-auto pb-4 custom-scrollbar">
+                <div className="flex gap-1.5 min-w-max">
                     {weeks.map((wk, wi) => (
-                        <div key={wi} className="flex flex-col gap-1">
+                        <div key={wi} className="flex flex-col gap-1.5">
                             {[...Array(7)].map((_, di) => {
                                 const c = wk[di];
-                                if (!c) return <div key={di} className="h-3 w-3" />;
+                                if (!c) return <div key={di} className="h-3.5 w-3.5" />;
                                 return (
                                     <div key={di} title={`${fmt(c.dt, { month: "short", day: "numeric" })} — ${c.count} event${c.count !== 1 ? "s" : ""}`}
-                                        className={`h-3 w-3 rounded-sm ${shade(c.count)} transition-all hover:ring-2 hover:ring-blue-400`} />
+                                        className={`h-3.5 w-3.5 rounded-[4px] ${shade(c.count)} transition-all duration-300 hover:scale-125 cursor-crosshair`} />
                                 );
                             })}
                         </div>
                     ))}
                 </div>
             </div>
-            <div className="flex items-center gap-2 text-xs text-gray-500">
+            <div className="flex items-center gap-2.5 text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider pt-2 border-t border-white/5">
                 <span>Less</span>
-                {["bg-gray-100", "bg-blue-200", "bg-blue-400", "bg-blue-500", "bg-blue-700"].map((c, i) => (
-                    <span key={i} className={`h-3 w-3 rounded-sm ${c}`} />
+                {["bg-zinc-800/50 border-white/5", "bg-cyan-900/50 border-cyan-500/20", "bg-cyan-700/60 border-cyan-400/30", "bg-cyan-500/80 border-cyan-300/40", "bg-cyan-400 border-cyan-300"].map((c, i) => (
+                    <span key={i} className={`h-3.5 w-3.5 rounded-[4px] border ${c}`} />
                 ))}
                 <span>More</span>
             </div>
@@ -312,22 +326,44 @@ const EventItem = ({ event }) => {
     const isEvent = event.type === "event";
     const evStyle = isEvent ? (EVENT_TYPE_STYLE[event.eventType] || EVENT_TYPE_STYLE.Event) : null;
     const EvIcon = evStyle?.icon;
+    
+    // Dynamic styling based on event type for dark mode
+    let borderBgClass = "";
+    let iconBgClass = "";
+    let iconClass = "";
+
+    if (isTask) {
+        if (event.overdue) {
+            borderBgClass = "bg-rose-500/5 border-rose-500/20";
+            iconBgClass = "bg-rose-500/10 border border-rose-500/20";
+            iconClass = "text-rose-400";
+        } else {
+            borderBgClass = "bg-cyan-500/5 border-cyan-500/20";
+            iconBgClass = "bg-cyan-500/10 border border-cyan-500/20";
+            iconClass = "text-cyan-400";
+        }
+    } else if (isEvent) {
+        borderBgClass = evStyle.badge;
+        iconBgClass = evStyle.badge.replace('text-', 'border border-').replace('text', 'border'); 
+        iconClass = evStyle.badge.split(' ').find(c => c.startsWith('text-'));
+    } else { // timesheet
+        borderBgClass = "bg-emerald-500/5 border-emerald-500/20";
+        iconBgClass = "bg-emerald-500/10 border border-emerald-500/20";
+        iconClass = "text-emerald-400";
+    }
+
     return (
-        <div className={`flex items-start gap-2.5 px-3 py-2.5 rounded-2xl border
-            ${isTask ? event.overdue ? "bg-red-50 border-red-100" : "bg-blue-50 border-blue-100"
-                : isEvent ? evStyle.badge
-                    : "bg-green-50 border-green-100"}`}>
-            <div className={`h-7 w-7 rounded-xl flex items-center justify-center shrink-0 mt-0.5
-                ${isTask ? event.overdue ? "bg-red-100" : "bg-blue-100" : isEvent ? "bg-white/70" : "bg-green-100"}`}>
+        <div className={`flex items-start gap-3 px-3.5 py-3 rounded-2xl border shadow-inner ${borderBgClass}`}>
+            <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 shadow-inner ${iconBgClass}`}>
                 {isTask
-                    ? <ClipboardCheck size={13} className={event.overdue ? "text-red-600" : "text-blue-600"} />
+                    ? <ClipboardCheck size={16} className={`stroke-[2.5] ${iconClass}`} />
                     : isEvent
-                        ? <EvIcon size={13} />
-                        : <Clock3 size={13} className="text-green-600" />}
+                        ? <EvIcon size={16} className={`stroke-[2.5] ${iconClass}`} />
+                        : <Clock3 size={16} className={`stroke-[2.5] ${iconClass}`} />}
             </div>
             <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-gray-900 truncate">{event.title}</p>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-sm font-mono font-bold text-white truncate">{event.title}</p>
+                <p className="text-[10px] font-mono text-zinc-400 mt-1 uppercase tracking-wider">
                     {isTask
                         ? `${event.priority} · ${event.status}${event.overdue ? " · ⚠ Overdue" : ""}`
                         : isEvent
@@ -354,23 +390,23 @@ const EventsHolidaysPanel = ({ adminEvents, loading, filter, setFilter, onSelect
     }, [adminEvents, filter]);
 
     return (
-        <div className="bg-white border border-gray-200 rounded-3xl p-5">
-            <div className="flex items-center gap-2.5 mb-4">
-                <div className="h-9 w-9 rounded-2xl bg-purple-100 flex items-center justify-center shrink-0">
-                    <Megaphone size={16} className="text-purple-600" />
+        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-6 shadow-[0_15px_50px_rgba(0,0,0,0.6)]">
+            <div className="flex items-center gap-3.5 mb-5">
+                <div className="h-10 w-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0 shadow-inner">
+                    <Megaphone size={18} className="text-purple-400 stroke-[2.5]" />
                 </div>
                 <div className="min-w-0">
-                    <h3 className="text-sm font-bold text-gray-900">Events & Holidays</h3>
-                    <p className="text-xs text-gray-400">{loading ? "Loading…" : `${list.length} total`}</p>
+                    <h3 className="text-sm font-mono font-bold text-white tracking-wide">Events & Holidays</h3>
+                    <p className="text-[10px] font-mono text-zinc-400 mt-0.5 uppercase tracking-wider">{loading ? "Loading…" : `${list.length} total`}</p>
                 </div>
             </div>
 
             {!loading && (
-                <div className="flex flex-wrap gap-1.5 mb-4">
+                <div className="flex flex-wrap gap-2 mb-5">
                     {EVENT_FILTER_TABS.map(t => (
                         <button key={t} type="button" onClick={() => setFilter(t)}
-                            className={`cursor-pointer text-[11px] font-semibold px-2.5 py-1.5 rounded-xl border transition-all
-                                ${filter === t ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"}`}>
+                            className={`cursor-pointer text-[10px] font-mono font-bold px-3 py-1.5 rounded-lg border transition-all shadow-inner active:scale-95 uppercase tracking-wider
+                                ${filter === t ? "bg-zinc-950 text-cyan-400 border-white/10 shadow-lg" : "bg-zinc-900/50 text-zinc-500 border-white/5 hover:text-white hover:bg-zinc-800"}`}>
                             {t}
                         </button>
                     ))}
@@ -380,29 +416,29 @@ const EventsHolidaysPanel = ({ adminEvents, loading, filter, setFilter, onSelect
             {loading ? (
                 <SidebarSkeleton />
             ) : list.length === 0 ? (
-                <div className="border border-dashed border-gray-200 rounded-2xl py-8 text-center">
-                    <Megaphone size={24} className="mx-auto text-gray-300 mb-2" />
-                    <p className="text-sm font-medium text-gray-600">No events found</p>
-                    <p className="text-xs text-gray-400 mt-0.5">Try a different filter</p>
+                <div className="border border-dashed border-white/10 bg-zinc-900/20 rounded-2xl py-10 text-center">
+                    <Megaphone size={28} className="mx-auto text-zinc-600 mb-3" />
+                    <p className="text-sm font-mono font-bold text-zinc-400">No events found</p>
+                    <p className="text-[10px] font-mono text-zinc-500 mt-1 uppercase tracking-wider">Try a different filter</p>
                 </div>
             ) : (
-                <div className="space-y-2 max-h-80 overflow-y-auto custom-scrollbar pr-1">
+                <div className="space-y-2.5 max-h-80 overflow-y-auto custom-scrollbar pr-1">
                     {list.map(ev => {
                         const style = EVENT_TYPE_STYLE[ev.type] || EVENT_TYPE_STYLE.Event;
                         const Icon = style.icon;
                         const d = new Date(ev.date);
                         return (
                             <button key={ev._id} type="button" onClick={() => onSelect(ev)}
-                                className="cursor-pointer w-full flex items-start gap-2.5 px-3 py-2.5 rounded-2xl border border-gray-100 bg-gray-50/60 hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all text-left">
-                                <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 border ${style.badge}`}>
-                                    <Icon size={13} />
+                                className="cursor-pointer w-full flex items-start gap-3 px-3.5 py-3 rounded-2xl border border-white/5 bg-zinc-900/50 hover:bg-zinc-900 hover:border-white/10 shadow-inner hover:shadow-lg transition-all text-left group">
+                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 border shadow-inner ${style.badge}`}>
+                                    <Icon size={16} className="stroke-[2.5]" />
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <div className="flex items-center justify-between gap-2">
-                                        <p className="text-sm font-medium text-gray-900 truncate">{ev.title}</p>
-                                        <span className={`shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${style.badge}`}>{ev.type}</span>
+                                        <p className="text-sm font-mono font-bold text-white truncate group-hover:text-cyan-400 transition-colors">{ev.title}</p>
+                                        <span className={`shrink-0 text-[9px] font-mono font-bold px-2 py-1 rounded-md border shadow-inner uppercase tracking-wider ${style.badge}`}>{ev.type}</span>
                                     </div>
-                                    <p className="text-xs text-gray-500 mt-0.5">{fmt(d, { day: "numeric", month: "short", year: "numeric" })} · {to12h(ev.time)}</p>
+                                    <p className="text-[10px] font-mono text-zinc-400 mt-1.5 uppercase tracking-wider">{fmt(d, { day: "numeric", month: "short", year: "numeric" })} · {to12h(ev.time)}</p>
                                 </div>
                             </button>
                         );
@@ -423,49 +459,52 @@ const EventDetailModal = ({ event, onClose }) => {
     const Icon = style.icon;
     const d = new Date(event.date);
     return (
-        <div className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-            <div className="w-full max-w-md bg-white rounded-[26px] shadow-2xl max-h-[85vh] flex flex-col animate-[modalPop_.2s_ease]" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[9999] bg-zinc-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn" onClick={onClose}>
+            <div className="w-full max-w-md bg-zinc-950/95 backdrop-blur-3xl rounded-[2rem] border border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.95)] max-h-[85vh] flex flex-col animate-[modalPop_.2s_ease] relative overflow-hidden" onClick={e => e.stopPropagation()}>
 
-                <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
-                    <div className="flex items-center gap-3 min-w-0">
-                        <div className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 border ${style.badge}`}>
-                            <Icon size={18} />
+                {/* Top Glow Line */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent shadow-[0_0_15px_rgba(34,211,238,0.8)]"></div>
+
+                <div className="flex items-center justify-between px-6 py-5 border-b border-white/5 shrink-0">
+                    <div className="flex items-center gap-3.5 min-w-0">
+                        <div className={`h-11 w-11 rounded-2xl flex items-center justify-center shrink-0 border shadow-inner ${style.badge}`}>
+                            <Icon size={20} className="stroke-[2.5]" />
                         </div>
                         <div className="min-w-0">
-                            <span className={`inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full border ${style.badge}`}>{event.type}</span>
+                            <span className={`inline-block text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg border shadow-inner uppercase tracking-wider ${style.badge}`}>{event.type}</span>
                         </div>
                     </div>
-                    <button type="button" onClick={onClose} className="cursor-pointer h-9 w-9 rounded-2xl hover:bg-gray-100 flex items-center justify-center transition shrink-0">
-                        <X size={18} className="text-gray-500" />
+                    <button type="button" onClick={onClose} className="cursor-pointer h-9 w-9 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 flex items-center justify-center transition shrink-0 shadow-inner">
+                        <X size={16} className="text-zinc-400 hover:text-white" />
                     </button>
                 </div>
 
-                <div className="overflow-y-auto flex-1 p-5 space-y-4 custom-scrollbar">
-                    <h2 className="text-lg font-bold text-gray-900 leading-snug break-words">{event.title}</h2>
+                <div className="overflow-y-auto flex-1 p-6 space-y-5 custom-scrollbar">
+                    <h2 className="text-xl font-mono font-black text-white leading-snug break-words">{event.title}</h2>
 
-                    <div className="flex flex-wrap gap-2">
-                        <span className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-600">
-                            <CalendarDays size={13} />
+                    <div className="flex flex-wrap gap-2.5">
+                        <span className="inline-flex items-center gap-2 text-[11px] font-mono font-bold uppercase tracking-wider px-3.5 py-2 rounded-xl border border-white/5 bg-zinc-900/50 text-zinc-300 shadow-inner">
+                            <CalendarDays size={14} className="text-cyan-400 stroke-[2.5]" />
                             {fmt(d, { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
                         </span>
-                        <span className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-600">
-                            <Clock3 size={13} />
+                        <span className="inline-flex items-center gap-2 text-[11px] font-mono font-bold uppercase tracking-wider px-3.5 py-2 rounded-xl border border-white/5 bg-zinc-900/50 text-zinc-300 shadow-inner">
+                            <Clock3 size={14} className="text-cyan-400 stroke-[2.5]" />
                             {to12h(event.time)}
                         </span>
                     </div>
 
-                    <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Description</p>
-                        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap break-words">
+                    <div className="pt-2 border-t border-white/5">
+                        <p className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mb-2.5">Description</p>
+                        <p className="text-sm font-mono text-zinc-300 leading-relaxed whitespace-pre-wrap break-words">
                             {event.description?.trim() ? event.description : "No description added."}
                         </p>
                     </div>
                 </div>
 
-                <div className="px-5 py-4 border-t border-gray-100 shrink-0">
+                <div className="px-6 py-5 border-t border-white/5 shrink-0 bg-zinc-950/40">
                     <button type="button" onClick={onClose}
-                        className="cursor-pointer w-full h-11 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition">
-                        Close
+                        className="cursor-pointer w-full h-11 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-white text-xs sm:text-sm font-mono font-bold transition shadow-inner active:scale-95">
+                        Close Details
                     </button>
                 </div>
             </div>
@@ -648,20 +687,37 @@ const Calendar = () => {
     const hasData = stats.total > 0 || stats.tsCount > 0 || stats.evCount > 0;
     const weekLabel = `${fmt(weekStart, { month: "short", day: "numeric" })} – ${fmt(new Date(new Date(weekStart).setDate(weekStart.getDate() + 6)), { month: "short", day: "numeric", year: "numeric" })}`;
 
+    // Inline style injections for animations
+    useEffect(() => {
+        const style = document.createElement("style");
+        style.innerHTML = `
+            @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+            .animate-shimmer { animation: shimmer 2s infinite linear; }
+            @keyframes modalPop { from { opacity:0; transform:scale(.96) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            .animate-fadeIn { animation: fadeIn .2s ease; }
+            .custom-scrollbar::-webkit-scrollbar { width:4px; height:4px; }
+            .custom-scrollbar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:999px; }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.2); }
+        `;
+        document.head.appendChild(style);
+        return () => document.head.removeChild(style);
+    }, []);
+
     // ── RENDER ─────────────────────────────────────────────────────────────
     return (
         <DashboardLayout activeMenu="Calendar">
-            <div className="space-y-5">
+            <div className="space-y-6">
 
                 {/* PAGE HEADER */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">My Calendar</h1>
-                        <p className="text-sm text-gray-500 mt-1">Tasks, timesheets, company events and your schedule at a glance</p>
+                        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">My Calendar</h1>
+                        <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-1">Tasks, timesheets, company events and your schedule</p>
                     </div>
                     <button type="button" onClick={() => fetchData({ isRefresh: true })} disabled={loading || refreshing}
-                        className="cursor-pointer h-11 px-4 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-60 text-gray-700 flex items-center gap-2 text-sm font-medium transition-all self-start sm:self-auto">
-                        <RefreshCcw size={16} className={refreshing ? "animate-spin" : ""} />
+                        className="cursor-pointer h-11 px-4 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 disabled:opacity-60 text-zinc-300 hover:text-white flex items-center gap-2 text-xs sm:text-sm font-mono font-bold transition-all self-start sm:self-auto shadow-inner">
+                        <RefreshCcw size={16} className={`${refreshing ? "animate-spin text-cyan-400" : "text-cyan-400"} stroke-[2.5]`} />
                         Refresh
                     </button>
                 </div>
@@ -670,18 +726,18 @@ const Calendar = () => {
                 {!loading && (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                         {[
-                            { label: "Total Tasks", value: stats.total, icon: <ClipboardCheck size={16} />, bg: "bg-blue-100", text: "text-blue-600" },
-                            { label: "Completed", value: stats.completed, icon: <CheckCircle2 size={16} />, bg: "bg-green-100", text: "text-green-600" },
-                            { label: "Overdue", value: stats.overdue, icon: <AlertCircle size={16} />, bg: "bg-red-100", text: "text-red-600" },
-                            { label: "Timesheets", value: stats.tsCount, icon: <Clock3 size={16} />, bg: "bg-purple-100", text: "text-purple-600" },
-                            { label: "Hours Logged", value: `${stats.tsHours}h`, icon: <Clock3 size={16} />, bg: "bg-amber-100", text: "text-amber-600" },
-                            { label: "Company Events", value: stats.evCount, icon: <Megaphone size={16} />, bg: "bg-indigo-100", text: "text-indigo-600" },
-                        ].map(({ label, value, icon, bg, text }) => (
-                            <div key={label} className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                                <div className={`h-9 w-9 rounded-xl ${bg} ${text} flex items-center justify-center shrink-0`}>{icon}</div>
-                                <div>
-                                    <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">{label}</p>
-                                    <p className="text-lg font-bold text-gray-900 mt-0.5">{value}</p>
+                            { label: "Total Tasks", value: stats.total, icon: <ClipboardCheck size={18} className="stroke-[2.5]" />, style: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" },
+                            { label: "Completed", value: stats.completed, icon: <CheckCircle2 size={18} className="stroke-[2.5]" />, style: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
+                            { label: "Overdue", value: stats.overdue, icon: <AlertCircle size={18} className="stroke-[2.5]" />, style: "bg-rose-500/10 text-rose-400 border-rose-500/20" },
+                            { label: "Timesheets", value: stats.tsCount, icon: <Clock3 size={18} className="stroke-[2.5]" />, style: "bg-purple-500/10 text-purple-400 border-purple-500/20" },
+                            { label: "Hours Logged", value: `${stats.tsHours}h`, icon: <Clock3 size={18} className="stroke-[2.5]" />, style: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
+                            { label: "Events", value: stats.evCount, icon: <Megaphone size={18} className="stroke-[2.5]" />, style: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20" },
+                        ].map(({ label, value, icon, style }) => (
+                            <div key={label} className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 shadow-inner">
+                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 border shadow-inner ${style}`}>{icon}</div>
+                                <div className="min-w-0">
+                                    <p className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider truncate">{label}</p>
+                                    <p className="text-lg font-mono font-black text-white mt-0.5 truncate">{value}</p>
                                 </div>
                             </div>
                         ))}
@@ -690,13 +746,14 @@ const Calendar = () => {
 
                 {/* MONTH SUMMARY BANNER */}
                 {!loading && (
-                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-5 text-white">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="bg-gradient-to-r from-cyan-900/40 via-blue-900/40 to-indigo-900/40 backdrop-blur-3xl border border-blue-500/20 rounded-[2rem] p-5 sm:p-7 shadow-[0_15px_50px_rgba(0,0,0,0.5)] relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/10 blur-3xl rounded-full pointer-events-none"></div>
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 relative z-10">
                             <div>
-                                <p className="text-sm text-white/70 font-medium">{MONTHS[month]} {year}</p>
-                                <h2 className="text-xl font-bold mt-0.5">Month Summary</h2>
+                                <p className="text-[10px] sm:text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">{MONTHS[month]} {year}</p>
+                                <h2 className="text-xl sm:text-2xl font-black text-white mt-1">Month Summary</h2>
                             </div>
-                            <div className="flex flex-wrap gap-5">
+                            <div className="flex flex-wrap gap-4 sm:gap-6 bg-zinc-950/50 border border-white/5 rounded-2xl p-4 shadow-inner">
                                 {[
                                     { label: "Tasks Due", val: monthStats.due },
                                     { label: "Completed", val: monthStats.done },
@@ -704,99 +761,114 @@ const Calendar = () => {
                                     { label: "Completion", val: `${monthStats.pct}%` },
                                 ].map(({ label, val }) => (
                                     <div key={label} className="text-center">
-                                        <p className="text-2xl font-extrabold">{val}</p>
-                                        <p className="text-xs text-white/70">{label}</p>
+                                        <p className="text-lg sm:text-xl font-mono font-black text-white">{val}</p>
+                                        <p className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mt-0.5">{label}</p>
                                     </div>
                                 ))}
                             </div>
                         </div>
                         {monthStats.due > 0 && (
-                            <div className="mt-4">
-                                <div className="flex justify-between text-xs text-white/70 mb-1.5">
-                                    <span>Progress</span>
-                                    <span>{monthStats.done}/{monthStats.due} tasks</span>
+                            <div className="mt-6 relative z-10">
+                                <div className="flex justify-between text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider mb-2">
+                                    <span>Task Progress</span>
+                                    <span className="text-cyan-400">{monthStats.done}/{monthStats.due} tasks</span>
                                 </div>
-                                <div className="h-2 rounded-full bg-white/20">
-                                    <div className="h-2 rounded-full bg-white transition-all duration-700" style={{ width: `${monthStats.pct}%` }} />
+                                <div className="h-2.5 rounded-full bg-zinc-900 border border-white/5 shadow-inner overflow-hidden">
+                                    <div className="h-2.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-700 shadow-[0_0_10px_rgba(56,189,248,0.5)]" style={{ width: `${monthStats.pct}%` }} />
                                 </div>
                             </div>
                         )}
                     </div>
                 )}
 
-                {/* SEARCH + FILTERS */}
+                {/* SEARCH + FILTERS (CLEANED NO DOUBLE CARD) */}
                 {!loading && (
-                    <div className="bg-white border border-gray-200 rounded-3xl p-4 flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-center">
-                        <div className="relative flex-1 min-w-[180px]">
-                            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center justify-between pb-1">
+                        
+                        {/* SEARCH */}
+                        <div className="relative flex-1 w-full max-w-xl shrink-0">
+                            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none stroke-[2.5]" />
                             <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                                 placeholder="Search tasks, projects or events..."
-                                className="w-full h-10 pl-10 pr-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+                                className="w-full h-12 pl-11 pr-4 rounded-2xl border border-white/10 bg-zinc-950/80 text-white font-mono text-xs focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 focus:outline-none placeholder-zinc-500 transition-all shadow-inner" />
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <button type="button" onClick={() => setShowTasks(v => !v)}
-                                className={`cursor-pointer h-10 px-4 rounded-2xl text-sm font-medium transition-all flex items-center gap-1.5 border
-                                    ${showTasks ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-200 hover:bg-blue-50"}`}>
-                                <ClipboardCheck size={14} /> Tasks
-                            </button>
-                            <button type="button" onClick={() => setShowTimesheets(v => !v)}
-                                className={`cursor-pointer h-10 px-4 rounded-2xl text-sm font-medium transition-all flex items-center gap-1.5 border
-                                    ${showTimesheets ? "bg-green-600 text-white border-green-600" : "bg-white text-gray-600 border-gray-200 hover:bg-green-50"}`}>
-                                <Clock3 size={14} /> Timesheets
-                            </button>
-                            <button type="button" onClick={() => setShowEvents(v => !v)}
-                                className={`cursor-pointer h-10 px-4 rounded-2xl text-sm font-medium transition-all flex items-center gap-1.5 border
-                                    ${showEvents ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-600 border-gray-200 hover:bg-indigo-50"}`}>
-                                <Megaphone size={14} /> Events
-                            </button>
-                        </div>
-
-                        <select value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)}
-                            className="h-10 px-3 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white cursor-pointer">
-                            {["All", "High", "Medium", "Low"].map(p => <option key={p}>{p}</option>)}
-                        </select>
-
-                        <div className="flex items-center gap-1 bg-gray-100 rounded-2xl p-1 self-start sm:self-auto">
-                            {[
-                                { key: "month", icon: <LayoutGrid size={14} />, label: "Month" },
-                                { key: "week", icon: <CalendarRange size={14} />, label: "Week" },
-                                { key: "heatmap", icon: <List size={14} />, label: "Heat" },
-                            ].map(({ key, icon, label }) => (
-                                <button key={key} type="button" onClick={() => setView(key)}
-                                    className={`cursor-pointer flex items-center gap-1.5 px-3 h-8 rounded-xl text-xs font-semibold transition-all
-                                        ${view === key ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
-                                    {icon}{label}
+                        {/* HORIZONTAL SCROLLABLE FILTERS ON MOBILE */}
+                        <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-2 sm:pb-0 w-full xl:w-auto">
+                            
+                            {/* EVENT TYPE TABS */}
+                            <div className="flex items-center gap-1.5 bg-zinc-900 border border-white/5 rounded-2xl p-1.5 shadow-inner shrink-0 min-w-max">
+                                <button type="button" onClick={() => setShowTasks(v => !v)}
+                                    className={`cursor-pointer h-9 px-4 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 whitespace-nowrap active:scale-95
+                                        ${showTasks ? "bg-zinc-950 text-cyan-400 border border-white/10 shadow-sm" : "text-zinc-500 hover:text-white hover:bg-zinc-800/50"}`}>
+                                    <ClipboardCheck size={14} className={showTasks ? "stroke-[2.5]" : ""} /> Tasks
                                 </button>
-                            ))}
+                                <button type="button" onClick={() => setShowTimesheets(v => !v)}
+                                    className={`cursor-pointer h-9 px-4 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 whitespace-nowrap active:scale-95
+                                        ${showTimesheets ? "bg-zinc-950 text-cyan-400 border border-white/10 shadow-sm" : "text-zinc-500 hover:text-white hover:bg-zinc-800/50"}`}>
+                                    <Clock3 size={14} className={showTimesheets ? "stroke-[2.5]" : ""} /> Timesheets
+                                </button>
+                                <button type="button" onClick={() => setShowEvents(v => !v)}
+                                    className={`cursor-pointer h-9 px-4 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 whitespace-nowrap active:scale-95
+                                        ${showEvents ? "bg-zinc-950 text-cyan-400 border border-white/10 shadow-sm" : "text-zinc-500 hover:text-white hover:bg-zinc-800/50"}`}>
+                                    <Megaphone size={14} className={showEvents ? "stroke-[2.5]" : ""} /> Events
+                                </button>
+                            </div>
+
+                            {/* PRIORITY DROPDOWN */}
+                            <div className="relative shrink-0 min-w-[130px]">
+                                <select value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)}
+                                    className="appearance-none w-full h-12 px-4 rounded-2xl border border-white/10 bg-zinc-900/80 text-white font-mono text-xs focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 focus:outline-none cursor-pointer transition-all shadow-inner">
+                                    {["All", "High", "Medium", "Low"].map(p => <option className="bg-zinc-900 text-white" key={p} value={p}>{p} Priority</option>)}
+                                </select>
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <svg className="w-4 h-4 text-cyan-400 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+
+                            {/* VIEW MODE TABS */}
+                            <div className="flex items-center gap-1.5 bg-zinc-900 border border-white/5 rounded-2xl p-1.5 shadow-inner shrink-0 min-w-max">
+                                {[
+                                    { key: "month", icon: <LayoutGrid size={14} />, label: "Month" },
+                                    { key: "week", icon: <CalendarRange size={14} />, label: "Week" },
+                                    { key: "heatmap", icon: <List size={14} />, label: "Heat" },
+                                ].map(({ key, icon, label }) => (
+                                    <button key={key} type="button" onClick={() => setView(key)}
+                                        className={`cursor-pointer flex items-center gap-1.5 px-3 h-9 rounded-xl text-[10px] sm:text-xs font-mono font-bold transition-all uppercase tracking-wider whitespace-nowrap active:scale-95
+                                            ${view === key ? "bg-zinc-950 text-cyan-400 border border-white/10 shadow-sm" : "text-zinc-500 hover:text-white hover:bg-zinc-800/50"}`}>
+                                        {icon}{label}
+                                    </button>
+                                ))}
+                            </div>
+
                         </div>
                     </div>
                 )}
 
                 {/* ── CALENDAR + SIDEBAR ────────────────────────────────── */}
-                <div className="flex flex-col lg:flex-row gap-5 items-start">
+                <div className="flex flex-col lg:flex-row gap-6 items-start">
 
                     {/* MAIN CALENDAR */}
-                    <div className="flex-1 bg-white border border-gray-200 rounded-3xl p-4 sm:p-6 min-w-0">
+                    <div className="flex-1 w-full bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-5 sm:p-7 shadow-[0_15px_50px_rgba(0,0,0,0.6)] min-w-0">
                         {loading ? <Skeleton /> : (
                             <>
                                 {/* Nav */}
-                                <div className="flex items-center justify-between mb-5">
-                                    <h2 className="text-base sm:text-xl font-bold text-gray-900 truncate">
+                                <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/5">
+                                    <h2 className="text-lg sm:text-xl font-mono font-black text-white tracking-wide truncate pr-4">
                                         {view === "week" ? weekLabel : view === "heatmap" ? `${year} Activity` : `${MONTHS[month]} ${year}`}
                                     </h2>
                                     <div className="flex items-center gap-2 shrink-0">
                                         <button type="button" onClick={view === "week" ? prevWeek : prevMonth}
-                                            className="cursor-pointer h-9 w-9 rounded-2xl border border-gray-200 hover:bg-blue-50 hover:border-blue-200 transition flex items-center justify-center">
-                                            <ChevronLeft size={17} className="text-gray-600" />
+                                            className="cursor-pointer h-9 w-9 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 flex items-center justify-center transition shadow-inner active:scale-95">
+                                            <ChevronLeft size={16} className="text-cyan-400 stroke-[2.5]" />
                                         </button>
                                         <button type="button" onClick={goToday}
-                                            className="cursor-pointer h-9 px-4 rounded-2xl border border-gray-200 hover:bg-blue-50 hover:border-blue-200 transition text-sm font-medium text-gray-700">
+                                            className="cursor-pointer h-9 px-4 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 transition text-xs font-mono font-bold text-zinc-300 hover:text-white shadow-inner active:scale-95">
                                             Today
                                         </button>
                                         <button type="button" onClick={view === "week" ? nextWeek : nextMonth}
-                                            className="cursor-pointer h-9 w-9 rounded-2xl border border-gray-200 hover:bg-blue-50 hover:border-blue-200 transition flex items-center justify-center">
-                                            <ChevronRight size={17} className="text-gray-600" />
+                                            className="cursor-pointer h-9 w-9 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 flex items-center justify-center transition shadow-inner active:scale-95">
+                                            <ChevronRight size={16} className="text-cyan-400 stroke-[2.5]" />
                                         </button>
                                     </div>
                                 </div>
@@ -804,10 +876,10 @@ const Calendar = () => {
                                 {/* MONTH VIEW */}
                                 {view === "month" && (
                                     <>
-                                        <div className="grid grid-cols-7 gap-1 mb-1">
-                                            {DAYS.map(d => <div key={d} className="text-center text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-wider py-2">{d}</div>)}
+                                        <div className="grid grid-cols-7 gap-1.5 mb-2">
+                                            {DAYS.map(d => <div key={d} className="text-center text-[10px] sm:text-xs font-mono font-bold text-zinc-500 uppercase tracking-wider py-2">{d}</div>)}
                                         </div>
-                                        <div className="grid grid-cols-7 gap-1">
+                                        <div className="grid grid-cols-7 gap-1.5">
                                             {calendarDays.map((cell, idx) => {
                                                 const key = cell.current ? `${year}-${month}-${cell.day}` : null;
                                                 const events = (key && eventMap[key]) || [];
@@ -819,37 +891,37 @@ const Calendar = () => {
                                                 const hl = searchQuery && events.length > 0;
                                                 return (
                                                     <button key={idx} type="button" disabled={!cell.current} onClick={() => openCell(cell)}
-                                                        className={`cursor-pointer rounded-2xl p-1.5 sm:p-2 min-h-[64px] sm:min-h-[90px] text-left flex flex-col transition-all duration-150
+                                                        className={`cursor-pointer rounded-2xl p-1.5 sm:p-2.5 min-h-[70px] sm:min-h-[110px] text-left flex flex-col transition-all duration-300 shadow-inner
                                                             ${!cell.current ? "opacity-0 pointer-events-none"
-                                                                : isToday ? "bg-blue-600 hover:bg-blue-700"
-                                                                    : overdue ? "bg-red-50 border border-red-200 hover:bg-red-100"
-                                                                        : hl ? "ring-2 ring-amber-400 bg-amber-50 hover:bg-amber-100"
-                                                                            : events.length > 0 ? "bg-blue-50 border border-blue-200 hover:bg-blue-100"
-                                                                                : "bg-gray-50 border border-transparent hover:bg-gray-100 hover:border-gray-200"}`}>
-                                                        <span className={`text-xs sm:text-sm font-semibold leading-none mb-1.5
-                                                            ${isToday ? "text-white" : overdue ? "text-red-700" : "text-gray-700"}`}>
+                                                                : isToday ? "bg-blue-600/20 border border-blue-500/30 hover:bg-blue-600/30"
+                                                                    : overdue ? "bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20"
+                                                                        : hl ? "ring-2 ring-amber-400/50 bg-amber-500/10 hover:bg-amber-500/20 border-transparent"
+                                                                            : events.length > 0 ? "bg-zinc-800/60 border border-white/10 hover:bg-zinc-800"
+                                                                                : "bg-zinc-900/30 border border-transparent hover:border-white/5 hover:bg-zinc-900/60"}`}>
+                                                        <span className={`text-xs sm:text-sm font-mono font-black leading-none mb-2
+                                                            ${isToday ? "text-blue-400" : overdue ? "text-rose-400" : "text-white"}`}>
                                                             {cell.day}
                                                         </span>
-                                                        <div className="hidden sm:flex flex-col gap-1 w-full">
+                                                        <div className="hidden sm:flex flex-col gap-1.5 w-full">
                                                             {cEvs.slice(0, 1).map(e => (
-                                                                <span key={e.id} className={`text-[10px] font-medium px-1.5 py-0.5 rounded-lg truncate
-                                                                    ${isToday ? "bg-white/20 text-white" : "bg-indigo-600 text-white"}`}>{e.title}</span>
+                                                                <span key={e.id} className={`text-[9px] sm:text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border truncate shadow-inner
+                                                                    ${isToday ? "bg-blue-500/30 text-blue-200 border-blue-500/20" : "bg-indigo-500/20 text-indigo-300 border-indigo-500/20"}`}>{e.title}</span>
                                                             ))}
                                                             {taskEvs.slice(0, 2).map(e => (
-                                                                <span key={e.id} className={`text-[10px] font-medium px-1.5 py-0.5 rounded-lg truncate
-                                                                    ${isToday ? "bg-white/20 text-white" : e.overdue ? "bg-red-500 text-white" : "bg-blue-600 text-white"}`}>{e.title}</span>
+                                                                <span key={e.id} className={`text-[9px] sm:text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border truncate shadow-inner
+                                                                    ${isToday ? "bg-blue-500/30 text-blue-200 border-blue-500/20" : e.overdue ? "bg-rose-500/20 text-rose-300 border-rose-500/20" : "bg-cyan-500/20 text-cyan-300 border-cyan-500/20"}`}>{e.title}</span>
                                                             ))}
                                                             {tsEvs.slice(0, 1).map(e => (
-                                                                <span key={e.id} className={`text-[10px] font-medium px-1.5 py-0.5 rounded-lg truncate
-                                                                    ${isToday ? "bg-white/20 text-white" : "bg-green-600 text-white"}`}>{e.title}</span>
+                                                                <span key={e.id} className={`text-[9px] sm:text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border truncate shadow-inner
+                                                                    ${isToday ? "bg-blue-500/30 text-blue-200 border-blue-500/20" : "bg-emerald-500/20 text-emerald-300 border-emerald-500/20"}`}>{e.title}</span>
                                                             ))}
-                                                            {events.length > 4 && <span className={`text-[10px] ${isToday ? "text-white/70" : "text-gray-400"}`}>+{events.length - 4} more</span>}
+                                                            {events.length > 4 && <span className={`text-[9px] sm:text-[10px] font-mono font-bold mt-0.5 ${isToday ? "text-blue-300/70" : "text-zinc-500"}`}>+{events.length - 4} more</span>}
                                                         </div>
                                                         {events.length > 0 && (
-                                                            <div className="flex sm:hidden gap-0.5 mt-auto flex-wrap">
-                                                                {cEvs.length > 0 && <span className={`h-1.5 w-1.5 rounded-full ${isToday ? "bg-white" : "bg-indigo-500"}`} />}
-                                                                {taskEvs.length > 0 && <span className={`h-1.5 w-1.5 rounded-full ${isToday ? "bg-white" : overdue ? "bg-red-500" : "bg-blue-500"}`} />}
-                                                                {tsEvs.length > 0 && <span className={`h-1.5 w-1.5 rounded-full ${isToday ? "bg-white/70" : "bg-green-500"}`} />}
+                                                            <div className="flex sm:hidden gap-1 mt-auto flex-wrap justify-center w-full">
+                                                                {cEvs.length > 0 && <span className={`h-1.5 w-1.5 rounded-full ${isToday ? "bg-blue-300" : "bg-indigo-400"}`} />}
+                                                                {taskEvs.length > 0 && <span className={`h-1.5 w-1.5 rounded-full ${isToday ? "bg-blue-300" : overdue ? "bg-rose-400" : "bg-cyan-400"}`} />}
+                                                                {tsEvs.length > 0 && <span className={`h-1.5 w-1.5 rounded-full ${isToday ? "bg-blue-300/70" : "bg-emerald-400"}`} />}
                                                             </div>
                                                         )}
                                                     </button>
@@ -862,8 +934,8 @@ const Calendar = () => {
                                 {/* WEEK VIEW */}
                                 {view === "week" && (
                                     <>
-                                        <div className="grid grid-cols-7 gap-1 mb-1">
-                                            {DAYS.map(d => <div key={d} className="text-center text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-wider py-2">{d}</div>)}
+                                        <div className="grid grid-cols-7 gap-1.5 mb-2">
+                                            {DAYS.map(d => <div key={d} className="text-center text-[10px] sm:text-xs font-mono font-bold text-zinc-500 uppercase tracking-wider py-2">{d}</div>)}
                                         </div>
                                         <WeekView weekStart={weekStart} eventMap={eventMap} today={today} onDayClick={openDay} />
                                     </>
@@ -874,17 +946,17 @@ const Calendar = () => {
 
                                 {/* Legend */}
                                 {view !== "heatmap" && (
-                                    <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-gray-100">
+                                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 sm:gap-6 mt-6 pt-5 border-t border-white/5">
                                         {[
-                                            { color: "bg-blue-600", label: "Task due" },
-                                            { color: "bg-green-600", label: "Timesheet" },
-                                            { color: "bg-indigo-600", label: "Event / Announcement" },
-                                            { color: "bg-red-500", label: "Overdue" },
-                                            { color: "bg-blue-600 ring-2 ring-blue-400 ring-offset-1", label: "Today" },
+                                            { color: "bg-cyan-500/40 border-cyan-500/50", label: "Task due" },
+                                            { color: "bg-emerald-500/40 border-emerald-500/50", label: "Timesheet" },
+                                            { color: "bg-indigo-500/40 border-indigo-500/50", label: "Event/Hol." },
+                                            { color: "bg-rose-500/40 border-rose-500/50", label: "Overdue" },
+                                            { color: "bg-blue-600/40 border-blue-400/50 ring-2 ring-blue-500/30 ring-offset-zinc-950", label: "Today" },
                                         ].map(({ color, label }) => (
-                                            <div key={label} className="flex items-center gap-1.5">
-                                                <span className={`h-3 w-3 rounded-sm shrink-0 ${color}`} />
-                                                <span className="text-xs text-gray-500">{label}</span>
+                                            <div key={label} className="flex items-center gap-2">
+                                                <span className={`h-3 w-3 rounded-[4px] border shrink-0 ${color}`} />
+                                                <span className="text-[10px] sm:text-xs font-mono font-bold text-zinc-400 uppercase tracking-wider">{label}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -894,68 +966,84 @@ const Calendar = () => {
                     </div>
 
                     {/* SIDEBAR — Today's Agenda + Upcoming */}
-                    <div className="w-full lg:w-72 xl:w-80 flex flex-col gap-5 shrink-0">
+                    <div className="w-full lg:w-72 xl:w-[340px] flex flex-col gap-6 shrink-0">
 
                         {/* TODAY'S AGENDA */}
-                        <div className="bg-white border border-gray-200 rounded-3xl p-5">
-                            <div className="flex items-center gap-2.5 mb-4">
-                                <div className="h-9 w-9 rounded-2xl bg-blue-100 flex items-center justify-center shrink-0">
-                                    <CalendarDays size={16} className="text-blue-600" />
+                        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-6 shadow-[0_15px_50px_rgba(0,0,0,0.6)]">
+                            <div className="flex items-center gap-3.5 mb-5">
+                                <div className="h-10 w-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 shadow-inner">
+                                    <CalendarDays size={18} className="text-blue-400 stroke-[2.5]" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-gray-900">Today's Agenda</h3>
-                                    <p className="text-xs text-gray-400">{fmt(today, { weekday: "long", day: "numeric", month: "short" })}</p>
+                                    <h3 className="text-sm font-mono font-bold text-white tracking-wide">Today's Agenda</h3>
+                                    <p className="text-[10px] font-mono text-zinc-400 mt-0.5 uppercase tracking-wider">{fmt(today, { weekday: "long", day: "numeric", month: "short" })}</p>
                                 </div>
                             </div>
                             {loading ? <SidebarSkeleton /> : todayEvents.length === 0 ? (
-                                <div className="border border-dashed border-gray-200 rounded-2xl py-8 text-center">
-                                    <CalendarDays size={24} className="mx-auto text-gray-300 mb-2" />
-                                    <p className="text-sm font-medium text-gray-600">Nothing today</p>
-                                    <p className="text-xs text-gray-400 mt-0.5">Enjoy your clear day!</p>
+                                <div className="border border-dashed border-white/10 bg-zinc-900/20 rounded-2xl py-8 text-center">
+                                    <CalendarDays size={28} className="mx-auto text-zinc-600 mb-3" />
+                                    <p className="text-sm font-mono font-bold text-zinc-400">Nothing today</p>
+                                    <p className="text-[10px] font-mono text-zinc-500 mt-1 uppercase tracking-wider">Enjoy your clear day!</p>
                                 </div>
                             ) : (
-                                <div className="space-y-2 max-h-64 overflow-y-auto custom-scrollbar pr-1">
+                                <div className="space-y-2.5 max-h-64 overflow-y-auto custom-scrollbar pr-1">
                                     {todayEvents.map(e => <EventItem key={e.id} event={e} />)}
                                 </div>
                             )}
                         </div>
 
                         {/* UPCOMING — next 7 days */}
-                        <div className="bg-white border border-gray-200 rounded-3xl p-5">
-                            <div className="flex items-center gap-2.5 mb-4">
-                                <div className="h-9 w-9 rounded-2xl bg-indigo-100 flex items-center justify-center shrink-0">
-                                    <CalendarRange size={16} className="text-indigo-600" />
+                        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-6 shadow-[0_15px_50px_rgba(0,0,0,0.6)]">
+                            <div className="flex items-center gap-3.5 mb-5">
+                                <div className="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0 shadow-inner">
+                                    <CalendarRange size={18} className="text-indigo-400 stroke-[2.5]" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-gray-900">Upcoming (7 Days)</h3>
-                                    <p className="text-xs text-gray-400">{upcomingDays.reduce((s, d) => s + d.events.length, 0)} events ahead</p>
+                                    <h3 className="text-sm font-mono font-bold text-white tracking-wide">Upcoming (7 Days)</h3>
+                                    <p className="text-[10px] font-mono text-zinc-400 mt-0.5 uppercase tracking-wider">{upcomingDays.reduce((s, d) => s + d.events.length, 0)} events ahead</p>
                                 </div>
                             </div>
                             {loading ? <SidebarSkeleton /> : upcomingDays.length === 0 ? (
-                                <div className="border border-dashed border-gray-200 rounded-2xl py-8 text-center">
-                                    <CheckCircle2 size={24} className="mx-auto text-gray-300 mb-2" />
-                                    <p className="text-sm font-medium text-gray-600">All clear ahead!</p>
-                                    <p className="text-xs text-gray-400 mt-0.5">No events in the next 7 days</p>
+                                <div className="border border-dashed border-white/10 bg-zinc-900/20 rounded-2xl py-8 text-center">
+                                    <CheckCircle2 size={28} className="mx-auto text-zinc-600 mb-3 stroke-[2.5]" />
+                                    <p className="text-sm font-mono font-bold text-zinc-400">All clear ahead!</p>
+                                    <p className="text-[10px] font-mono text-zinc-500 mt-1 uppercase tracking-wider">No events in the next 7 days</p>
                                 </div>
                             ) : (
-                                <div className="space-y-3.5 max-h-80 overflow-y-auto custom-scrollbar pr-1">
+                                <div className="space-y-4 max-h-80 overflow-y-auto custom-scrollbar pr-1">
                                     {upcomingDays.map(({ date, events }) => (
                                         <div key={dateKey(date)}>
-                                            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+                                            <p className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-wider mb-2">
                                                 {isSameDay(date, today) ? "Today" : fmt(date, { weekday: "short", day: "numeric", month: "short" })}
                                             </p>
-                                            <div className="space-y-1.5">
-                                                {events.slice(0, 3).map(e => (
-                                                    <div key={e.id} className={`flex items-center gap-2 px-3 py-2 rounded-xl border
-                                                        ${e.type === "task" ? e.overdue ? "bg-red-50 border-red-100" : "bg-blue-50 border-blue-100"
-                                                            : e.type === "event" ? "bg-indigo-50 border-indigo-100" : "bg-green-50 border-green-100"}`}>
-                                                        <span className={`h-1.5 w-1.5 rounded-full shrink-0
-                                                            ${e.type === "task" ? e.overdue ? "bg-red-500" : "bg-blue-500" : e.type === "event" ? "bg-indigo-500" : "bg-green-500"}`} />
-                                                        <span className="text-xs font-medium text-gray-800 truncate flex-1">{e.title}</span>
-                                                        {e.overdue && <span className="text-[10px] text-red-600 font-bold shrink-0">OD</span>}
-                                                    </div>
-                                                ))}
-                                                {events.length > 3 && <p className="text-[10px] text-gray-400 pl-1">+{events.length - 3} more</p>}
+                                            <div className="space-y-2">
+                                                {events.slice(0, 3).map(e => {
+                                                    const isTask = e.type === "task";
+                                                    const isEvent = e.type === "event";
+                                                    const evStyle = isEvent ? (EVENT_TYPE_STYLE[e.eventType] || EVENT_TYPE_STYLE.Event) : null;
+                                                    
+                                                    let borderBgClass = "";
+                                                    let iconClass = "";
+                                                    if (isTask) {
+                                                        borderBgClass = e.overdue ? "bg-rose-500/5 border-rose-500/20" : "bg-cyan-500/5 border-cyan-500/20";
+                                                        iconClass = e.overdue ? "bg-rose-500" : "bg-cyan-500";
+                                                    } else if (isEvent) {
+                                                        borderBgClass = evStyle.badge;
+                                                        iconClass = evStyle.badge.split(' ').find(c => c.startsWith('text-'))?.replace('text-', 'bg-') || "bg-indigo-500";
+                                                    } else {
+                                                        borderBgClass = "bg-emerald-500/5 border-emerald-500/20";
+                                                        iconClass = "bg-emerald-500";
+                                                    }
+
+                                                    return (
+                                                        <div key={e.id} className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border shadow-inner ${borderBgClass}`}>
+                                                            <span className={`h-1.5 w-1.5 rounded-full shrink-0 shadow-inner ${iconClass}`} />
+                                                            <span className="text-xs font-mono font-bold text-white truncate flex-1">{e.title}</span>
+                                                            {e.overdue && <span className="text-[9px] font-mono font-black text-rose-400 bg-rose-500/10 px-1.5 py-0.5 rounded border border-rose-500/20 shrink-0">OD</span>}
+                                                        </div>
+                                                    )
+                                                })}
+                                                {events.length > 3 && <p className="text-[10px] font-mono font-bold text-zinc-500 pl-1.5">+{events.length - 3} more</p>}
                                             </div>
                                         </div>
                                     ))}
@@ -976,12 +1064,12 @@ const Calendar = () => {
 
                 {/* EMPTY STATE */}
                 {!loading && !hasData && (
-                    <div className="bg-white border border-dashed border-gray-300 rounded-3xl py-16 text-center">
-                        <div className="h-16 w-16 rounded-3xl bg-blue-50 flex items-center justify-center mx-auto mb-4">
-                            <CalendarDays size={28} className="text-blue-400" />
+                    <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center backdrop-blur-xl mt-6">
+                        <div className="w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mx-auto mb-5 shadow-[0_0_20px_rgba(56,189,248,0.15)]">
+                            <CalendarDays size={36} className="text-cyan-400 stroke-[2.5]" />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800">Your calendar is clear</h3>
-                        <p className="text-sm text-gray-500 mt-2 max-w-sm mx-auto">
+                        <h3 className="text-xl md:text-2xl font-mono font-black text-white tracking-tight">Your calendar is clear</h3>
+                        <p className="text-zinc-400 max-w-md mt-2 leading-relaxed font-mono text-xs sm:text-sm">
                             No tasks, timesheets or events yet. Once your team assigns tasks, approves timesheets, or admin publishes an event, they'll show up here.
                         </p>
                     </div>
@@ -1005,15 +1093,6 @@ const Calendar = () => {
                 />
             )}
 
-            <style>{`
-                @keyframes modalPop {
-                    from { opacity:0; transform:scale(.96); }
-                    to   { opacity:1; transform:scale(1); }
-                }
-                .custom-scrollbar::-webkit-scrollbar { width:4px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:999px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
-            `}</style>
         </DashboardLayout>
     );
 };
