@@ -37,31 +37,35 @@ const getTotalVotes = (options) =>
 const getVotePercent = (optVotes, total) =>
     total === 0 ? 0 : Math.round((optVotes / total) * 100);
 
+// Updated for Dark Theme / Glassmorphism
 const optionColors = [
-    { bg: "bg-blue-500", light: "bg-blue-50", text: "text-blue-600", border: "border-blue-300", bar: "bg-blue-500" },
-    { bg: "bg-violet-500", light: "bg-violet-50", text: "text-violet-600", border: "border-violet-300", bar: "bg-violet-500" },
-    { bg: "bg-emerald-500", light: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-300", bar: "bg-emerald-500" },
-    { bg: "bg-amber-500", light: "bg-amber-50", text: "text-amber-600", border: "border-amber-300", bar: "bg-amber-500" },
-    { bg: "bg-rose-500", light: "bg-rose-50", text: "text-rose-600", border: "border-rose-300", bar: "bg-rose-500" },
-    { bg: "bg-cyan-500", light: "bg-cyan-50", text: "text-cyan-600", border: "border-cyan-300", bar: "bg-cyan-500" },
+    { bg: "bg-blue-500", light: "bg-blue-500/15", text: "text-blue-400", border: "border-blue-500/40", bar: "bg-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.8)]" },
+    { bg: "bg-purple-500", light: "bg-purple-500/15", text: "text-purple-400", border: "border-purple-500/40", bar: "bg-purple-500 shadow-[0_0_12px_rgba(168,85,247,0.8)]" },
+    { bg: "bg-emerald-500", light: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/40", bar: "bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.8)]" },
+    { bg: "bg-amber-500", light: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/40", bar: "bg-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.8)]" },
+    { bg: "bg-rose-500", light: "bg-rose-500/15", text: "text-rose-400", border: "border-rose-500/40", bar: "bg-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.8)]" },
+    { bg: "bg-cyan-500", light: "bg-cyan-500/15", text: "text-cyan-400", border: "border-cyan-500/40", bar: "bg-cyan-500 shadow-[0_0_12px_rgba(6,182,212,0.8)]" },
 ];
 const optionLabels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const getColor = (i) => optionColors[i % optionColors.length];
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
+// ─── Skeleton (Dark Mode) ─────────────────────────────────────────────────────
 const SkeletonBlock = ({ className }) => (
-    <div className={`bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:200%_100%] animate-shimmer rounded-xl ${className}`} />
+    <div className={`bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 bg-[length:200%_100%] animate-shimmer border border-white/5 ${className}`} />
 );
 
 const PollSkeleton = () => (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="h-24 bg-gradient-to-r from-blue-100 to-violet-100" />
+    <div className="bg-zinc-900/40 backdrop-blur-3xl rounded-[2rem] border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
+        <div className="p-5 border-b border-white/5 flex items-center justify-between">
+            <SkeletonBlock className="h-6 w-3/4 rounded-lg" />
+            <SkeletonBlock className="h-5 w-14 rounded-full" />
+        </div>
         <div className="p-5 space-y-3">
             {[1, 2, 3].map((i) => (
-                <SkeletonBlock key={i} className="h-11 w-full" />
+                <SkeletonBlock key={i} className="h-11 w-full rounded-[1.25rem]" />
             ))}
         </div>
-        <div className="h-10 bg-gray-50 border-t border-gray-100" />
+        <div className="h-12 bg-zinc-950/40 border-t border-white/5" />
     </div>
 );
 
@@ -69,22 +73,22 @@ const MyPollsSkeleton = () => (
     <div className="py-4 md:py-5 space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="space-y-2">
-                <SkeletonBlock className="h-8 w-32" />
-                <SkeletonBlock className="h-4 w-64" />
+                <SkeletonBlock className="h-8 w-32 rounded-lg" />
+                <SkeletonBlock className="h-4 w-64 rounded-md" />
             </div>
-            <SkeletonBlock className="h-11 w-28 rounded-2xl" />
+            <SkeletonBlock className="h-10 w-28 rounded-xl" />
         </div>
         <div className="flex flex-col xl:flex-row xl:items-center gap-4">
-            <SkeletonBlock className="h-12 flex-1 rounded-2xl" />
-            <SkeletonBlock className="h-11 w-64 rounded-xl" />
+            <SkeletonBlock className="h-10 flex-1 max-w-xl rounded-xl" />
+            <SkeletonBlock className="h-10 w-64 rounded-xl" />
         </div>
-        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {[1, 2, 3, 4].map((i) => <PollSkeleton key={i} />)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
+            {[1, 2, 3, 4, 5, 6].map((i) => <PollSkeleton key={i} />)}
         </div>
     </div>
 );
 
-// ─── Poll Card ────────────────────────────────────────────────────────────────
+// ─── Poll Card (Advanced Rounded Developer Style) ─────────────────────────────
 const PollCard = ({ poll, currentUserId, onVote }) => {
     const [voting, setVoting] = useState(false);
     const [localPoll, setLocalPoll] = useState(poll);
@@ -160,9 +164,7 @@ const PollCard = ({ poll, currentUserId, onVote }) => {
                 onVote && onVote(normalized);
             }
         } catch (err) {
-            // console.log("Backend Error:", err.response?.data);
             console.error("Vote Error:", err);
-
             setLocalPoll(previousPoll);
         } finally {
             setVoting(false);
@@ -176,198 +178,139 @@ const PollCard = ({ poll, currentUserId, onVote }) => {
     );
 
     return (
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden relative">
+        <div className="bg-zinc-900/40 backdrop-blur-3xl rounded-[2rem] border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.4)] hover:shadow-[0_15px_40px_rgba(6,182,212,0.15)] hover:border-white/20 hover:-translate-y-1 transition-all duration-500 overflow-hidden flex flex-col relative group">
+            
+            {/* Ambient Glass Orbs for 3D effect */}
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 blur-[50px] rounded-full group-hover:bg-cyan-500/20 transition-all duration-500 pointer-events-none" />
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-500/10 blur-[50px] rounded-full group-hover:bg-purple-500/20 transition-all duration-500 pointer-events-none" />
+
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-5 pt-5 pb-4">
-                <div className="flex items-start justify-between gap-3">
+            <div className="px-5 pt-5 pb-2 relative z-10">
+                <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-2 shrink-0">
-                        <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
-                            <BarChart3 size={14} className="text-white" />
+                        <div className="h-8 w-8 rounded-xl bg-zinc-950/50 flex items-center justify-center border border-white/5 shadow-inner">
+                            <BarChart3 size={14} className="text-cyan-400 stroke-[2.5]" />
                         </div>
-                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${expired ? "bg-red-400/30 text-red-100" : "bg-white/20 text-white"}`}>
+                        <span className={`text-[9px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border shadow-inner ${expired ? "bg-rose-500/10 text-rose-400 border-rose-500/20" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"}`}>
                             {expired ? "Closed" : "Active"}
                         </span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-blue-100 shrink-0">
-                        <Vote size={12} />
-                        <span>{totalVotes} vote{totalVotes !== 1 ? "s" : ""}</span>
+                    <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-zinc-300 shrink-0 bg-zinc-950/50 border border-white/5 px-3 py-1.5 rounded-xl shadow-inner">
+                        <Vote size={12} className="text-cyan-400 stroke-[2.5]" />
+                        <span>{totalVotes} Votes</span>
                     </div>
                 </div>
-                <h2 className="text-white font-bold text-base mt-2 leading-snug">
+                <h2 className="text-white font-mono font-black text-sm sm:text-base leading-snug line-clamp-3">
                     {localPoll?.question || "No question"}
                 </h2>
             </div>
 
             {/* Body */}
-            <div className="p-5">
+            <div className="p-5 flex-1 relative z-10 flex flex-col justify-center">
 
                 {!showResultsView ? (
 
                     <div className="space-y-3">
-
-                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-                            Choose one option
-                        </p>
-
                         {options.map((opt, i) => {
-
                             const color = getColor(i);
-
                             return (
                                 <button
                                     key={i}
                                     type="button"
                                     disabled={voting}
                                     onClick={() => handleVote(i)}
-                                    className={`w-full flex items-center gap-3 rounded-2xl px-4 py-3 border transition-all duration-200 text-left cursor-pointer
-                            
-                            ${voting && justVoted === i
-                                            ? `${color.light} ${color.border}`
-                                            : "bg-gray-50 border-gray-100 hover:border-blue-200 hover:bg-blue-50/40"
+                                    className={`w-full flex items-center gap-3 rounded-[1.25rem] px-2.5 py-2.5 border transition-all duration-300 text-left cursor-pointer active:scale-[0.98] shadow-inner
+                                        ${voting && justVoted === i
+                                            ? `${color.light} ${color.border} shadow-[0_0_20px_rgba(56,189,248,0.2)]`
+                                            : "bg-zinc-950/50 border-white/5 hover:border-cyan-500/40 hover:bg-cyan-500/10 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)]"
                                         }
-                        `}
+                                    `}
                                 >
-
-                                    <div className={`w-8 h-8 rounded-xl ${color.bg} text-white flex items-center justify-center text-xs font-bold shrink-0`}>
+                                    <div className={`w-8 h-8 rounded-xl ${color.bg} text-white flex items-center justify-center text-[11px] font-mono font-black shrink-0 shadow-inner`}>
                                         {optionLabels[i]}
                                     </div>
-
-                                    <span className="flex-1 text-sm font-medium text-gray-700 truncate">
+                                    <span className="flex-1 text-xs font-mono text-zinc-300 truncate pr-2">
                                         {opt?.text || "No option"}
                                     </span>
-
                                     {voting && justVoted === i && (
-                                        <Loader2
-                                            size={15}
-                                            className="animate-spin text-gray-400 shrink-0"
-                                        />
+                                        <Loader2 size={14} className="animate-spin text-cyan-400 shrink-0 mr-2" />
                                     )}
-
                                 </button>
                             );
                         })}
-
                     </div>
 
                 ) : (
 
                     <div className="space-y-3">
-
-                        <div className="flex items-center justify-between">
-
-                            <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 flex items-center gap-1">
-                                <TrendingUp size={12} />
-                                Poll Results
-                            </p>
-
-                            {hasVoted && (
-                                <div className="flex items-center gap-1 text-xs font-semibold bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full">
-                                    <CheckCircle2 size={12} />
-                                    Voted
-                                </div>
-                            )}
-
-                        </div>
-
                         {options.map((opt, i) => {
-
                             const votes = opt?.votes?.length || 0;
-
                             const pct = getVotePercent(votes, totalVotes);
-
                             const color = getColor(i);
-
-                            const isLeading =
-                                i === leadingIndex && totalVotes > 0;
-
-                            const isMyVote =
-                                i === userVotedIndex;
+                            const isLeading = i === leadingIndex && totalVotes > 0;
+                            const isMyVote = i === userVotedIndex;
 
                             return (
-
                                 <div
                                     key={i}
-                                    className={`rounded-2xl border overflow-hidden transition-all duration-200
-                            
-                            ${isMyVote
-                                            ? `${color.border} border-2`
-                                            : "border-gray-100"
-                                        }
-                        `}
+                                    className={`rounded-[1.25rem] border relative overflow-hidden transition-all duration-300 shadow-inner
+                                        ${isMyVote ? `${color.border} bg-zinc-950/80` : "border-white/5 bg-zinc-950/40"}
+                                    `}
                                 >
+                                    {/* Main background fill (Opacity based) */}
+                                    <div 
+                                        className={`absolute inset-y-0 left-0 ${color.light} transition-all duration-1000 ease-out`} 
+                                        style={{ width: `${pct}%` }} 
+                                    >
+                                        {/* Glowing edge on the progress fill */}
+                                        <div className={`absolute inset-y-0 right-0 w-1 ${color.bar} opacity-70 blur-[2px]`} />
+                                    </div>
 
-                                    <div className={`px-4 py-3 flex items-center gap-3
-                            
-                            ${isMyVote
-                                            ? color.light
-                                            : "bg-gray-50"
-                                        }
-                        `}>
-
-                                        <div className={`w-8 h-8 rounded-xl ${color.bg} text-white text-xs font-bold flex items-center justify-center shrink-0`}>
+                                    <div className="px-2.5 py-2.5 flex items-center gap-3 relative z-10">
+                                        <div className={`w-8 h-8 rounded-xl ${color.bg} text-white text-[11px] font-mono font-black flex items-center justify-center shrink-0 shadow-inner`}>
                                             {optionLabels[i]}
                                         </div>
 
-                                        <span className="flex-1 text-sm font-medium text-gray-700 truncate">
+                                        <span className={`flex-1 text-xs font-mono truncate ${isMyVote ? 'text-white font-bold' : 'text-zinc-400'}`}>
                                             {opt?.text || "No option"}
                                         </span>
 
-                                        {isLeading && (
-                                            <span className="text-xs">
-                                                🏆
+                                        <div className="flex items-center gap-2 shrink-0 pr-2">
+                                            {isLeading && (
+                                                <span className="text-[11px]" title="Leading Option">⭐</span>
+                                            )}
+
+                                            {isMyVote && (
+                                                <CheckCircle2 size={14} className={`${color.text} stroke-[2.5]`} />
+                                            )}
+
+                                            <span className={`text-[10px] sm:text-xs font-mono font-black ${isMyVote ? color.text : "text-zinc-500"}`}>
+                                                {pct}%
                                             </span>
-                                        )}
-
-                                        {isMyVote && (
-                                            <CheckCircle2
-                                                size={14}
-                                                className={color.text}
-                                            />
-                                        )}
-
-                                        <span className={`text-xs font-bold ${isMyVote ? color.text : "text-gray-500"}`}>
-                                            {pct}%
-                                        </span>
-
+                                        </div>
                                     </div>
 
-                                    {/* Progress */}
-                                    <div className="h-1.5 bg-gray-100">
-
+                                    {/* Thin progress bar line at very bottom for extra flair */}
+                                    <div className="h-1 w-full bg-zinc-950/50 absolute bottom-0 left-0">
                                         <div
-                                            className={`h-full ${color.bar} transition-all duration-700`}
+                                            className={`h-full ${color.bar} transition-all duration-1000 ease-out`}
                                             style={{ width: `${pct}%` }}
                                         />
-
                                     </div>
-
-                                    {/* Votes */}
-                                    <div className={`px-4 py-2 text-xs font-medium flex justify-end
-                            
-                            ${isMyVote
-                                            ? `${color.light} ${color.text}`
-                                            : "bg-gray-50 text-gray-400"
-                                        }
-                        `}>
-                                        {votes} vote{votes !== 1 ? "s" : ""}
-                                    </div>
-
                                 </div>
-
                             );
                         })}
 
                         {!hasVoted && !expired && (
-
-                            <button
-                                onClick={() => setShowResults(false)}
-                                className="text-xs font-medium text-blue-500 hover:text-blue-700 transition cursor-pointer"
-                            >
-                                ← Back to voting
-                            </button>
-
+                            <div className="pt-2">
+                                <button
+                                    onClick={() => setShowResults(false)}
+                                    className="text-[10px] font-mono font-bold text-cyan-400 hover:text-cyan-300 transition-all cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-cyan-500/10"
+                                >
+                                    <span>←</span> Back to voting
+                                </button>
+                            </div>
                         )}
-
                     </div>
 
                 )}
@@ -375,25 +318,18 @@ const PollCard = ({ poll, currentUserId, onVote }) => {
             </div>
 
             {/* Footer */}
-            <div
-                className={`flex items-center justify-between gap-3 px-5 py-3 border-t
-        ${expired
-                        ? "bg-red-50 border-red-100"
-                        : "bg-green-50 border-green-100"
-                    }
-    `}
-            >
-                <div className={`flex items-center gap-1.5 text-xs font-medium ${expired ? "text-red-500" : "text-blue-600"}`}>
-                    {expired ? <Clock size={12} /> : <CalendarClock size={12} />}
+            <div className={`flex items-center justify-between gap-3 px-5 py-3.5 border-t border-white/5 bg-zinc-950/50 backdrop-blur-md relative z-10`}>
+                <div className={`flex items-center gap-1.5 text-[9px] font-mono font-bold uppercase tracking-wider ${expired ? "text-rose-400" : "text-cyan-400"}`}>
+                    {expired ? <Clock size={12} className="stroke-[2.5]" /> : <CalendarClock size={12} className="stroke-[2.5]" />}
                     <span>{expired ? "Closed " : "Closes "}{formatExpiry(expiryDate)}</span>
                 </div>
                 {!showResultsView && totalVotes > 0 && (
                     <button
                         onClick={() => setShowResults(true)}
-                        className="text-xs text-blue-500 hover:text-blue-700 font-medium flex items-center gap-1 cursor-pointer transition"
+                        className="text-[10px] font-mono font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 cursor-pointer transition uppercase tracking-wider px-3 py-1.5 rounded-lg hover:bg-cyan-500/10"
                     >
-                        <TrendingUp size={11} />
-                        View results
+                        <TrendingUp size={12} className="stroke-[2.5]" />
+                        Results
                     </button>
                 )}
             </div>
@@ -407,7 +343,7 @@ const MyPolls = () => {
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("All");
     const [refreshing, setRefreshing] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");  // ✅ search state
+    const [searchQuery, setSearchQuery] = useState("");
 
     const currentUserId =
         JSON.parse(localStorage.getItem("user") || "{}")?.id ||
@@ -445,7 +381,7 @@ const MyPolls = () => {
         fetchPolls();
     }, []);
 
-    // ✅ Shimmer + animation inject
+    // Shimmer + animation inject
     useEffect(() => {
         const style = document.createElement('style');
         style.innerHTML = `
@@ -459,6 +395,8 @@ const MyPolls = () => {
                 to   { opacity: 1; transform: translateY(0); }
             }
             .poll-animate { animation: fadeSlideUp 0.35s ease both; }
+            .scrollbar-hide::-webkit-scrollbar { display: none; }
+            .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         `;
         document.head.appendChild(style);
         return () => document.head.removeChild(style);
@@ -473,13 +411,13 @@ const MyPolls = () => {
         { label: "Closed", count: closedCount },
     ];
 
-    // ✅ Filter + Search combined
+    // Filter + Search combined
     const filteredPolls = useMemo(() => {
         return polls.filter((poll) => {
             const expired = isExpired(poll?.expiry);
             const matchesFilter =
                 filter === "Active" ? !expired :
-                    filter === "Closed" ? expired : true;
+                filter === "Closed" ? expired : true;
 
             const matchesSearch = poll?.question
                 ?.toLowerCase()
@@ -495,15 +433,15 @@ const MyPolls = () => {
             {loading ? (
                 <MyPollsSkeleton />
             ) : (
-                <div className="py-4 md:py-5 space-y-6">
+                <div className="py-2 md:py-4 space-y-6">
 
                     {/* ── Header ── */}
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                                 My Polls
                             </h1>
-                            <p className="text-sm text-gray-500 mt-1">
+                            <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-1">
                                 Vote on active polls and view results from your team.
                             </p>
                         </div>
@@ -512,31 +450,31 @@ const MyPolls = () => {
                         <button
                             onClick={() => fetchPolls(true)}
                             disabled={refreshing}
-                            className="h-11 px-4 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 flex items-center gap-2 text-sm font-medium transition-all cursor-pointer disabled:opacity-60 self-start lg:self-auto"
+                            className="h-10 px-4 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white flex items-center gap-2 text-xs font-mono font-bold transition-all shadow-inner cursor-pointer disabled:opacity-60 self-start lg:self-auto active:scale-95"
                         >
-                            <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
+                            <RefreshCw size={14} className={`${refreshing ? "animate-spin text-cyan-400" : "text-cyan-400"} stroke-[2.5]`} />
                             {refreshing ? "Refreshing..." : "Refresh"}
                         </button>
                     </div>
 
-                    {/* ── Search + Tabs — MyTasks jaisa layout ── */}
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    {/* ── Search + Tabs (Clean Layout without Double Cards) ── */}
+                    <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center justify-between">
 
-                        {/* Search bar — left */}
-                        <div className="relative flex-1">
-                            <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                        {/* Search bar */}
+                        <div className="relative flex-1 max-w-xl shrink-0">
+                            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none stroke-[2.5]" />
                             <input
                                 type="text"
                                 placeholder="Search polls by question..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full h-12 pl-11 pr-4 rounded-2xl border border-gray-200 bg-white outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-sm transition-all"
+                                className="w-full h-11 pl-11 pr-4 rounded-xl border border-white/10 bg-zinc-950/80 backdrop-blur-xl outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-xs sm:text-sm font-mono text-white placeholder-zinc-500 transition-all shadow-inner"
                             />
                         </div>
 
                         {/* Tabs */}
-                        <div className="overflow-x-auto scrollbar-hide">
-                            <div className="min-w-max">
+                        <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 xl:mx-0 xl:px-0 pb-1 sm:pb-0">
+                            <div className="min-w-max flex items-center h-11">
                                 <TaskStatusTabs
                                     tabs={TABS}
                                     activeTab={filter}
@@ -548,33 +486,33 @@ const MyPolls = () => {
 
                     {/* ── Result count ── */}
                     {filteredPolls.length > 0 && (
-                        <p className="text-sm text-gray-500">
+                        <p className="text-xs sm:text-sm font-mono text-zinc-400 px-1">
                             Showing{" "}
-                            <span className="font-semibold text-gray-900">{filteredPolls.length}</span>{" "}
+                            <span className="font-bold text-cyan-400">{filteredPolls.length}</span>{" "}
                             poll{filteredPolls.length !== 1 ? "s" : ""}
                         </p>
                     )}
 
                     {/* ── Empty State ── */}
                     {filteredPolls.length === 0 ? (
-                        <div className="bg-white border border-dashed border-gray-200 rounded-3xl py-20 px-6 flex flex-col items-center justify-center text-center">
-                            <div className="w-24 h-24 rounded-3xl bg-blue-50 flex items-center justify-center mb-6">
-                                <Vote size={40} className="text-blue-400" />
+                        <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center backdrop-blur-xl mt-6">
+                            <div className="w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(56,189,248,0.15)]">
+                                <Vote size={32} className="text-cyan-400 stroke-[2.5]" />
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-800">
+                            <h3 className="text-xl md:text-2xl font-mono font-black text-white tracking-tight">
                                 {searchQuery
-                                    ? "No Polls Found 🔍"
-                                    : filter === "Active" ? "No Active Polls 🗳️"
-                                        : filter === "Closed" ? "No Closed Polls 📋"
+                                    ? "No Polls Found"
+                                    : filter === "Active" ? "No Active Polls"
+                                        : filter === "Closed" ? "No Closed Polls"
                                             : filter !== "All" ? "No Polls Found" : "No Polls Created"
                                 }
                             </h3>
-                            <p className="text-gray-500 max-w-md mt-3 leading-relaxed">
+                            <p className="text-zinc-400 max-w-md mt-2 leading-relaxed font-mono text-xs sm:text-sm">
                                 {searchQuery
                                     ? `No polls matched "${searchQuery}". Try different keywords.`
-                                    : filter === "active"
+                                    : filter === "Active"
                                         ? "There are no active polls right now. Check back later or switch to All Polls."
-                                        : filter === "closed"
+                                        : filter === "Closed"
                                             ? "No polls have been closed yet. Active polls will appear here once they expire."
                                             : "No polls have been created yet. Your admin will create polls for the team soon."
                                 }
@@ -582,27 +520,27 @@ const MyPolls = () => {
                             {searchQuery ? (
                                 <button
                                     onClick={() => setSearchQuery("")}
-                                    className="mt-6 h-11 px-6 rounded-2xl border border-gray-200 text-sm font-medium text-gray-600 hover:border-blue-300 hover:text-blue-600 transition-all cursor-pointer"
+                                    className="mt-6 h-10 px-6 rounded-xl border border-white/10 bg-zinc-900/80 text-xs font-mono font-bold text-cyan-400 hover:text-white hover:bg-zinc-800 transition-all cursor-pointer shadow-inner active:scale-95"
                                 >
                                     Clear Search
                                 </button>
-                            ) : filter !== "all" ? (
+                            ) : filter !== "All" ? (
                                 <button
                                     onClick={() => setFilter("All")}
-                                    className="mt-6 h-11 px-6 rounded-2xl border border-gray-200 text-sm font-medium text-gray-600 hover:border-blue-300 hover:text-blue-600 transition-all cursor-pointer"
+                                    className="mt-6 h-10 px-6 rounded-xl border border-white/10 bg-zinc-900/80 text-xs font-mono font-bold text-cyan-400 hover:text-white hover:bg-zinc-800 transition-all cursor-pointer shadow-inner active:scale-95"
                                 >
                                     View All Polls
                                 </button>
                             ) : null}
                         </div>
                     ) : (
-                        /* ── Poll Grid ── */
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                        /* ── Poll Grid (Compact up to 4 columns on huge screens) ── */
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
                             {filteredPolls.map((poll, idx) => (
                                 <div
                                     key={poll._id}
                                     className="poll-animate"
-                                    style={{ animationDelay: `${idx * 60}ms` }}
+                                    style={{ animationDelay: `${idx * 40}ms` }}
                                 >
                                     <PollCard
                                         poll={poll}
