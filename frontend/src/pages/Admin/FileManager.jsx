@@ -440,7 +440,7 @@ const FileManager = () => {
                     {/* Search */}
                     <div className="relative flex-1 max-w-xl">
 
-                        <LuSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 text-lg" />
+                        <LuSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 text-lg z-10 pointer-events-none" />
 
                         <input
                             type="text"

@@ -1,3 +1,4 @@
+// src/pages/Polls/ManagePolls.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import {
     Plus,
@@ -17,7 +18,6 @@ import { API_PATHS } from "../../utils/apiPaths.js";
 import CreatePollModal from "../../components/Polls/CreatePollModal.jsx";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
 import TaskStatusTabs from "../../components/TaskStatusTabs.jsx";
-
 
 // ───────────────────────────────────────────────────────────────────────────────
 // Skeleton Components (Dark Mode Cyber Pulse)
@@ -378,7 +378,7 @@ const ManagePolls = () => {
 
                         <Search
                             size={18}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none"
                         />
 
                         <input

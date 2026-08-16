@@ -7,7 +7,7 @@ const SearchBar = ({ value, onChange }) => {
 
             <Search
                 size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none"
             />
 
             <input

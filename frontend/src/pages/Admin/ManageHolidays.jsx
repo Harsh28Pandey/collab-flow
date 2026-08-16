@@ -1,4 +1,3 @@
-// src/pages/Admin/ManageHolidays.jsx
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
 import axiosInstance from "../../utils/axiosInstance.js";
@@ -324,7 +323,7 @@ const ManageHolidays = () => {
 
                                 {/* Search Bar on Left */}
                                 <div className="relative flex-1 max-w-xl">
-                                    <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400" />
+                                    <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none" />
                                     <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                                         placeholder="Search employee, reason or type..."
                                         className="w-full h-12 pl-11 pr-4 rounded-2xl border border-white/10 bg-zinc-950/80 backdrop-blur-xl outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-xs sm:text-sm font-mono text-white placeholder-zinc-500 transition-all shadow-inner" />

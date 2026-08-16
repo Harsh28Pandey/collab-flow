@@ -326,7 +326,7 @@ const ManageUsers = () => {
 
                     {/* SEARCH */}
                     <div className='relative mb-5 max-w-xl'>
-                        <LuSearch className='absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 text-base' />
+                        <LuSearch className='absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 text-base z-10 pointer-events-none' />
                         <input
                             type='text'
                             value={search}

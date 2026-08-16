@@ -1,4 +1,3 @@
-// src/pages/Timesheet.jsx
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
 import { Plus, Users, Clock3, ClipboardList, CheckCircle, Download } from "lucide-react";
@@ -191,8 +190,6 @@ const Timesheet = () => {
                             <SearchBar
                                 value={search}
                                 onChange={setSearch}
-                            // You might need to update SearchBar component's internal style to match dark mode, 
-                            // otherwise it will use default style.
                             />
                         </div>
 
@@ -204,7 +201,7 @@ const Timesheet = () => {
                                 className="flex-1 sm:flex-none h-11 px-4 sm:px-5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 font-mono font-bold flex items-center justify-center gap-2 text-xs sm:text-sm shadow-inner transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             >
                                 <Download size={16} className="stroke-[2.5]" />
-                                <span className="hidden sm:inline">Export</span>
+                                <span>Export</span>
                             </button>
 
                             {/* Create Button */}
@@ -226,12 +223,10 @@ const Timesheet = () => {
                 {/* ───────────────── SUMMARY CARDS ───────────────── */}
                 <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
 
-                    {/* Wrapping SummaryCards in Glassy Container if their internal style isn't modified */}
                     <SummaryCard
                         title="Employees"
                         value={allUsers.length}
                         icon={<Users className="text-cyan-400" size={18} />}
-                    // Tip: Update internal SummaryCard CSS to fit dark bento style, or pass classes if allowed.
                     />
 
                     <SummaryCard
@@ -255,37 +250,34 @@ const Timesheet = () => {
                 </div>
 
                 {/* ───────────────── BODY LIST ───────────────── */}
-                <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-4 sm:p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
-
-                    {loading ? (
-                        <TimesheetSkeleton />
-                    ) : timesheets.length === 0 ? (
-                        <div className="border border-dashed border-white/10 rounded-[2rem] py-20 px-6 flex flex-col items-center justify-center text-center">
-                            <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-5 shadow-[0_0_15px_rgba(56,189,248,0.15)]">
-                                <ClipboardList size={28} className="text-cyan-400" />
-                            </div>
-                            <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">
-                                No Timesheets Found
-                            </h3>
-                            <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-2">
-                                Create a new timesheet to get started tracking work logs.
-                            </p>
+                {/* Removed outer double card wrapper */}
+                {loading ? (
+                    <TimesheetSkeleton />
+                ) : timesheets.length === 0 ? (
+                    <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center backdrop-blur-xl mt-6">
+                        <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-5 shadow-[0_0_15px_rgba(56,189,248,0.15)]">
+                            <ClipboardList size={28} className="text-cyan-400" />
                         </div>
-                    ) : (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                            {timesheets.map((timesheet) => (
-                                <Timesheetcard
-                                    key={timesheet._id}
-                                    timesheet={timesheet}
-                                    onView={setViewingTimesheet}
-                                    onApprove={handleApproveClick}
-                                    onReject={handleRejectClick}
-                                />
-                            ))}
-                        </div>
-                    )}
-
-                </div>
+                        <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">
+                            No Timesheets Found
+                        </h3>
+                        <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-2">
+                            Create a new timesheet to get started tracking work logs.
+                        </p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-2">
+                        {timesheets.map((timesheet) => (
+                            <Timesheetcard
+                                key={timesheet._id}
+                                timesheet={timesheet}
+                                onView={setViewingTimesheet}
+                                onApprove={handleApproveClick}
+                                onReject={handleRejectClick}
+                            />
+                        ))}
+                    </div>
+                )}
 
                 {/* ───────────────── MODALS ───────────────── */}
                 <CreateTimesheetModal
