@@ -1,18 +1,35 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, {
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
+
 import {
-    LuSearch, LuUpload, LuRefreshCcw, LuImage, LuVideo, LuFileText, LuFile, LuArrowUpRight, LuFolderOpen, LuTrash2, LuX
+    LuSearch,
+    LuRefreshCcw,
+    LuImage,
+    LuVideo,
+    LuFileText,
+    LuFile,
+    LuArrowUpRight,
+    LuFolderOpen,
+    LuTrash2,
+    LuX,
+    LuUpload
 } from "react-icons/lu";
-// Import loader from lucide-react correctly
+
 import { Loader2 } from "lucide-react";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
+import TaskStatusTabs from "../../components/TaskStatusTabs.jsx";
+
 import { UserContext } from "../../context/userContext.jsx";
 import axiosInstance from "../../utils/axiosInstance.js";
 import { API_PATHS } from "../../utils/apiPaths.js";
 import toast from "react-hot-toast";
-import TaskStatusTabs from "../../components/TaskStatusTabs.jsx"; // Imported TaskStatusTabs
 
 // ─────────────────────────────────────────────
-// Skeleton Components (Dark Mode Cyber Pulse)
+// Skeleton Components
 // ─────────────────────────────────────────────
 
 const SkeletonBlock = ({ className }) => (
@@ -24,23 +41,19 @@ const SkeletonBlock = ({ className }) => (
 const FileCardSkeleton = () => (
     <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-5 shadow-[0_10px_40px_rgba(0,0,0,0.5)] space-y-4">
         <div className="flex items-start justify-between">
-            <SkeletonBlock className="h-14 w-14 rounded-2xl" />
-            <SkeletonBlock className="h-6 w-20 rounded-full" />
+            <SkeletonBlock className="h-12 w-12 rounded-xl" />
+            <SkeletonBlock className="h-6 w-16 rounded-lg" />
         </div>
-        <div className="space-y-2">
-            <SkeletonBlock className="h-5 w-3/4 rounded-lg" />
-            <SkeletonBlock className="h-4 w-1/2 rounded-md" />
+        <div className="space-y-2 mt-4">
+            <SkeletonBlock className="h-5 w-3/4" />
+            <SkeletonBlock className="h-4 w-1/2" />
         </div>
         <div className="flex items-center justify-between pt-4 mt-2 border-t border-white/5">
-            <SkeletonBlock className="h-10 w-28 rounded-2xl" />
-            <SkeletonBlock className="h-10 w-10 rounded-2xl" />
+            <SkeletonBlock className="h-9 w-24 rounded-xl" />
+            <SkeletonBlock className="h-9 w-10 rounded-xl" />
         </div>
     </div>
 );
-
-// ─────────────────────────────────────────────
-// Main Component
-// ─────────────────────────────────────────────
 
 const FileManager = () => {
 
@@ -54,7 +67,6 @@ const FileManager = () => {
 
     const [searchQuery, setSearchQuery] = useState("");
 
-    // Tab Filter State added
     const [activeTab, setActiveTab] = useState("All");
 
     const [uploading, setUploading] = useState(false);
@@ -334,21 +346,32 @@ const FileManager = () => {
     // FILE ICON
     // ─────────────────────────────────────────
 
-    const getFileIcon = (type) => {
-
+    const getFileStyle = (type) => {
         switch (type) {
-
             case "image":
-                return <LuImage className="text-cyan-400 text-2xl" />;
-
+                return {
+                    icon: <LuImage className="text-cyan-400 text-xl stroke-[2.5]" />,
+                    wrapper: "bg-cyan-500/10 border-cyan-500/20",
+                    badge: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"
+                };
             case "video":
-                return <LuVideo className="text-purple-400 text-2xl" />;
-
+                return {
+                    icon: <LuVideo className="text-purple-400 text-xl stroke-[2.5]" />,
+                    wrapper: "bg-purple-500/10 border-purple-500/20",
+                    badge: "bg-purple-500/10 text-purple-400 border-purple-500/20"
+                };
             case "pdf":
-                return <LuFileText className="text-rose-400 text-2xl" />;
-
+                return {
+                    icon: <LuFileText className="text-rose-400 text-xl stroke-[2.5]" />,
+                    wrapper: "bg-rose-500/10 border-rose-500/20",
+                    badge: "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                };
             default:
-                return <LuFile className="text-zinc-400 text-2xl" />;
+                return {
+                    icon: <LuFile className="text-zinc-400 text-xl stroke-[2.5]" />,
+                    wrapper: "bg-zinc-800/50 border-white/10",
+                    badge: "bg-zinc-800/50 text-zinc-300 border-white/10"
+                };
         }
     };
 
@@ -529,59 +552,64 @@ const FileManager = () => {
                         {/* Files Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
 
-                            {filteredFiles.map((file) => (
+                            {filteredFiles.map((file) => {
+                                const style = getFileStyle(file.fileType);
+                                return (
+                                    <div
+                                        key={file._id}
+                                        className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-5 shadow-[0_10px_40px_rgba(0,0,0,0.5)] hover:border-white/20 transition-all duration-300 relative flex flex-col justify-between"
+                                    >
+                                        <div>
+                                            <div className="flex items-start justify-between gap-3">
 
-                                <div
-                                    key={file._id}
-                                    className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-5 shadow-[0_10px_40px_rgba(0,0,0,0.5)] hover:border-white/20 transition-all duration-300 relative flex flex-col justify-between"
-                                >
-                                    <div>
-                                        <div className="flex items-start justify-between gap-3">
+                                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border shadow-inner shrink-0 ${style.wrapper}`}>
+                                                    {style.icon}
+                                                </div>
 
-                                            <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shadow-inner">
-                                                {getFileIcon(file.fileType)}
+                                                <span className={`text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider bg-zinc-900 border border-white/5 text-zinc-400 px-3 py-1.5 rounded-xl shadow-inner`}>
+                                                    {file.fileType}
+                                                </span>
                                             </div>
 
-                                            <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider bg-zinc-900 border border-white/5 text-zinc-400 px-3 py-1.5 rounded-xl shadow-inner">
-                                                {file.fileType}
-                                            </span>
+                                            <div className="mt-5">
+                                                <h3 className="font-mono font-bold text-base sm:text-lg text-white truncate tracking-wide">
+                                                    {file.title}
+                                                </h3>
+
+                                                <p className="text-xs font-mono text-zinc-500 mt-1 truncate">
+                                                    {file.originalName}
+                                                </p>
+                                            </div>
                                         </div>
 
-                                        <div className="mt-5">
-                                            <h3 className="font-mono font-bold text-base sm:text-lg text-white truncate tracking-wide">
-                                                {file.title}
-                                            </h3>
+                                        <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between gap-3">
 
-                                            <p className="text-xs font-mono text-zinc-500 mt-1 truncate">
-                                                {file.originalName}
-                                            </p>
+                                            <div className="relative group cursor-pointer flex-1">
+                                                <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
+                                                <a
+                                                    href={file.fileUrl}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="relative h-10 px-4 rounded-xl bg-zinc-950 text-white text-xs sm:text-sm font-mono font-bold border border-white/10 transition-all shadow-lg active:scale-95 flex items-center justify-center gap-1.5"
+                                                >
+                                                    Open File
+                                                    <LuArrowUpRight className="text-cyan-400 stroke-[3]" size={14} />
+                                                </a>
+                                            </div>
+
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedFile(file);
+                                                    setDeleteModal(true);
+                                                }}
+                                                className="h-10 w-10 shrink-0 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 flex items-center justify-center transition-all shadow-inner cursor-pointer"
+                                            >
+                                                <LuTrash2 className="text-lg" />
+                                            </button>
                                         </div>
                                     </div>
-
-                                    <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between gap-3">
-
-                                        <a
-                                            href={file.fileUrl}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="flex-1 h-10 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-white/10 text-cyan-400 text-xs sm:text-sm font-mono font-bold flex items-center justify-center gap-2 transition-all shadow-inner cursor-pointer"
-                                        >
-                                            Open File
-                                            <LuArrowUpRight className="text-lg" />
-                                        </a>
-
-                                        <button
-                                            onClick={() => {
-                                                setSelectedFile(file);
-                                                setDeleteModal(true);
-                                            }}
-                                            className="h-10 w-10 shrink-0 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 flex items-center justify-center transition-all shadow-inner cursor-pointer"
-                                        >
-                                            <LuTrash2 className="text-lg" />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </>
                 )}

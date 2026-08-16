@@ -44,6 +44,8 @@ import ManageExpenses from './pages/Admin/ManageExpenses.jsx'
 import ManageHolidays from './pages/Admin/ManageHolidays.jsx'
 import MyHolidays from './pages/User/MyHolidays.jsx'
 import Playground from './pages/Landing/Playground.jsx'
+import MeetingControls from './pages/Admin/MeetingControls.jsx'
+import MyMeetings from './pages/User/MyMeetings.jsx'
 
 
 const App = () => {
@@ -88,6 +90,7 @@ const App = () => {
                             <Route path='/admin/expense-analytics' element={<ExpenseAnalytics />} />
                             <Route path='/admin/holidays' element={<ManageHolidays />} />
                             <Route path='/admin/file-manager' element={<FileManager />} />
+                            <Route path='/admin/meeting-controls' element={<MeetingControls />} />
                             <Route path='/admin/calendar' element={<AdminCalendar />} />
                             <Route path='/admin/timesheet' element={<TimeSheet />} />
                             <Route path='/admin/settings' element={<Settings />} />
@@ -102,6 +105,7 @@ const App = () => {
                             <Route path='/user/polls' element={<MyPolls />} />
                             <Route path='/user/timesheet' element={<MyTimesheets />} />
                             <Route path='/user/holidays' element={<MyHolidays />} />
+                            <Route path='/user/meetings' element={<MyMeetings />} />
                             <Route path='/user/calendar' element={<Calendar />} />
                             <Route path='/user/files' element={<Files />} />
                             <Route path='/user/profile-settings' element={<ProfileSettings />} />

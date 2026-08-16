@@ -17,13 +17,10 @@ import {
 } from "react-icons/lu";
 
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
-
+import TaskStatusTabs from "../../components/TaskStatusTabs.jsx"; // Imported TaskStatusTabs
 import { UserContext } from "../../context/userContext.jsx";
-
 import axiosInstance from "../../utils/axiosInstance.js";
-
 import { API_PATHS } from "../../utils/apiPaths.js";
-
 import toast from "react-hot-toast";
 
 // ─────────────────────────────────────────────
@@ -32,32 +29,23 @@ import toast from "react-hot-toast";
 
 const SkeletonBlock = ({ className }) => (
     <div
-        className={`bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 bg-[length:200%_100%] animate-shimmer rounded-xl ${className}`}
+        className={`bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 bg-[length:200%_100%] animate-shimmer rounded-xl border border-white/5 ${className}`}
     />
 );
 
 const FileCardSkeleton = () => (
-    <div className="bg-white border border-gray-100 rounded-3xl p-5 shadow-sm space-y-4">
-
+    <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-5 shadow-[0_10px_40px_rgba(0,0,0,0.5)] space-y-4">
         <div className="flex items-start justify-between">
-
-            <SkeletonBlock className="h-14 w-14 rounded-2xl" />
-
-            <SkeletonBlock className="h-6 w-20 rounded-full" />
+            <SkeletonBlock className="h-12 w-12 rounded-xl" />
+            <SkeletonBlock className="h-6 w-16 rounded-lg" />
         </div>
-
-        <div className="space-y-2">
-
+        <div className="space-y-2 mt-4">
             <SkeletonBlock className="h-5 w-3/4" />
-
             <SkeletonBlock className="h-4 w-1/2" />
         </div>
-
-        <div className="flex items-center justify-between pt-3">
-
-            <SkeletonBlock className="h-10 w-28 rounded-2xl" />
-
-            <SkeletonBlock className="h-5 w-16" />
+        <div className="flex items-center justify-between pt-4 mt-2 border-t border-white/5">
+            <SkeletonBlock className="h-9 w-24 rounded-xl" />
+            <SkeletonBlock className="h-4 w-16" />
         </div>
     </div>
 );
@@ -67,12 +55,10 @@ const Files = () => {
     const { user } = useContext(UserContext);
 
     const [files, setFiles] = useState([]);
-
     const [loading, setLoading] = useState(true);
-
     const [refreshing, setRefreshing] = useState(false);
-
     const [searchQuery, setSearchQuery] = useState("");
+    const [activeTab, setActiveTab] = useState("All"); // Added state for tabs
 
     // ─────────────────────────────────────────
     // FETCH FILES
@@ -177,20 +163,20 @@ const Files = () => {
                     const search =
                         searchQuery.toLowerCase();
 
-                    return (
+                    const matchesSearch = file?.title?.toLowerCase().includes(search) ||
+                        file?.originalName?.toLowerCase().includes(search);
 
-                        file?.title
-                            ?.toLowerCase()
-                            .includes(search) ||
+                    let matchesTab = true;
+                    if (activeTab === "Images") matchesTab = file.fileType === "image";
+                    else if (activeTab === "Videos") matchesTab = file.fileType === "video";
+                    else if (activeTab === "PDFs") matchesTab = file.fileType === "pdf";
+                    else if (activeTab === "Others") matchesTab = !["image", "video", "pdf"].includes(file.fileType);
 
-                        file?.originalName
-                            ?.toLowerCase()
-                            .includes(search)
-                    );
+                    return matchesSearch && matchesTab;
                 }
             );
 
-        }, [files, searchQuery]);
+        }, [files, searchQuery, activeTab]);
 
     // ─────────────────────────────────────────
     // COUNTS
@@ -238,34 +224,35 @@ const Files = () => {
         }, [files]);
 
     // ─────────────────────────────────────────
-    // FILE ICON
+    // FILE ICON & STYLE HELPERS
     // ─────────────────────────────────────────
 
-    const getFileIcon = (
-        type
-    ) => {
-
+    const getFileStyle = (type) => {
         switch (type) {
-
             case "image":
-                return (
-                    <LuImage className="text-blue-600 text-2xl" />
-                );
-
+                return {
+                    icon: <LuImage className="text-cyan-400 text-xl stroke-[2.5]" />,
+                    wrapper: "bg-cyan-500/10 border-cyan-500/20",
+                    badge: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"
+                };
             case "video":
-                return (
-                    <LuVideo className="text-purple-600 text-2xl" />
-                );
-
+                return {
+                    icon: <LuVideo className="text-purple-400 text-xl stroke-[2.5]" />,
+                    wrapper: "bg-purple-500/10 border-purple-500/20",
+                    badge: "bg-purple-500/10 text-purple-400 border-purple-500/20"
+                };
             case "pdf":
-                return (
-                    <LuFileText className="text-red-600 text-2xl" />
-                );
-
+                return {
+                    icon: <LuFileText className="text-rose-400 text-xl stroke-[2.5]" />,
+                    wrapper: "bg-rose-500/10 border-rose-500/20",
+                    badge: "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                };
             default:
-                return (
-                    <LuFile className="text-gray-700 text-2xl" />
-                );
+                return {
+                    icon: <LuFile className="text-zinc-400 text-xl stroke-[2.5]" />,
+                    wrapper: "bg-zinc-800/50 border-white/10",
+                    badge: "bg-zinc-800/50 text-zinc-300 border-white/10"
+                };
         }
     };
 
@@ -281,40 +268,42 @@ const Files = () => {
 
                     <div className="min-w-0">
 
-                        <h1 className="text-xl md:text-3xl font-bold text-gray-900 truncate">
+                        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight truncate">
                             Files
                         </h1>
 
-                        <p className="hidden sm:block text-sm text-gray-500 mt-1">
+                        <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-1">
                             Browse and access all shared project files.
                         </p>
                     </div>
 
                     <button
                         onClick={fetchFiles}
-                        className="h-10 w-10 sm:w-auto sm:px-4 sm:h-11 rounded-2xl border border-blue-100 bg-white hover:bg-blue-50 flex items-center justify-center gap-2 text-sm font-medium transition-all cursor-pointer"
+                        disabled={loading || refreshing}
+                        className="px-4 h-11 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 disabled:opacity-60 text-zinc-300 hover:text-white flex items-center justify-center gap-2 text-xs sm:text-sm font-mono font-bold transition-all shadow-inner shrink-0 cursor-pointer"
                     >
 
                         <LuRefreshCcw
                             className={`${refreshing
                                 ? "animate-spin"
                                 : ""
-                                } text-blue-600`}
+                                } text-cyan-400 stroke-[2.5]`}
+                            size={16}
                         />
 
-                        <span className="hidden sm:inline text-blue-600">
+                        <span>
                             Refresh
                         </span>
                     </button>
                 </div>
 
-                {/* Search + Stats */}
+                {/* Search + Stats (TaskStatusTabs style) */}
 
-                <div className="flex flex-col xl:flex-row xl:items-center gap-4">
+                <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 py-2">
 
-                    <div className="relative flex-1">
+                    <div className="relative flex-1 max-w-2xl">
 
-                        <LuSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+                        <LuSearch size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none" />
 
                         <input
                             type="text"
@@ -325,46 +314,24 @@ const Files = () => {
                                     e.target.value
                                 )
                             }
-                            className="w-full h-12 pl-11 pr-4 rounded-2xl border border-gray-200 bg-white outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-sm"
+                            className="w-full h-12 pl-11 pr-4 rounded-2xl border border-white/10 bg-zinc-950/80 backdrop-blur-xl outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-xs sm:text-sm font-mono text-white placeholder-zinc-500 transition-all shadow-inner"
                         />
                     </div>
 
-                    <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+                    <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 xl:mx-0 xl:px-0">
 
-                        <div className="min-w-max flex items-center gap-3">
-
-                            <div className="bg-blue-50 text-blue-700 border border-blue-100 px-4 h-12 rounded-2xl flex items-center gap-2 text-sm font-semibold">
-                                <LuImage />
-                                Images
-                                <span className="bg-white px-2 py-0.5 rounded-lg text-xs">
-                                    {counts.images}
-                                </span>
-                            </div>
-
-                            <div className="bg-purple-50 text-purple-700 border border-purple-100 px-4 h-12 rounded-2xl flex items-center gap-2 text-sm font-semibold">
-                                <LuVideo />
-                                Videos
-                                <span className="bg-white px-2 py-0.5 rounded-lg text-xs">
-                                    {counts.videos}
-                                </span>
-                            </div>
-
-                            <div className="bg-red-50 text-red-700 border border-red-100 px-4 h-12 rounded-2xl flex items-center gap-2 text-sm font-semibold">
-                                <LuFileText />
-                                PDFs
-                                <span className="bg-white px-2 py-0.5 rounded-lg text-xs">
-                                    {counts.pdfs}
-                                </span>
-                            </div>
-
-                            <div className="bg-gray-100 text-gray-700 border border-gray-200 px-4 h-12 rounded-2xl flex items-center gap-2 text-sm font-semibold">
-                                <LuFolderOpen />
-                                Others
-                                <span className="bg-white px-2 py-0.5 rounded-lg text-xs">
-                                    {counts.others}
-                                </span>
-                            </div>
-
+                        <div className="min-w-max flex items-center gap-1.5 h-12">
+                            <TaskStatusTabs
+                                tabs={[
+                                    { label: "All", count: files.length, icon: <LuFile size={14} className="text-zinc-400" /> },
+                                    { label: "Images", count: counts.images, icon: <LuImage size={14} className="text-cyan-400" /> },
+                                    { label: "Videos", count: counts.videos, icon: <LuVideo size={14} className="text-purple-400" /> },
+                                    { label: "PDFs", count: counts.pdfs, icon: <LuFileText size={14} className="text-rose-400" /> },
+                                    { label: "Others", count: counts.others, icon: <LuFolderOpen size={14} className="text-zinc-400" /> }
+                                ]}
+                                activeTab={activeTab}
+                                setActiveTab={setActiveTab}
+                            />
                         </div>
                     </div>
                 </div>
@@ -383,22 +350,22 @@ const Files = () => {
 
                 ) : filteredFiles.length === 0 ? (
 
-                    <div className="bg-white border border-dashed border-gray-200 rounded-3xl py-20 px-6 flex flex-col items-center justify-center text-center">
+                    <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center backdrop-blur-xl mt-6">
 
-                        <div className="w-24 h-24 rounded-3xl bg-blue-50 flex items-center justify-center mb-6">
+                        <div className="w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(56,189,248,0.15)]">
 
-                            <LuFolderOpen className="text-5xl text-blue-500" />
+                            <LuFolderOpen className="text-4xl text-cyan-400" />
 
                         </div>
 
-                        <h3 className="text-2xl font-bold text-gray-800">
+                        <h3 className="text-xl md:text-2xl font-mono font-black text-white tracking-tight">
                             No Files Found
                         </h3>
 
-                        <p className="text-gray-500 max-w-md mt-3 leading-relaxed">
+                        <p className="text-zinc-400 max-w-md mt-2 leading-relaxed font-mono text-xs sm:text-sm">
 
-                            {searchQuery
-                                ? "No files matched your search query."
+                            {searchQuery || activeTab !== "All"
+                                ? "No files matched your search query or filter."
                                 : "No project files are available right now."
                             }
 
@@ -410,13 +377,13 @@ const Files = () => {
 
                     <>
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between px-1">
 
-                            <p className="text-sm text-gray-500">
+                            <p className="text-xs sm:text-sm font-mono text-zinc-400">
 
                                 Showing{" "}
 
-                                <span className="font-semibold text-gray-900">
+                                <span className="font-bold text-cyan-400">
                                     {filteredFiles.length}
                                 </span>{" "}
 
@@ -428,71 +395,63 @@ const Files = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
 
-                            {filteredFiles.map((file) => (
+                            {filteredFiles.map((file) => {
+                                const style = getFileStyle(file.fileType);
 
-                                <div
-                                    key={file._id}
-                                    className="bg-white border border-gray-100 rounded-3xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
-                                >
+                                return (
+                                    <div
+                                        key={file._id}
+                                        className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-5 shadow-[0_10px_40px_rgba(0,0,0,0.5)] hover:border-white/20 transition-all duration-300 hover:-translate-y-1 flex flex-col"
+                                    >
 
-                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="flex items-start justify-between gap-3">
 
-                                        <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center">
+                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center border shadow-inner shrink-0 ${style.wrapper}`}>
+                                                {style.icon}
+                                            </div>
 
-                                            {getFileIcon(file.fileType)}
+                                            <span className={`text-[10px] font-mono font-bold capitalize px-2.5 py-1 rounded-lg border shadow-inner shrink-0 ${style.badge}`}>
+                                                {file.fileType}
+                                            </span>
 
                                         </div>
 
-                                        <span className="text-xs capitalize bg-gray-100 px-3 py-1 rounded-full font-medium text-gray-600">
+                                        <div className="mt-4 flex-1">
 
-                                            {file.fileType}
+                                            <h3 className="text-sm sm:text-base font-mono font-bold text-white line-clamp-1 tracking-wide">
+                                                {file.title}
+                                            </h3>
 
-                                        </span>
+                                            <p className="text-xs font-mono text-zinc-500 mt-1 line-clamp-1">
+                                                {file.originalName}
+                                            </p>
 
-                                    </div>
+                                        </div>
 
-                                    <div className="mt-5">
+                                        <div className="mt-5 pt-4 border-t border-white/5 flex items-center justify-between gap-3">
 
-                                        <h3 className="font-bold text-gray-900 line-clamp-1">
+                                            <div className="relative group cursor-pointer">
+                                                <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
+                                                <a
+                                                    href={file.fileUrl}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="relative h-9 px-4 rounded-xl bg-zinc-950 text-white text-xs font-mono font-bold border border-white/10 transition-all shadow-lg active:scale-95 flex items-center justify-center gap-1.5"
+                                                >
+                                                    Open File
+                                                    <LuArrowUpRight className="text-cyan-400 stroke-[3]" size={14} />
+                                                </a>
+                                            </div>
 
-                                            {file.title}
+                                            <span className="text-[10px] sm:text-xs text-zinc-400 font-mono font-medium truncate max-w-[100px]">
+                                                {file?.uploadedBy?.name || "Unknown"}
+                                            </span>
 
-                                        </h3>
-
-                                        <p className="text-sm text-gray-500 mt-1 line-clamp-1">
-
-                                            {file.originalName}
-
-                                        </p>
-
-                                    </div>
-
-                                    <div className="mt-6 flex items-center justify-between gap-3">
-
-                                        <a
-                                            href={file.fileUrl}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="h-10 px-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold flex items-center gap-2 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md"
-                                        >
-
-                                            Open File
-
-                                            <LuArrowUpRight className="text-base" />
-
-                                        </a>
-
-                                        <span className="text-xs text-gray-400 font-medium truncate">
-
-                                            {file?.uploadedBy?.name || "Unknown"}
-
-                                        </span>
+                                        </div>
 
                                     </div>
-
-                                </div>
-
-                            ))}
+                                );
+                            })}
 
                         </div>
 

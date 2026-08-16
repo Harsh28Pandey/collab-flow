@@ -86,8 +86,6 @@ const MyTimesheets = () => {
 
     const [viewingTimesheet, setViewingTimesheet] = useState(null);
 
-    const [lastUpdated, setLastUpdated] = useState(null);
-
     const autoRefreshRef = useRef(null);
 
     const fetchData = async ({ isRefresh = false } = {}) => {
@@ -101,7 +99,6 @@ const MyTimesheets = () => {
             const res = await getMyTimesheets();
 
             setTimesheets(res.data?.data || []);
-            setLastUpdated(new Date());
 
         } catch (error) {
             console.log(error);
@@ -116,7 +113,7 @@ const MyTimesheets = () => {
         fetchData();
     }, []);
 
-    // AUTO-REFRESH every 1 minute (silent, no skeleton — uses the refresh spinner state)
+    // AUTO-REFRESH every 1 minute
     useEffect(() => {
         autoRefreshRef.current = setInterval(() => {
             fetchData({ isRefresh: true });
@@ -129,7 +126,7 @@ const MyTimesheets = () => {
         fetchData({ isRefresh: true });
     };
 
-    // UNIQUE PROJECT LIST (for the filter dropdown)
+    // UNIQUE PROJECT LIST
     const projectOptions = useMemo(() => {
         const projects = new Set(
             timesheets.map((t) => t.project).filter(Boolean)
@@ -137,7 +134,7 @@ const MyTimesheets = () => {
         return Array.from(projects).sort();
     }, [timesheets]);
 
-    // FILTER + SEARCH + SORT (all client-side, derived from loaded data)
+    // FILTER + SEARCH + SORT
     const filteredTimesheets = useMemo(() => {
         const query = search.trim().toLowerCase();
 
@@ -183,7 +180,7 @@ const MyTimesheets = () => {
         return result;
     }, [timesheets, search, dateRange, projectFilter, sortBy]);
 
-    // SUMMARY STATS (derived from currently loaded data, not the filtered subset)
+    // SUMMARY STATS
     const totalHours = useMemo(
         () => timesheets.reduce((sum, t) => sum + (t.totalHours || 0), 0),
         [timesheets]
@@ -202,7 +199,7 @@ const MyTimesheets = () => {
         ? Math.round((totalHours / timesheets.length) * 10) / 10
         : 0;
 
-    // EXPORT TO CSV — exports whatever is currently filtered/visible
+    // EXPORT TO CSV
     const handleExportCsv = () => {
         if (filteredTimesheets.length === 0) return;
 
@@ -276,32 +273,22 @@ const MyTimesheets = () => {
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
 
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">
+                        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                             Timesheets
                         </h1>
 
-                        <p className="text-gray-500 mt-1">
+                        <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-1">
                             All approved timesheets across the team
                         </p>
-
-                        {lastUpdated && (
-                            <p className="text-xs text-gray-400 mt-1">
-                                Last updated{" "}
-                                {lastUpdated.toLocaleTimeString("en-IN", {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                })}
-                            </p>
-                        )}
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
 
-                        {/* SEARCH */}
-                        <div className="relative flex-1 sm:w-64">
+                        {/* SEARCH (Increased Width on Desktop) */}
+                        <div className="relative flex-1 md:min-w-[320px] lg:min-w-[400px] xl:min-w-[500px]">
                             <Search
                                 size={17}
-                                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                                className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none"
                             />
 
                             <input
@@ -309,35 +296,38 @@ const MyTimesheets = () => {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search employee or project..."
-                                className="w-full h-11 pl-11 pr-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white"
+                                className="w-full h-12 sm:h-11 pl-11 pr-4 rounded-2xl border border-white/10 bg-zinc-950/80 backdrop-blur-xl outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-xs sm:text-sm font-mono text-white placeholder-zinc-500 transition-all shadow-inner"
                             />
                         </div>
 
                         <div className="flex gap-3">
-                            {/* REFRESH */}
+                            {/* REFRESH (Text visible on mobile too) */}
                             <button
                                 type="button"
                                 onClick={handleRefresh}
                                 disabled={loading || refreshing}
-                                className="cursor-pointer h-11 px-4 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-60 text-gray-700 flex items-center justify-center gap-2 text-sm font-medium transition-all shrink-0"
+                                className="cursor-pointer flex-1 sm:flex-none h-12 sm:h-11 px-4 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 disabled:opacity-60 text-zinc-300 hover:text-white flex items-center justify-center gap-2 text-xs sm:text-sm font-mono font-bold transition-all shadow-inner shrink-0"
                             >
                                 <RefreshCcw
                                     size={16}
-                                    className={refreshing ? "animate-spin" : ""}
+                                    className={`${refreshing ? "animate-spin text-cyan-400" : "text-cyan-400"} stroke-[2.5]`}
                                 />
-                                <span className="hidden sm:inline">Refresh</span>
+                                <span>Refresh</span>
                             </button>
 
-                            {/* EXPORT */}
-                            <button
-                                type="button"
-                                onClick={handleExportCsv}
-                                disabled={filteredTimesheets.length === 0}
-                                className="cursor-pointer h-11 px-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white flex items-center justify-center gap-2 text-sm font-medium transition-all shrink-0"
-                            >
-                                <Download size={16} />
-                                <span className="hidden sm:inline">Export</span>
-                            </button>
+                            {/* EXPORT (Text visible on mobile, cursor pointer fixed) */}
+                            <div className={`relative group shrink-0 flex-1 sm:flex-none ${filteredTimesheets.length === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}>
+                                <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
+                                <button
+                                    type="button"
+                                    onClick={handleExportCsv}
+                                    disabled={filteredTimesheets.length === 0}
+                                    className="relative cursor-pointer h-12 sm:h-11 px-4 rounded-2xl bg-zinc-950 text-white flex items-center justify-center gap-2 text-xs sm:text-sm font-mono font-bold border border-white/10 transition-all shadow-lg active:scale-95 disabled:active:scale-100 w-full disabled:cursor-not-allowed"
+                                >
+                                    <Download size={16} className="text-cyan-400 stroke-[2.5]" />
+                                    <span>Export</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -345,166 +335,178 @@ const MyTimesheets = () => {
                 {/* SUMMARY STATS */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
 
-                    <div className="bg-white border border-gray-200 rounded-3xl px-5 py-4 flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-2xl bg-blue-100 flex items-center justify-center shrink-0">
-                            <Clock3 size={18} className="text-blue-600" />
+                    <div className="bg-zinc-950/60 backdrop-blur-3xl border border-blue-500/20 rounded-2xl px-5 py-4 flex items-center gap-3.5 shadow-inner relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/10 blur-xl rounded-full pointer-events-none"></div>
+                        <div className="h-10 w-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 shadow-inner relative z-10">
+                            <Clock3 size={18} className="text-blue-400 stroke-[2.5]" />
                         </div>
 
-                        <div className="min-w-0">
-                            <p className="text-xs text-gray-500">Total Hours</p>
-                            <p className="text-lg font-bold text-gray-900 truncate">
-                                {totalHours} hrs
+                        <div className="min-w-0 relative z-10">
+                            <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider">Total Hours</p>
+                            <p className="text-xl font-mono font-black text-white truncate mt-0.5">
+                                {totalHours} <span className="text-sm font-bold text-zinc-500">hrs</span>
                             </p>
                         </div>
                     </div>
 
-                    <div className="bg-white border border-gray-200 rounded-3xl px-5 py-4 flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-2xl bg-green-100 flex items-center justify-center shrink-0">
-                            <Users size={18} className="text-green-600" />
+                    <div className="bg-zinc-950/60 backdrop-blur-3xl border border-emerald-500/20 rounded-2xl px-5 py-4 flex items-center gap-3.5 shadow-inner relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 blur-xl rounded-full pointer-events-none"></div>
+                        <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 shadow-inner relative z-10">
+                            <Users size={18} className="text-emerald-400 stroke-[2.5]" />
                         </div>
 
-                        <div className="min-w-0">
-                            <p className="text-xs text-gray-500">Employees</p>
-                            <p className="text-lg font-bold text-gray-900 truncate">
+                        <div className="min-w-0 relative z-10">
+                            <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider">Employees</p>
+                            <p className="text-xl font-mono font-black text-white truncate mt-0.5">
                                 {uniqueEmployeeCount}
                             </p>
                         </div>
                     </div>
 
-                    <div className="bg-white border border-gray-200 rounded-3xl px-5 py-4 flex items-center gap-3 col-span-2 sm:col-span-1">
-                        <div className="h-10 w-10 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
-                            <TrendingUp size={18} className="text-amber-600" />
+                    <div className="bg-zinc-950/60 backdrop-blur-3xl border border-amber-500/20 rounded-2xl px-5 py-4 flex items-center gap-3.5 shadow-inner relative overflow-hidden col-span-2 sm:col-span-1">
+                        <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/10 blur-xl rounded-full pointer-events-none"></div>
+                        <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 shadow-inner relative z-10">
+                            <TrendingUp size={18} className="text-amber-400 stroke-[2.5]" />
                         </div>
 
-                        <div className="min-w-0">
-                            <p className="text-xs text-gray-500">Avg Hours / Entry</p>
-                            <p className="text-lg font-bold text-gray-900 truncate">
-                                {avgHoursPerEntry} hrs
+                        <div className="min-w-0 relative z-10">
+                            <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider">Avg Hrs/Entry</p>
+                            <p className="text-xl font-mono font-black text-white truncate mt-0.5">
+                                {avgHoursPerEntry} <span className="text-sm font-bold text-zinc-500">hrs</span>
                             </p>
                         </div>
                     </div>
                 </div>
 
-                {/* FILTER BAR */}
-                <div className="bg-white border border-gray-200 rounded-3xl p-4 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">
+                {/* FILTER BAR (Cleaned up Double Card issue - Standard Native Selects) */}
+                <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-4 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-4 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
 
                     {/* DATE RANGE */}
-                    <div className="flex items-center gap-2 flex-1 min-w-[160px]">
-                        <CalendarRange size={16} className="text-gray-400 shrink-0" />
-
+                    <div className="relative flex-1 min-w-[160px]">
+                        <CalendarRange size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 pointer-events-none stroke-[2.5] z-10" />
                         <select
                             value={dateRange}
                             onChange={(e) => setDateRange(e.target.value)}
-                            className="w-full h-10 px-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white"
+                            className="appearance-none w-full h-11 pl-11 pr-4 rounded-xl border border-white/10 bg-zinc-900/80 text-white font-mono text-xs focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 focus:outline-none cursor-pointer transition-all shadow-inner relative"
                         >
                             {DATE_RANGE_OPTIONS.map((opt) => (
-                                <option key={opt.value} value={opt.value}>
+                                <option className="bg-zinc-900 text-white" key={opt.value} value={opt.value}>
                                     {opt.label}
                                 </option>
                             ))}
                         </select>
+                        {/* Custom Dropdown Arrow SVG */}
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg className="w-4 h-4 text-cyan-400 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
                     </div>
 
                     {/* PROJECT FILTER */}
-                    <div className="flex items-center gap-2 flex-1 min-w-[160px]">
-                        <FolderKanban size={16} className="text-gray-400 shrink-0" />
-
+                    <div className="relative flex-1 min-w-[160px]">
+                        <FolderKanban size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 pointer-events-none stroke-[2.5] z-10" />
                         <select
                             value={projectFilter}
                             onChange={(e) => setProjectFilter(e.target.value)}
-                            className="w-full h-10 px-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white"
+                            className="appearance-none w-full h-11 pl-11 pr-4 rounded-xl border border-white/10 bg-zinc-900/80 text-white font-mono text-xs focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 focus:outline-none cursor-pointer transition-all shadow-inner relative"
                         >
-                            <option value="all">All Projects</option>
+                            <option className="bg-zinc-900 text-white" value="all">All Projects</option>
                             {projectOptions.map((project) => (
-                                <option key={project} value={project}>
+                                <option className="bg-zinc-900 text-white" key={project} value={project}>
                                     {project}
                                 </option>
                             ))}
                         </select>
+                        {/* Custom Dropdown Arrow SVG */}
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg className="w-4 h-4 text-cyan-400 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
                     </div>
 
                     {/* SORT */}
-                    <div className="flex items-center gap-2 flex-1 min-w-[160px]">
-                        <ArrowUpDown size={16} className="text-gray-400 shrink-0" />
-
+                    <div className="relative flex-1 min-w-[160px]">
+                        <ArrowUpDown size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 pointer-events-none stroke-[2.5] z-10" />
                         <select
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value)}
-                            className="w-full h-10 px-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white"
+                            className="appearance-none w-full h-11 pl-11 pr-4 rounded-xl border border-white/10 bg-zinc-900/80 text-white font-mono text-xs focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 focus:outline-none cursor-pointer transition-all shadow-inner relative"
                         >
                             {SORT_OPTIONS.map((opt) => (
-                                <option key={opt.value} value={opt.value}>
+                                <option className="bg-zinc-900 text-white" key={opt.value} value={opt.value}>
                                     {opt.label}
                                 </option>
                             ))}
                         </select>
+                        {/* Custom Dropdown Arrow SVG */}
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg className="w-4 h-4 text-cyan-400 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
                     </div>
 
                     {hasActiveFilters && (
                         <button
                             type="button"
                             onClick={resetFilters}
-                            className="cursor-pointer h-10 px-4 rounded-xl text-sm font-medium text-blue-600 hover:bg-blue-50 transition-all shrink-0"
+                            className="cursor-pointer h-11 px-4 rounded-xl text-xs font-mono font-bold text-cyan-400 hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/20 transition-all shrink-0"
                         >
                             Clear Filters
                         </button>
                     )}
                 </div>
+                {/* Body / List */}
 
-                {/* Body */}
-                <div className="bg-white rounded-3xl border border-gray-200 p-4 sm:p-5">
+                {!loading && timesheets.length > 0 && (
+                    <div className="flex items-center justify-between px-1">
+                        <p className="text-xs sm:text-sm font-mono text-zinc-400">
+                            Showing{" "}
+                            <span className="font-bold text-cyan-400">
+                                {filteredTimesheets.length}
+                            </span>{" "}
+                            of{" "}
+                            <span className="font-bold text-cyan-400">
+                                {timesheets.length}
+                            </span>{" "}
+                            timesheets
+                        </p>
+                    </div>
+                )}
 
-                    {!loading && timesheets.length > 0 && (
-                        <div className="flex items-center justify-between mb-4">
-                            <p className="text-sm text-gray-500">
-                                Showing{" "}
-                                <span className="font-semibold text-gray-900">
-                                    {filteredTimesheets.length}
-                                </span>{" "}
-                                of{" "}
-                                <span className="font-semibold text-gray-900">
-                                    {timesheets.length}
-                                </span>{" "}
-                                timesheets
-                            </p>
+                {loading ? (
+                    <TimesheetSkeleton />
+                ) : timesheets.length === 0 ? (
+                    <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center backdrop-blur-xl mt-6">
+                        <div className="w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mx-auto mb-5 shadow-[0_0_20px_rgba(56,189,248,0.15)]">
+                            <ClipboardList size={36} className="text-cyan-400" />
                         </div>
-                    )}
-
-                    {loading ? (
-                        <TimesheetSkeleton />
-                    ) : timesheets.length === 0 ? (
-                        <div className="border border-dashed border-gray-300 rounded-3xl py-16 text-center">
-                            <ClipboardList size={32} className="mx-auto text-gray-400 mb-3" />
-                            <p className="text-sm font-medium text-gray-600">
-                                No approved timesheets yet
-                            </p>
-                            <p className="text-xs text-gray-400 mt-1">
-                                Approved timesheets will appear here
-                            </p>
+                        <h3 className="text-xl md:text-2xl font-mono font-black text-white tracking-tight">
+                            No approved timesheets yet
+                        </h3>
+                        <p className="text-zinc-400 max-w-md mt-2 leading-relaxed font-mono text-xs sm:text-sm">
+                            Approved timesheets will appear here automatically.
+                        </p>
+                    </div>
+                ) : filteredTimesheets.length === 0 ? (
+                    <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center backdrop-blur-xl mt-6">
+                        <div className="w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mx-auto mb-5 shadow-[0_0_20px_rgba(56,189,248,0.15)]">
+                            <Search size={36} className="text-cyan-400" />
                         </div>
-                    ) : filteredTimesheets.length === 0 ? (
-                        <div className="border border-dashed border-gray-300 rounded-3xl py-16 text-center">
-                            <Search size={32} className="mx-auto text-gray-400 mb-3" />
-                            <p className="text-sm font-medium text-gray-600">
-                                No timesheets match your filters
-                            </p>
-                            <p className="text-xs text-gray-400 mt-1">
-                                Try adjusting the search, date range, or project filter
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                            {filteredTimesheets.map((timesheet) => (
-                                <TimesheetCard
-                                    key={timesheet._id}
-                                    timesheet={timesheet}
-                                    onView={setViewingTimesheet}
-                                />
-                            ))}
-                        </div>
-                    )}
-
-                </div>
+                        <h3 className="text-xl md:text-2xl font-mono font-black text-white tracking-tight">
+                            No timesheets match your filters
+                        </h3>
+                        <p className="text-zinc-400 max-w-md mt-2 leading-relaxed font-mono text-xs sm:text-sm">
+                            Try adjusting the search, date range, or project filter to see results.
+                        </p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        {filteredTimesheets.map((timesheet) => (
+                            <TimesheetCard
+                                key={timesheet._id}
+                                timesheet={timesheet}
+                                onView={setViewingTimesheet}
+                            />
+                        ))}
+                    </div>
+                )}
 
                 <TimesheetDetailsModal
                     open={!!viewingTimesheet}

@@ -1,6 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
-import { Plus, Users, Clock3, ClipboardList, CheckCircle, Download } from "lucide-react";
+import {
+    Plus,
+    Users,
+    Clock3,
+    ClipboardList,
+    CheckCircle,
+    Download,
+    ArrowUpDown,
+    CalendarRange,
+    FolderKanban,
+    Search
+} from "lucide-react";
 
 import SearchBar from "../../components/timesheet/SearchBar.jsx";
 import SummaryCard from "../../components/timesheet/SummaryCard.jsx";
@@ -20,6 +31,51 @@ import CreateTimesheetModal from "../../components/timesheet/CreateTimesheetModa
 import axiosInstance from "../../utils/axiosInstance.js";
 import { API_PATHS } from "../../utils/apiPaths.js";
 
+// ─────────────────────────────────────────────
+// Constants for Filters
+// ─────────────────────────────────────────────
+
+const DATE_RANGE_OPTIONS = [
+    { label: "All Time", value: "all" },
+    { label: "This Week", value: "week" },
+    { label: "This Month", value: "month" },
+];
+
+const SORT_OPTIONS = [
+    { label: "Date (Newest)", value: "date_desc" },
+    { label: "Date (Oldest)", value: "date_asc" },
+    { label: "Hours (Highest)", value: "hours_desc" },
+    { label: "Hours (Lowest)", value: "hours_asc" },
+    { label: "Employee (A-Z)", value: "name_asc" },
+];
+
+const isInDateRange = (dateStr, range) => {
+    if (range === "all") return true;
+
+    const date = new Date(dateStr);
+    const now = new Date();
+
+    if (range === "week") {
+        const firstDay = new Date(now);
+        firstDay.setDate(now.getDate() - now.getDay());
+        firstDay.setHours(0, 0, 0, 0);
+
+        const lastDay = new Date(firstDay);
+        lastDay.setDate(firstDay.getDate() + 7);
+
+        return date >= firstDay && date < lastDay;
+    }
+
+    if (range === "month") {
+        return (
+            date.getFullYear() === now.getFullYear() &&
+            date.getMonth() === now.getMonth()
+        );
+    }
+
+    return true;
+};
+
 const escapeCsvValue = (value) => {
     const str = String(value ?? "");
 
@@ -30,12 +86,21 @@ const escapeCsvValue = (value) => {
     return str;
 };
 
+// ─────────────────────────────────────────────
+// Main Component
+// ─────────────────────────────────────────────
+
 const Timesheet = () => {
 
     const [loading, setLoading] = useState(true);
     const [allUsers, setAllUsers] = useState([]);
 
     const [search, setSearch] = useState("");
+
+    // FILTER STATES
+    const [dateRange, setDateRange] = useState("all");
+    const [projectFilter, setProjectFilter] = useState("all");
+    const [sortBy, setSortBy] = useState("date_desc");
 
     const [stats, setStats] = useState({});
 
@@ -78,6 +143,53 @@ const Timesheet = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search]);
 
+    // UNIQUE PROJECT LIST (for the filter dropdown)
+    const projectOptions = useMemo(() => {
+        const projects = new Set(
+            timesheets.map((t) => t.project).filter(Boolean)
+        );
+        return Array.from(projects).sort();
+    }, [timesheets]);
+
+    // FILTER + SORT LOGIC
+    const filteredTimesheets = useMemo(() => {
+        let result = timesheets.filter((t) => {
+            const matchesDateRange = isInDateRange(t.date, dateRange);
+            const matchesProject = projectFilter === "all" || t.project === projectFilter;
+            return matchesDateRange && matchesProject;
+        });
+
+        result = [...result].sort((a, b) => {
+            switch (sortBy) {
+                case "date_asc":
+                    return new Date(a.date) - new Date(b.date);
+                case "date_desc":
+                    return new Date(b.date) - new Date(a.date);
+                case "hours_asc":
+                    return (a.totalHours || 0) - (b.totalHours || 0);
+                case "hours_desc":
+                    return (b.totalHours || 0) - (a.totalHours || 0);
+                case "name_asc": {
+                    const nameA = (a.employeeName || a.employee?.name || "").toLowerCase();
+                    const nameB = (b.employeeName || b.employee?.name || "").toLowerCase();
+                    return nameA.localeCompare(nameB);
+                }
+                default:
+                    return 0;
+            }
+        });
+
+        return result;
+    }, [timesheets, dateRange, projectFilter, sortBy]);
+
+    const hasActiveFilters = dateRange !== "all" || projectFilter !== "all" || sortBy !== "date_desc";
+
+    const resetFilters = () => {
+        setDateRange("all");
+        setProjectFilter("all");
+        setSortBy("date_desc");
+    };
+
     // OPEN APPROVE / REJECT MODAL
     const handleApproveClick = (timesheet) => {
         setActionModal({ open: true, mode: "approve", timesheet });
@@ -91,7 +203,7 @@ const Timesheet = () => {
         setActionModal({ open: false, mode: null, timesheet: null });
     };
 
-    // CONFIRM APPROVE / REJECT (reason is required, enforced inside the modal)
+    // CONFIRM APPROVE / REJECT
     const handleConfirmAction = async (reason) => {
         const { mode, timesheet } = actionModal;
 
@@ -107,9 +219,9 @@ const Timesheet = () => {
         await fetchData();
     };
 
-    // EXPORT TO CSV — exports whatever timesheets are currently loaded
+    // EXPORT TO CSV
     const handleExportReport = () => {
-        if (timesheets.length === 0) return;
+        if (filteredTimesheets.length === 0) return;
 
         const headers = [
             "Employee",
@@ -127,7 +239,7 @@ const Timesheet = () => {
             "Notes",
         ];
 
-        const rows = timesheets.map((t) => [
+        const rows = filteredTimesheets.map((t) => [
             t.employeeName || t.employee?.name || "",
             t.employeeEmail || t.employee?.email || "",
             t.date ? new Date(t.date).toLocaleDateString("en-IN") : "",
@@ -177,7 +289,6 @@ const Timesheet = () => {
                             Timesheets
                         </h1>
 
-                        {/* Description visible in both mobile and desktop */}
                         <p className="text-xs sm:text-sm text-zinc-400 mt-1 font-mono">
                             Manage employee work logs and approvals.
                         </p>
@@ -185,7 +296,6 @@ const Timesheet = () => {
 
                     <div className="flex flex-col md:flex-row gap-3 items-stretch sm:items-center w-full lg:w-auto">
 
-                        {/* Search Bar - Note: Assuming SearchBar has been styled internally, if not you can wrap or pass custom class to it */}
                         <div className="flex-1 min-w-0">
                             <SearchBar
                                 value={search}
@@ -197,7 +307,7 @@ const Timesheet = () => {
                             {/* Export Button */}
                             <button
                                 onClick={handleExportReport}
-                                disabled={timesheets.length === 0}
+                                disabled={filteredTimesheets.length === 0}
                                 className="flex-1 sm:flex-none h-11 px-4 sm:px-5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 font-mono font-bold flex items-center justify-center gap-2 text-xs sm:text-sm shadow-inner transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             >
                                 <Download size={16} className="stroke-[2.5]" />
@@ -249,8 +359,99 @@ const Timesheet = () => {
 
                 </div>
 
+                {/* ───────────────── FILTER BAR ───────────────── */}
+                <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-4 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-4 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+
+                    {/* DATE RANGE */}
+                    <div className="relative flex-1 min-w-[160px]">
+                        <CalendarRange size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 pointer-events-none stroke-[2.5] z-10" />
+                        <select
+                            value={dateRange}
+                            onChange={(e) => setDateRange(e.target.value)}
+                            className="appearance-none w-full h-11 pl-11 pr-4 rounded-xl border border-white/10 bg-zinc-900/80 text-white font-mono text-xs focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 focus:outline-none cursor-pointer transition-all shadow-inner relative"
+                        >
+                            {DATE_RANGE_OPTIONS.map((opt) => (
+                                <option className="bg-zinc-900 text-white" key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                </option>
+                            ))}
+                        </select>
+                        {/* Custom Dropdown Arrow SVG */}
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg className="w-4 h-4 text-cyan-400 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+
+                    {/* PROJECT FILTER */}
+                    <div className="relative flex-1 min-w-[160px]">
+                        <FolderKanban size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 pointer-events-none stroke-[2.5] z-10" />
+                        <select
+                            value={projectFilter}
+                            onChange={(e) => setProjectFilter(e.target.value)}
+                            className="appearance-none w-full h-11 pl-11 pr-4 rounded-xl border border-white/10 bg-zinc-900/80 text-white font-mono text-xs focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 focus:outline-none cursor-pointer transition-all shadow-inner relative"
+                        >
+                            <option className="bg-zinc-900 text-white" value="all">All Projects</option>
+                            {projectOptions.map((project) => (
+                                <option className="bg-zinc-900 text-white" key={project} value={project}>
+                                    {project}
+                                </option>
+                            ))}
+                        </select>
+                        {/* Custom Dropdown Arrow SVG */}
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg className="w-4 h-4 text-cyan-400 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+
+                    {/* SORT */}
+                    <div className="relative flex-1 min-w-[160px]">
+                        <ArrowUpDown size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 pointer-events-none stroke-[2.5] z-10" />
+                        <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="appearance-none w-full h-11 pl-11 pr-4 rounded-xl border border-white/10 bg-zinc-900/80 text-white font-mono text-xs focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 focus:outline-none cursor-pointer transition-all shadow-inner relative"
+                        >
+                            {SORT_OPTIONS.map((opt) => (
+                                <option className="bg-zinc-900 text-white" key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                </option>
+                            ))}
+                        </select>
+                        {/* Custom Dropdown Arrow SVG */}
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg className="w-4 h-4 text-cyan-400 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+
+                    {hasActiveFilters && (
+                        <button
+                            type="button"
+                            onClick={resetFilters}
+                            className="cursor-pointer h-11 px-4 rounded-xl text-xs font-mono font-bold text-cyan-400 hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/20 transition-all shrink-0"
+                        >
+                            Clear Filters
+                        </button>
+                    )}
+                </div>
+
                 {/* ───────────────── BODY LIST ───────────────── */}
-                {/* Removed outer double card wrapper */}
+
+                {!loading && timesheets.length > 0 && (
+                    <div className="flex items-center justify-between px-1 mt-2">
+                        <p className="text-xs sm:text-sm font-mono text-zinc-400">
+                            Showing{" "}
+                            <span className="font-bold text-cyan-400">
+                                {filteredTimesheets.length}
+                            </span>{" "}
+                            of{" "}
+                            <span className="font-bold text-cyan-400">
+                                {timesheets.length}
+                            </span>{" "}
+                            timesheets
+                        </p>
+                    </div>
+                )}
+
                 {loading ? (
                     <TimesheetSkeleton />
                 ) : timesheets.length === 0 ? (
@@ -265,9 +466,21 @@ const Timesheet = () => {
                             Create a new timesheet to get started tracking work logs.
                         </p>
                     </div>
+                ) : filteredTimesheets.length === 0 ? (
+                    <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center backdrop-blur-xl mt-6">
+                        <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-5 shadow-[0_0_15px_rgba(56,189,248,0.15)]">
+                            <Search size={28} className="text-cyan-400" />
+                        </div>
+                        <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">
+                            No timesheets match your filters
+                        </h3>
+                        <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-2">
+                            Try adjusting the search, date range, or project filter to see results.
+                        </p>
+                    </div>
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-2">
-                        {timesheets.map((timesheet) => (
+                        {filteredTimesheets.map((timesheet) => (
                             <Timesheetcard
                                 key={timesheet._id}
                                 timesheet={timesheet}
