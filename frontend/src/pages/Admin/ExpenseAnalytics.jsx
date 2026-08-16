@@ -1,28 +1,36 @@
+// src/pages/Admin/ExpenseAnalytics.jsx
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
 import axiosInstance from "../../utils/axiosInstance.js";
 import { API_PATHS } from "../../utils/apiPaths.js";
-import { EXPENSE_CATEGORIES, CATEGORY_STYLE, PAYMENT_MODE_ICON, formatCurrency, fmtDate, MONTH_NAMES } from "../../utils/expenseConstants.js";
+import { EXPENSE_CATEGORIES, CATEGORY_STYLE, PAYMENT_MODE_ICON, formatCurrency, MONTH_NAMES, fmtDate } from "../../utils/expenseConstants.js";
 import {
-    RefreshCcw, Wallet, TrendingUp, TrendingDown, Trophy, Receipt, BarChart3,
-    PieChart as PieIcon, CreditCard, Target, AlertCircle, ArrowUpRight, ArrowDownRight,
-    Download, Users, Lightbulb, Gauge, CalendarDays, ListFilter,
+    Plus, RefreshCcw, ChevronLeft, ChevronRight, X, Pencil, Trash2,
+    Wallet, AlertTriangle, CheckCircle2, AlertCircle, Loader2, Target, TrendingUp,
+    Receipt, BarChart3, PieChart as PieIcon, CreditCard, ArrowUpRight, ArrowDownRight,
+    Download, Users, Lightbulb, Gauge, CalendarDays, ListFilter, Trophy,
 } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SKELETON
 // ─────────────────────────────────────────────────────────────────────────────
 
+const SkeletonBlock = ({ className }) => (
+    <div
+        className={`bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 bg-[length:200%_100%] animate-shimmer rounded-xl border border-white/5 ${className}`}
+    />
+);
+
 const Skeleton = () => (
     <div className="space-y-5 animate-pulse">
-        <div className="h-16 bg-gray-100 rounded-2xl" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {[...Array(5)].map((_, i) => <div key={i} className="h-[68px] bg-gray-100 rounded-2xl" />)}
+        <SkeletonBlock className="h-16 rounded-[2rem]" />
+        <div className="flex flex-col lg:grid lg:grid-cols-5 gap-3">
+            {[...Array(5)].map((_, i) => <SkeletonBlock key={i} className="h-[76px] rounded-2xl w-full" />)}
         </div>
-        <div className="h-72 bg-gray-100 rounded-3xl" />
+        <SkeletonBlock className="h-72 rounded-[2.5rem]" />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="h-72 bg-gray-100 rounded-3xl" />
-            <div className="h-72 bg-gray-100 rounded-3xl" />
+            <SkeletonBlock className="h-72 rounded-[2.5rem]" />
+            <SkeletonBlock className="h-72 rounded-[2.5rem]" />
         </div>
     </div>
 );
@@ -31,7 +39,7 @@ const Skeleton = () => (
 // HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
 
-const DONUT_COLORS = ["#2563eb", "#7c3aed", "#d97706", "#059669", "#dc2626", "#0891b2", "#db2777", "#65a30d", "#4f46e5", "#6b7280"];
+const DONUT_COLORS = ["#38bdf8", "#a855f7", "#fbbf24", "#34d399", "#f43f5e", "#06b6d4", "#ec4899", "#84cc16", "#6366f1", "#71717a"];
 const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const pctChange = (curr, prev) => {
@@ -75,11 +83,11 @@ const DeltaChip = ({ value, invert = false }) => {
     const isUp = value > 0;
     const isGood = invert ? !isUp : isUp;
     if (value === 0) {
-        return <span className="text-[10px] font-semibold text-gray-400">No change</span>;
+        return <span className="text-[10px] font-mono font-bold text-zinc-500">No change</span>;
     }
     return (
-        <span className={`inline-flex items-center gap-0.5 text-[10px] font-semibold ${isGood ? "text-red-500" : "text-emerald-600"}`}>
-            {isUp ? <ArrowUpRight size={11} /> : <ArrowDownRight size={11} />}
+        <span className={`inline-flex items-center gap-0.5 text-[10px] font-mono font-bold ${isGood ? "text-rose-400" : "text-emerald-400"}`}>
+            {isUp ? <ArrowUpRight size={11} className="stroke-[3]" /> : <ArrowDownRight size={11} className="stroke-[3]" />}
             {Math.abs(value)}%
         </span>
     );
@@ -130,32 +138,32 @@ const TrendChart = ({ trend }) => {
             onMouseMove={handleMove}
             onMouseLeave={() => setHoverIndex(null)}
         >
-            <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-56" preserveAspectRatio="none">
+            <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-56 overflow-visible" preserveAspectRatio="none">
                 <defs>
                     <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#2563eb" stopOpacity="0.28" />
-                        <stop offset="100%" stopColor="#2563eb" stopOpacity="0" />
+                        <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.35" />
+                        <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
                     </linearGradient>
                 </defs>
                 {[0.25, 0.5, 0.75].map((f) => (
                     <line key={f} x1="0" x2={w} y1={padY + (h - padY * 2) * f} y2={padY + (h - padY * 2) * f}
-                        stroke="#f1f5f9" strokeWidth="1" />
+                        stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
                 ))}
                 {areaPath && <path d={areaPath} fill="url(#trendFill)" />}
-                {linePath && <path d={linePath} fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
+                {linePath && <path d={linePath} fill="none" stroke="#38bdf8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />}
                 {hovered && (
-                    <line x1={hovered.x} x2={hovered.x} y1="0" y2={h} stroke="#94a3b8" strokeWidth="1" strokeDasharray="4 4" />
+                    <line x1={hovered.x} x2={hovered.x} y1="0" y2={h} stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="4 4" />
                 )}
                 {points.map((p, i) => (
-                    <circle key={`${p.year}-${p.month}`} cx={p.x} cy={p.y} r={hoverIndex === i ? 5.5 : 3}
-                        fill={hoverIndex === i ? "#1d4ed8" : "#2563eb"} stroke="white" strokeWidth="2"
+                    <circle key={`${p.year}-${p.month}`} cx={p.x} cy={p.y} r={hoverIndex === i ? 6 : 3.5}
+                        fill={hoverIndex === i ? "#0891b2" : "#38bdf8"} stroke="#09090b" strokeWidth="2"
                         className="transition-all duration-150" />
                 ))}
             </svg>
 
-            <div className="flex justify-between mt-1 px-0.5">
+            <div className="flex justify-between mt-2 px-0.5">
                 {trend.map((t, i) => (
-                    <span key={`${t.year}-${t.month}`} className={`text-[10px] font-medium transition-colors ${hoverIndex === i ? "text-blue-600" : "text-gray-400"}`}>
+                    <span key={`${t.year}-${t.month}`} className={`text-[11px] font-mono font-bold transition-colors ${hoverIndex === i ? "text-cyan-400" : "text-zinc-500"}`}>
                         {MONTH_NAMES[t.month - 1].slice(0, 3)}
                     </span>
                 ))}
@@ -163,11 +171,11 @@ const TrendChart = ({ trend }) => {
 
             {hovered && (
                 <div
-                    className="absolute -top-1 pointer-events-none bg-gray-900 text-white text-xs px-3 py-2 rounded-xl shadow-xl z-10 whitespace-nowrap"
+                    className="absolute -top-2 pointer-events-none bg-zinc-950/95 backdrop-blur-xl text-white text-xs px-3.5 py-2 rounded-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.8)] z-20 whitespace-nowrap"
                     style={{ left: `${(hovered.x / w) * 100}%`, transform: "translate(-50%, -100%)" }}
                 >
-                    <p className="font-semibold">{MONTH_NAMES[hovered.month - 1]} {hovered.year}</p>
-                    <p className="flex items-center gap-1.5">
+                    <p className="font-mono font-bold text-zinc-300">{MONTH_NAMES[hovered.month - 1]} {hovered.year}</p>
+                    <p className="flex items-center gap-2 mt-0.5 font-mono font-black text-cyan-400">
                         {formatCurrency(hovered.total)}
                         {hoveredDelta !== null && <DeltaChip value={hoveredDelta} />}
                     </p>
@@ -191,8 +199,8 @@ const DonutChart = ({ data }) => {
     return (
         <div className="flex flex-col sm:flex-row items-center gap-6">
             <div className="relative shrink-0">
-                <svg viewBox="0 0 160 160" className="w-40 h-40 -rotate-90">
-                    <circle cx="80" cy="80" r={radius} fill="none" stroke="#f1f5f9" strokeWidth="20" />
+                <svg viewBox="0 0 160 160" className="w-40 h-40 -rotate-90 overflow-visible">
+                    <circle cx="80" cy="80" r={radius} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="18" />
                     {data.map((d, i) => {
                         const frac = d.total / total;
                         const dash = frac * circumference;
@@ -200,7 +208,7 @@ const DonutChart = ({ data }) => {
                         const el = (
                             <circle key={d._id} cx="80" cy="80" r={radius} fill="none"
                                 stroke={DONUT_COLORS[i % DONUT_COLORS.length]}
-                                strokeWidth={hoverIdx === i ? 23 : 20}
+                                strokeWidth={hoverIdx === i ? 22 : 18}
                                 strokeDasharray={`${dash} ${gap}`} strokeDashoffset={-offsetAcc}
                                 strokeLinecap="butt" className="transition-all duration-200 cursor-pointer"
                                 onMouseEnter={() => setHoverIdx(i)}
@@ -209,27 +217,27 @@ const DonutChart = ({ data }) => {
                         offsetAcc += dash;
                         return el;
                     })}
-                    <circle cx="80" cy="80" r="42" fill="white" />
+                    <circle cx="80" cy="80" r="42" fill="#09090b" />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none px-4 text-center">
-                    <p className="text-[10px] text-gray-400 font-medium truncate max-w-full">
+                    <p className="text-[10px] font-mono text-zinc-500 font-bold truncate max-w-full">
                         {hoverIdx !== null ? data[hoverIdx]._id : "Total"}
                     </p>
-                    <p className="text-sm font-bold text-gray-900 truncate max-w-full">
+                    <p className="text-xs font-mono font-black text-white truncate max-w-full mt-0.5">
                         {formatCurrency(hoverIdx !== null ? data[hoverIdx].total : total)}
                     </p>
                 </div>
             </div>
-            <div className="flex-1 w-full space-y-1.5 max-h-52 overflow-y-auto custom-scrollbar pr-1">
+            <div className="flex-1 w-full space-y-2 max-h-52 overflow-y-auto custom-scrollbar pr-1">
                 {data.map((d, i) => (
                     <div key={d._id}
                         onMouseEnter={() => setHoverIdx(i)}
                         onMouseLeave={() => setHoverIdx(null)}
-                        className={`flex items-center gap-2.5 rounded-lg px-1.5 py-1.5 -mx-1.5 transition-colors cursor-default ${hoverIdx === i ? "bg-gray-50" : ""}`}>
-                        <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
-                        <span className="text-sm text-gray-700 truncate flex-1">{d._id}</span>
-                        <span className="text-xs text-gray-400 shrink-0">{Math.round((d.total / total) * 100)}%</span>
-                        <span className="text-sm font-semibold text-gray-900 shrink-0 w-24 text-right">{formatCurrency(d.total)}</span>
+                        className={`flex items-center gap-2.5 rounded-xl px-2 py-1.5 -mx-2 transition-colors cursor-default ${hoverIdx === i ? "bg-zinc-900/80 border border-white/5" : ""}`}>
+                        <span className="h-2.5 w-2.5 rounded-full shrink-0 shadow-inner" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
+                        <span className="text-xs font-mono text-zinc-300 truncate flex-1">{d._id}</span>
+                        <span className="text-[11px] font-mono text-zinc-500 shrink-0">{Math.round((d.total / total) * 100)}%</span>
+                        <span className="text-xs font-mono font-bold text-white shrink-0 w-24 text-right">{formatCurrency(d.total)}</span>
                     </div>
                 ))}
             </div>
@@ -249,16 +257,16 @@ const CategoryBarChart = ({ data }) => {
             {data.map((d, i) => (
                 <div key={d._id}>
                     <div className="flex items-center justify-between mb-1.5">
-                        <span className="flex items-center gap-2 text-sm text-gray-700 truncate">
-                            <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
+                        <span className="flex items-center gap-2 text-xs font-mono text-zinc-300 truncate">
+                            <span className="h-2 w-2 rounded-full shrink-0 shadow-inner" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
                             <span className="truncate">{d._id}</span>
                         </span>
-                        <span className="text-sm font-semibold text-gray-900 shrink-0 ml-2">
-                            {formatCurrency(d.total)} <span className="text-gray-400 font-normal">· {Math.round((d.total / total) * 100)}%</span>
+                        <span className="text-xs font-mono font-bold text-white shrink-0 ml-2">
+                            {formatCurrency(d.total)} <span className="text-zinc-500 font-normal">· {Math.round((d.total / total) * 100)}%</span>
                         </span>
                     </div>
-                    <div className="h-2.5 rounded-full bg-gray-100 overflow-hidden">
-                        <div className="h-2.5 rounded-full transition-all duration-700"
+                    <div className="h-2 rounded-full bg-zinc-900 border border-white/5 overflow-hidden shadow-inner">
+                        <div className="h-2 rounded-full transition-all duration-700 shadow-inner"
                             style={{ width: `${(d.total / max) * 100}%`, backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
                     </div>
                 </div>
@@ -284,18 +292,18 @@ const WeekdayChart = ({ data }) => {
                         <div key={d.label} className="flex-1 flex flex-col items-center gap-2 group min-w-0">
                             <div className="relative w-full flex-1 flex items-end justify-center">
                                 <div title={`${d.label}: ${formatCurrency(d.total)}`}
-                                    className={`w-full max-w-[30px] rounded-t-lg transition-all duration-500 cursor-default
-                                        ${isPeak ? "bg-indigo-600" : "bg-indigo-300 group-hover:bg-indigo-400"}`}
+                                    className={`w-full max-w-[30px] rounded-t-xl transition-all duration-500 cursor-default shadow-inner
+                                        ${isPeak ? "bg-gradient-to-t from-cyan-600 to-blue-600 shadow-[0_0_15px_rgba(56,189,248,0.3)]" : "bg-zinc-900 border border-white/5 group-hover:bg-zinc-800"}`}
                                     style={{ height: `${pct}%` }} />
                             </div>
-                            <span className={`text-[10px] font-medium ${isPeak ? "text-indigo-600 font-bold" : "text-gray-400"}`}>{d.label}</span>
+                            <span className={`text-[10px] font-mono uppercase tracking-wider ${isPeak ? "text-cyan-400 font-bold" : "text-zinc-500"}`}>{d.label}</span>
                         </div>
                     );
                 })}
             </div>
             {peak && peak.total > 0 && (
-                <p className="text-xs text-gray-400 mt-2 text-center">
-                    You spend the most on <span className="font-semibold text-gray-600">{peak.label}days</span>
+                <p className="text-xs font-mono text-zinc-400 mt-3 text-center">
+                    You spend the most on <span className="font-bold text-white">{peak.label}days</span>
                 </p>
             )}
         </>
@@ -383,10 +391,10 @@ const ExpenseAnalytics = () => {
     const totalBudgetSpent = useMemo(() => budgets.reduce((s, b) => s + (b.spent || 0), 0), [budgets]);
     const budgetPct = totalBudget ? Math.round((totalBudgetSpent / totalBudget) * 100) : 0;
     const budgetStatus = !totalBudget ? null : budgetPct >= 100 ? "Over Budget" : budgetPct >= 80 ? "Near Limit" : "On Track";
-    const budgetStatusColor = budgetStatus === "Over Budget" ? "text-red-600 bg-red-50 border-red-200"
-        : budgetStatus === "Near Limit" ? "text-amber-600 bg-amber-50 border-amber-200"
-            : "text-emerald-600 bg-emerald-50 border-emerald-200";
-    const budgetBarColor = budgetStatus === "Over Budget" ? "bg-red-500" : budgetStatus === "Near Limit" ? "bg-amber-500" : "bg-emerald-500";
+    const budgetStatusColor = budgetStatus === "Over Budget" ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
+        : budgetStatus === "Near Limit" ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+            : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+    const budgetBarColor = budgetStatus === "Over Budget" ? "bg-rose-500" : budgetStatus === "Near Limit" ? "bg-amber-500" : "bg-emerald-500";
 
     const insightText = useMemo(() => {
         if (!hasData) return null;
@@ -449,37 +457,52 @@ const ExpenseAnalytics = () => {
         URL.revokeObjectURL(url);
     };
 
+    // Style injections for scrollbars and animations
+    useEffect(() => {
+        const style = document.createElement("style");
+        style.innerHTML = `
+            @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+            .animate-shimmer { animation: shimmer 2s infinite linear; }
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            .animate-fadeIn { animation: fadeIn .2s ease; }
+            .scrollbar-hide::-webkit-scrollbar { display: none; }
+            .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        `;
+        document.head.appendChild(style);
+        return () => document.head.removeChild(style);
+    }, []);
+
     return (
         <DashboardLayout activeMenu="Expenses Analytics">
-            <div className="space-y-5">
+            <div className="space-y-6">
 
                 {/* HEADER */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Expense Analytics</h1>
-                        <p className="text-sm text-gray-500 mt-1">Spending trends, category breakdowns and budget performance</p>
+                        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Expense Analytics</h1>
+                        <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-1">Spending trends, category breakdowns and budget performance</p>
                     </div>
-                    <div className="flex items-center gap-2 self-start sm:self-auto">
+                    <div className="flex items-center gap-3 self-start sm:self-auto">
                         <button type="button" onClick={exportReport} disabled={loading || !hasData}
-                            className="cursor-pointer h-11 px-4 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-50 text-gray-700 flex items-center gap-2 text-sm font-medium transition-all">
-                            <Download size={16} />
+                            className="cursor-pointer h-11 px-4 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 disabled:opacity-50 text-zinc-300 hover:text-white flex items-center gap-2 text-xs sm:text-sm font-mono font-bold transition-all shadow-inner">
+                            <Download size={16} className="text-cyan-400 stroke-[2.5]" />
                             <span className="hidden sm:inline">Export Report</span>
                         </button>
                         <button type="button" onClick={() => fetchAll({ isRefresh: true })} disabled={loading || refreshing}
-                            className="cursor-pointer h-11 px-4 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-60 text-gray-700 flex items-center gap-2 text-sm font-medium transition-all">
-                            <RefreshCcw size={16} className={refreshing ? "animate-spin" : ""} />
+                            className="cursor-pointer h-11 px-4 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 disabled:opacity-60 text-zinc-300 hover:text-white flex items-center gap-2 text-xs sm:text-sm font-mono font-bold transition-all shadow-inner">
+                            <RefreshCcw size={16} className={refreshing ? "animate-spin text-cyan-400" : "text-cyan-400"} />
                             <span className="hidden sm:inline">Refresh</span>
                         </button>
                     </div>
                 </div>
 
                 {loading ? <Skeleton /> : !hasData ? (
-                    <div className="bg-white border border-dashed border-gray-300 rounded-3xl py-16 text-center">
-                        <div className="h-16 w-16 rounded-3xl bg-blue-50 flex items-center justify-center mx-auto mb-4">
-                            <BarChart3 size={28} className="text-blue-400" />
+                    <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center backdrop-blur-xl mt-6">
+                        <div className="w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 mx-auto flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(56,189,248,0.15)]">
+                            <BarChart3 size={36} className="text-cyan-400" />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800">No data to analyze yet</h3>
-                        <p className="text-sm text-gray-500 mt-2 max-w-sm mx-auto">
+                        <h3 className="text-xl md:text-2xl font-mono font-black text-white tracking-tight">No data to analyze yet</h3>
+                        <p className="text-zinc-400 max-w-md mt-2 leading-relaxed font-mono text-xs sm:text-sm">
                             Once you start logging expenses, trends and breakdowns will appear here automatically.
                         </p>
                     </div>
@@ -487,97 +510,98 @@ const ExpenseAnalytics = () => {
                     <>
                         {/* INSIGHT BANNER */}
                         {insightText && (
-                            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-4 sm:p-5 flex items-start gap-3 text-white shadow-sm shadow-blue-200">
-                                <div className="h-9 w-9 rounded-2xl bg-white/15 flex items-center justify-center shrink-0">
-                                    <Lightbulb size={16} />
+                            <div className="bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-zinc-950 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-5 sm:p-6 text-white shadow-[0_10px_40px_rgba(0,0,0,0.5)] relative overflow-hidden flex items-start gap-4">
+                                <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/10 blur-3xl rounded-full pointer-events-none"></div>
+                                <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0 shadow-inner relative z-10 mt-0.5">
+                                    <Lightbulb size={18} className="stroke-[2.5]" />
                                 </div>
-                                <p className="text-sm leading-relaxed pt-1.5">{insightText}</p>
+                                <p className="text-xs sm:text-sm font-mono text-zinc-300 leading-relaxed relative z-10 pt-2">{insightText}</p>
                             </div>
                         )}
 
-                        {/* STAT CARDS */}
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                            <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                                <div className="h-9 w-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><Wallet size={16} /></div>
+                        {/* STAT CARDS (Responsive: Stacked line-by-line on mobile, grid on desktop) */}
+                        <div className="flex flex-col sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-blue-500/20 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 shadow-inner relative overflow-hidden">
+                                <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-400 border border-white/5 flex items-center justify-center shrink-0 shadow-inner"><Wallet size={16} /></div>
                                 <div className="min-w-0">
-                                    <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Total Spent</p>
-                                    <p className="text-base font-bold text-gray-900 mt-0.5 truncate">{formatCurrency(summary?.total)}</p>
+                                    <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate">Total Spent</p>
+                                    <p className="text-xl font-mono font-black text-white mt-0.5 truncate">{formatCurrency(summary?.total)}</p>
                                 </div>
                             </div>
-                            <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                                <div className="h-9 w-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><TrendingUp size={16} /></div>
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-indigo-500/20 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 shadow-inner relative overflow-hidden">
+                                <div className="h-10 w-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-white/5 flex items-center justify-center shrink-0 shadow-inner"><TrendingUp size={16} /></div>
                                 <div className="min-w-0">
                                     <div className="flex items-center gap-1.5">
-                                        <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">This Month</p>
+                                        <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate">This Month</p>
                                         <DeltaChip value={momChange} />
                                     </div>
-                                    <p className="text-base font-bold text-gray-900 mt-0.5 truncate">{formatCurrency(summary?.thisMonth)}</p>
+                                    <p className="text-xl font-mono font-black text-white mt-0.5 truncate">{formatCurrency(summary?.thisMonth)}</p>
                                 </div>
                             </div>
-                            <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                                <div className="h-9 w-9 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center shrink-0"><Gauge size={16} /></div>
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-teal-500/20 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 shadow-inner relative overflow-hidden">
+                                <div className="h-10 w-10 rounded-xl bg-teal-500/10 text-teal-400 border border-white/5 flex items-center justify-center shrink-0 shadow-inner"><Gauge size={16} /></div>
                                 <div className="min-w-0">
-                                    <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Avg / Day</p>
-                                    <p className="text-base font-bold text-gray-900 mt-0.5 truncate">{formatCurrency(Math.round(avgPerDay))}</p>
+                                    <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate">Avg / Day</p>
+                                    <p className="text-xl font-mono font-black text-white mt-0.5 truncate">{formatCurrency(Math.round(avgPerDay))}</p>
                                 </div>
                             </div>
-                            <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                                <div className="h-9 w-9 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center shrink-0"><PieIcon size={16} /></div>
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-purple-500/20 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 shadow-inner relative overflow-hidden">
+                                <div className="h-10 w-10 rounded-xl bg-purple-500/10 text-purple-400 border border-white/5 flex items-center justify-center shrink-0 shadow-inner"><PieIcon size={16} /></div>
                                 <div className="min-w-0">
-                                    <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Top Category</p>
-                                    <p className="text-sm font-bold text-gray-900 mt-0.5 truncate">{highestCategory?._id || "—"}</p>
+                                    <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate">Top Category</p>
+                                    <p className="text-sm font-mono font-bold text-white mt-0.5 truncate">{highestCategory?._id || "—"}</p>
                                 </div>
                             </div>
-                            <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                                <div className="h-9 w-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0"><Trophy size={16} /></div>
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-amber-500/20 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 shadow-inner relative overflow-hidden col-span-2 sm:col-span-1">
+                                <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-400 border border-white/5 flex items-center justify-center shrink-0 shadow-inner"><Trophy size={16} /></div>
                                 <div className="min-w-0">
-                                    <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Highest Expense</p>
-                                    <p className="text-base font-bold text-gray-900 mt-0.5 truncate">{formatCurrency(highestSingle?.amount)}</p>
+                                    <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate">Highest Expense</p>
+                                    <p className="text-xl font-mono font-black text-white mt-0.5 truncate">{formatCurrency(highestSingle?.amount)}</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* BUDGET HEALTH */}
                         {totalBudget > 0 && (
-                            <div className="bg-white border border-gray-200 rounded-3xl p-5 sm:p-6">
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                                    <div className="flex items-center gap-2.5">
-                                        <div className="h-9 w-9 rounded-2xl bg-emerald-100 flex items-center justify-center shrink-0">
-                                            <Gauge size={16} className="text-emerald-600" />
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-5 sm:p-7 shadow-[0_15px_50px_rgba(0,0,0,0.6)]">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 shadow-inner">
+                                            <Gauge size={18} className="stroke-[2.5]" />
                                         </div>
                                         <div>
-                                            <h3 className="text-sm font-bold text-gray-900">Budget Health</h3>
-                                            <p className="text-xs text-gray-400">{MONTH_NAMES[today.getMonth()]} {today.getFullYear()} · {formatCurrency(totalBudgetSpent)} of {formatCurrency(totalBudget)} used</p>
+                                            <h3 className="text-sm font-mono font-bold text-white tracking-wide">Budget Health</h3>
+                                            <p className="text-xs font-mono text-zinc-400 mt-0.5">{MONTH_NAMES[today.getMonth()]} {today.getFullYear()} · {formatCurrency(totalBudgetSpent)} of {formatCurrency(totalBudget)} used</p>
                                         </div>
                                     </div>
-                                    <span className={`text-xs font-semibold px-3 py-1.5 rounded-full border self-start sm:self-auto ${budgetStatusColor}`}>
+                                    <span className={`text-xs font-mono font-bold px-3 py-1 rounded-lg border shadow-inner self-start sm:self-auto ${budgetStatusColor}`}>
                                         {budgetStatus}
                                     </span>
                                 </div>
-                                <div className="h-3 rounded-full bg-gray-100 overflow-hidden">
-                                    <div className={`h-3 rounded-full ${budgetBarColor} transition-all duration-700`} style={{ width: `${Math.min(budgetPct, 100)}%` }} />
+                                <div className="h-2.5 rounded-full bg-zinc-900 border border-white/5 overflow-hidden shadow-inner">
+                                    <div className={`h-2.5 rounded-full ${budgetBarColor} transition-all duration-700 shadow-[0_0_10px_rgba(0,0,0,0.5)]`} style={{ width: `${Math.min(budgetPct, 100)}%` }} />
                                 </div>
-                                <div className="flex items-center justify-between mt-2">
-                                    <span className="text-xs text-gray-400">{budgetPct}% used</span>
-                                    <span className="text-xs text-gray-400">{formatCurrency(Math.max(totalBudget - totalBudgetSpent, 0))} remaining</span>
+                                <div className="flex items-center justify-between mt-2.5">
+                                    <span className="text-xs font-mono text-zinc-400">{budgetPct}% used</span>
+                                    <span className="text-xs font-mono text-zinc-400">{formatCurrency(Math.max(totalBudget - totalBudgetSpent, 0))} remaining</span>
                                 </div>
                             </div>
                         )}
 
                         {/* MONTHLY TREND */}
-                        <div className="bg-white border border-gray-200 rounded-3xl p-5 sm:p-6">
-                            <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2.5">
-                                    <div className="h-9 w-9 rounded-2xl bg-blue-100 flex items-center justify-center shrink-0">
-                                        <BarChart3 size={16} className="text-blue-600" />
+                        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-5 sm:p-7 shadow-[0_15px_50px_rgba(0,0,0,0.6)]">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-10 w-10 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 shadow-inner">
+                                        <BarChart3 size={18} className="stroke-[2.5]" />
                                     </div>
-                                    <h3 className="text-sm font-bold text-gray-900">Monthly Spending Trend</h3>
+                                    <h3 className="text-sm font-mono font-bold text-white tracking-wide">Monthly Spending Trend</h3>
                                 </div>
-                                <div className="flex items-center gap-1 bg-gray-100 rounded-2xl p-1">
+                                <div className="flex items-center gap-1 bg-zinc-900 border border-white/5 rounded-xl p-1 shadow-inner">
                                     {RANGE_OPTIONS.map((opt) => (
                                         <button key={opt.label} type="button" onClick={() => setTrendMonths(opt.months)}
-                                            className={`cursor-pointer px-3 h-8 rounded-xl text-xs font-semibold transition-all
-                                                ${trendMonths === opt.months ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+                                            className={`cursor-pointer px-3 h-8 rounded-lg text-xs font-mono font-bold transition-all
+                                                ${trendMonths === opt.months ? "bg-zinc-950 text-cyan-400 shadow-sm border border-white/10" : "text-zinc-400 hover:text-white"}`}>
                                             {opt.label}
                                         </button>
                                     ))}
@@ -586,36 +610,36 @@ const ExpenseAnalytics = () => {
                             <TrendChart trend={trend} />
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* CATEGORY BREAKDOWN */}
-                            <div className="bg-white border border-gray-200 rounded-3xl p-5 sm:p-6">
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                                    <div className="flex items-center gap-2.5">
-                                        <div className="h-9 w-9 rounded-2xl bg-purple-100 flex items-center justify-center shrink-0">
-                                            <PieIcon size={16} className="text-purple-600" />
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-5 sm:p-7 shadow-[0_15px_50px_rgba(0,0,0,0.6)]">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-10 w-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shrink-0 shadow-inner">
+                                            <PieIcon size={18} className="stroke-[2.5]" />
                                         </div>
-                                        <h3 className="text-sm font-bold text-gray-900">Category Breakdown</h3>
+                                        <h3 className="text-sm font-mono font-bold text-white tracking-wide">Category Breakdown</h3>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <div className="flex items-center gap-1 bg-gray-100 rounded-2xl p-1">
+                                        <div className="flex items-center gap-1 bg-zinc-900 border border-white/5 rounded-xl p-1 shadow-inner">
                                             {[{ key: "month", label: "This Month" }, { key: "all", label: "All Time" }].map((opt) => (
                                                 <button key={opt.key} type="button" onClick={() => setCategoryScope(opt.key)}
-                                                    className={`cursor-pointer px-3 h-8 rounded-xl text-xs font-semibold transition-all
-                                                        ${categoryScope === opt.key ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+                                                    className={`cursor-pointer px-3 h-8 rounded-lg text-xs font-mono font-bold transition-all
+                                                        ${categoryScope === opt.key ? "bg-zinc-950 text-cyan-400 shadow-sm border border-white/10" : "text-zinc-400 hover:text-white"}`}>
                                                     {opt.label}
                                                 </button>
                                             ))}
                                         </div>
                                         <button type="button" onClick={() => setCategoryView((v) => (v === "donut" ? "bar" : "donut"))}
                                             title="Toggle chart view"
-                                            className="cursor-pointer h-8 w-8 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition">
-                                            {categoryView === "donut" ? <BarChart3 size={14} className="text-gray-500" /> : <PieIcon size={14} className="text-gray-500" />}
+                                            className="cursor-pointer h-10 w-10 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-cyan-400 flex items-center justify-center transition shadow-inner">
+                                            {categoryView === "donut" ? <BarChart3 size={16} /> : <PieIcon size={16} />}
                                         </button>
                                     </div>
                                 </div>
                                 {categoryData.length === 0 ? (
-                                    <div className="border border-dashed border-gray-200 rounded-2xl py-10 text-center">
-                                        <p className="text-sm text-gray-500">No spend in this period</p>
+                                    <div className="border border-dashed border-white/10 rounded-2xl py-10 text-center bg-zinc-900/20">
+                                        <p className="text-xs font-mono text-zinc-400">No spend in this period</p>
                                     </div>
                                 ) : categoryView === "donut" ? (
                                     <DonutChart data={categoryData} />
@@ -625,16 +649,16 @@ const ExpenseAnalytics = () => {
                             </div>
 
                             {/* PAYMENT MODE SPLIT */}
-                            <div className="bg-white border border-gray-200 rounded-3xl p-5 sm:p-6">
-                                <div className="flex items-center gap-2.5 mb-4">
-                                    <div className="h-9 w-9 rounded-2xl bg-teal-100 flex items-center justify-center shrink-0">
-                                        <CreditCard size={16} className="text-teal-600" />
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-5 sm:p-7 shadow-[0_15px_50px_rgba(0,0,0,0.6)]">
+                                <div className="flex items-center gap-3 mb-5">
+                                    <div className="h-10 w-10 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center shrink-0 shadow-inner">
+                                        <CreditCard size={18} className="stroke-[2.5]" />
                                     </div>
-                                    <h3 className="text-sm font-bold text-gray-900">Payment Mode Split</h3>
+                                    <h3 className="text-sm font-mono font-bold text-white tracking-wide">Payment Mode Split</h3>
                                 </div>
                                 {(!summary?.byPaymentMode || summary.byPaymentMode.length === 0) ? (
-                                    <div className="border border-dashed border-gray-200 rounded-2xl py-10 text-center">
-                                        <p className="text-sm text-gray-500">No data available</p>
+                                    <div className="border border-dashed border-white/10 rounded-2xl py-10 text-center bg-zinc-900/20">
+                                        <p className="text-xs font-mono text-zinc-400">No data available</p>
                                     </div>
                                 ) : (
                                     <div className="space-y-3.5">
@@ -644,13 +668,13 @@ const ExpenseAnalytics = () => {
                                             return (
                                                 <div key={pm._id}>
                                                     <div className="flex items-center justify-between mb-1.5">
-                                                        <span className="flex items-center gap-2 text-sm text-gray-700">
-                                                            <Icon size={14} className="text-gray-400" /> {pm._id}
+                                                        <span className="flex items-center gap-2 text-xs font-mono text-zinc-300">
+                                                            <Icon size={14} className="text-cyan-400" /> {pm._id}
                                                         </span>
-                                                        <span className="text-sm font-semibold text-gray-900">{formatCurrency(pm.total)} <span className="text-gray-400 font-normal">· {pct}%</span></span>
+                                                        <span className="text-xs font-mono font-bold text-white">{formatCurrency(pm.total)} <span className="text-zinc-500 font-normal">· {pct}%</span></span>
                                                     </div>
-                                                    <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
-                                                        <div className="h-2 rounded-full bg-blue-500 transition-all duration-700" style={{ width: `${pct}%` }} />
+                                                    <div className="h-2 rounded-full bg-zinc-900 border border-white/5 overflow-hidden shadow-inner">
+                                                        <div className="h-2 rounded-full bg-cyan-400 transition-all duration-700 shadow-inner" style={{ width: `${pct}%` }} />
                                                     </div>
                                                 </div>
                                             );
@@ -660,40 +684,40 @@ const ExpenseAnalytics = () => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* WEEKDAY PATTERN */}
-                            <div className="bg-white border border-gray-200 rounded-3xl p-5 sm:p-6">
-                                <div className="flex items-center gap-2.5 mb-2">
-                                    <div className="h-9 w-9 rounded-2xl bg-indigo-100 flex items-center justify-center shrink-0">
-                                        <CalendarDays size={16} className="text-indigo-600" />
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-5 sm:p-7 shadow-[0_15px_50px_rgba(0,0,0,0.6)]">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0 shadow-inner">
+                                        <CalendarDays size={18} className="stroke-[2.5]" />
                                     </div>
-                                    <h3 className="text-sm font-bold text-gray-900">Spending by Day of Week</h3>
+                                    <h3 className="text-sm font-mono font-bold text-white tracking-wide">Spending by Day of Week</h3>
                                 </div>
                                 <WeekdayChart data={weekdayData} />
                             </div>
 
                             {/* TOP VENDORS */}
-                            <div className="bg-white border border-gray-200 rounded-3xl p-5 sm:p-6">
-                                <div className="flex items-center gap-2.5 mb-4">
-                                    <div className="h-9 w-9 rounded-2xl bg-cyan-100 flex items-center justify-center shrink-0">
-                                        <Users size={16} className="text-cyan-600" />
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-5 sm:p-7 shadow-[0_15px_50px_rgba(0,0,0,0.6)]">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0 shadow-inner">
+                                        <Users size={18} className="stroke-[2.5]" />
                                     </div>
-                                    <h3 className="text-sm font-bold text-gray-900">Top Vendors</h3>
+                                    <h3 className="text-sm font-mono font-bold text-white tracking-wide">Top Vendors</h3>
                                 </div>
                                 {topVendors.length === 0 ? (
-                                    <div className="border border-dashed border-gray-200 rounded-2xl py-10 text-center">
-                                        <p className="text-sm text-gray-500">No vendor data available</p>
+                                    <div className="border border-dashed border-white/10 rounded-2xl py-10 text-center bg-zinc-900/20">
+                                        <p className="text-xs font-mono text-zinc-400">No vendor data available</p>
                                     </div>
                                 ) : (
-                                    <div className="space-y-2">
+                                    <div className="space-y-2.5">
                                         {topVendors.map((v, i) => (
-                                            <div key={v.vendor} className="flex items-center gap-3 px-3 py-2.5 rounded-2xl border border-gray-100 bg-gray-50/60">
-                                                <span className="text-xs font-bold text-gray-300 w-4 shrink-0">{i + 1}</span>
-                                                <div className="h-8 w-8 rounded-xl flex items-center justify-center shrink-0 bg-cyan-50 text-cyan-600 border border-cyan-100">
-                                                    <Users size={13} />
+                                            <div key={v.vendor} className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl border border-white/5 bg-zinc-900/40 shadow-inner">
+                                                <span className="text-xs font-mono font-bold text-zinc-500 w-4 shrink-0">{i + 1}</span>
+                                                <div className="h-8 w-8 rounded-xl flex items-center justify-center shrink-0 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-inner">
+                                                    <Users size={13} className="stroke-[2.5]" />
                                                 </div>
-                                                <p className="text-sm font-medium text-gray-900 truncate flex-1">{v.vendor}</p>
-                                                <p className="text-sm font-bold text-gray-900 shrink-0">{formatCurrency(v.total)}</p>
+                                                <p className="text-xs sm:text-sm font-mono font-bold text-white truncate flex-1">{v.vendor}</p>
+                                                <p className="text-xs sm:text-sm font-mono font-black text-cyan-400 shrink-0">{formatCurrency(v.total)}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -701,31 +725,31 @@ const ExpenseAnalytics = () => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* TOP 5 EXPENSES */}
-                            <div className="bg-white border border-gray-200 rounded-3xl p-5 sm:p-6">
-                                <div className="flex items-center gap-2.5 mb-4">
-                                    <div className="h-9 w-9 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
-                                        <Trophy size={16} className="text-amber-600" />
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-5 sm:p-7 shadow-[0_15px_50px_rgba(0,0,0,0.6)]">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 shadow-inner">
+                                        <Trophy size={18} className="stroke-[2.5]" />
                                     </div>
-                                    <h3 className="text-sm font-bold text-gray-900">Top 5 Expenses</h3>
+                                    <h3 className="text-sm font-mono font-bold text-white tracking-wide">Top 5 Expenses</h3>
                                 </div>
-                                <div className="space-y-2">
+                                <div className="space-y-2.5">
                                     {topExpenses.map((exp, i) => {
                                         const style = CATEGORY_STYLE[exp.category] || CATEGORY_STYLE.Miscellaneous;
                                         const Icon = style.icon;
-                                        const medal = i === 0 ? "text-amber-500" : i === 1 ? "text-gray-400" : i === 2 ? "text-orange-400" : "text-gray-300";
+                                        const medal = i === 0 ? "text-amber-400" : i === 1 ? "text-zinc-300" : i === 2 ? "text-amber-600" : "text-zinc-600";
                                         return (
-                                            <div key={exp._id} className="flex items-center gap-3 px-3 py-2.5 rounded-2xl border border-gray-100 bg-gray-50/60">
-                                                <span className={`text-xs font-bold w-4 shrink-0 ${medal}`}>{i + 1}</span>
-                                                <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 border ${style.badge}`}>
-                                                    <Icon size={13} />
+                                            <div key={exp._id} className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl border border-white/5 bg-zinc-900/40 shadow-inner">
+                                                <span className={`text-xs font-mono font-black w-4 shrink-0 ${medal}`}>{i + 1}</span>
+                                                <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 border shadow-inner ${style.badge}`}>
+                                                    <Icon size={13} className="stroke-[2.5]" />
                                                 </div>
                                                 <div className="min-w-0 flex-1">
-                                                    <p className="text-sm font-medium text-gray-900 truncate">{exp.title}</p>
-                                                    <p className="text-xs text-gray-400">{fmtDate(exp.date)} · {exp.category}</p>
+                                                    <p className="text-xs sm:text-sm font-mono font-bold text-white truncate">{exp.title}</p>
+                                                    <p className="text-[11px] font-mono text-zinc-400 mt-0.5">{fmtDate(exp.date)} · {exp.category}</p>
                                                 </div>
-                                                <p className="text-sm font-bold text-gray-900 shrink-0">{formatCurrency(exp.amount)}</p>
+                                                <p className="text-xs sm:text-sm font-mono font-black text-cyan-400 shrink-0">{formatCurrency(exp.amount)}</p>
                                             </div>
                                         );
                                     })}
@@ -733,33 +757,33 @@ const ExpenseAnalytics = () => {
                             </div>
 
                             {/* BUDGET VS ACTUAL */}
-                            <div className="bg-white border border-gray-200 rounded-3xl p-5 sm:p-6">
-                                <div className="flex items-center gap-2.5 mb-4">
-                                    <div className="h-9 w-9 rounded-2xl bg-green-100 flex items-center justify-center shrink-0">
-                                        <Target size={16} className="text-green-600" />
+                            <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-5 sm:p-7 shadow-[0_15px_50px_rgba(0,0,0,0.6)]">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 shadow-inner">
+                                        <Target size={18} className="stroke-[2.5]" />
                                     </div>
                                     <div>
-                                        <h3 className="text-sm font-bold text-gray-900">Budget vs Actual</h3>
-                                        <p className="text-xs text-gray-400">{MONTH_NAMES[today.getMonth()]} {today.getFullYear()}</p>
+                                        <h3 className="text-sm font-mono font-bold text-white tracking-wide">Budget vs Actual</h3>
+                                        <p className="text-[11px] font-mono text-zinc-400 mt-0.5">{MONTH_NAMES[today.getMonth()]} {today.getFullYear()}</p>
                                     </div>
                                 </div>
                                 {budgets.length === 0 ? (
-                                    <div className="border border-dashed border-gray-200 rounded-2xl py-10 text-center">
-                                        <AlertCircle size={22} className="mx-auto text-gray-300 mb-2" />
-                                        <p className="text-sm text-gray-500">No budgets set this month</p>
+                                    <div className="border border-dashed border-white/10 rounded-2xl py-10 text-center bg-zinc-900/20">
+                                        <AlertCircle size={22} className="mx-auto text-zinc-600 mb-2" />
+                                        <p className="text-xs font-mono text-zinc-400">No budgets set this month</p>
                                     </div>
                                 ) : (
                                     <div className="space-y-3.5 max-h-64 overflow-y-auto custom-scrollbar pr-1">
                                         {budgets.map((b) => {
-                                            const barColor = b.status === "Over Budget" ? "bg-red-500" : b.status === "Near Limit" ? "bg-amber-500" : "bg-green-500";
+                                            const barColor = b.status === "Over Budget" ? "bg-rose-500" : b.status === "Near Limit" ? "bg-amber-500" : "bg-emerald-500";
                                             return (
                                                 <div key={b._id}>
                                                     <div className="flex items-center justify-between mb-1.5">
-                                                        <span className="text-sm text-gray-700">{b.category}</span>
-                                                        <span className="text-xs text-gray-500">{formatCurrency(b.spent)} / {formatCurrency(b.amount)}</span>
+                                                        <span className="text-xs font-mono text-zinc-300">{b.category}</span>
+                                                        <span className="text-xs font-mono text-zinc-400">{formatCurrency(b.spent)} / {formatCurrency(b.amount)}</span>
                                                     </div>
-                                                    <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
-                                                        <div className={`h-2 rounded-full ${barColor} transition-all duration-700`} style={{ width: `${Math.min(b.pct, 100)}%` }} />
+                                                    <div className="h-2 rounded-full bg-zinc-900 border border-white/5 overflow-hidden shadow-inner">
+                                                        <div className={`h-2 rounded-full ${barColor} transition-all duration-700 shadow-inner`} style={{ width: `${Math.min(b.pct, 100)}%` }} />
                                                     </div>
                                                 </div>
                                             );
@@ -773,9 +797,10 @@ const ExpenseAnalytics = () => {
             </div>
 
             <style>{`
-                .custom-scrollbar::-webkit-scrollbar { width:4px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:999px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
+                .custom-scrollbar::-webkit-scrollbar { width:4px; height:4px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:999px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.2); }
+                .custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
             `}</style>
         </DashboardLayout>
     );

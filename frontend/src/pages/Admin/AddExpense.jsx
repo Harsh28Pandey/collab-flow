@@ -1,3 +1,4 @@
+// src/pages/Admin/AddExpense.jsx
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
@@ -27,11 +28,11 @@ const Toast = ({ toast, onClose }) => {
     const ok = toast.type === "success";
     return (
         <div className="fixed top-5 right-5 z-[10001] animate-[toastIn_.25s_ease]">
-            <div className={`flex items-center gap-2.5 pl-4 pr-3 py-3 rounded-2xl shadow-xl border text-sm font-medium
-                ${ok ? "bg-blue-600 border-blue-700 text-white" : "bg-red-600 border-red-700 text-white"}`}>
+            <div className={`flex items-center gap-2.5 pl-4 pr-3 py-3 rounded-2xl shadow-xl border text-sm font-mono font-bold backdrop-blur-xl
+                ${ok ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-400" : "bg-rose-500/10 border-rose-500/30 text-rose-400"}`}>
                 {ok ? <CheckCircle2 size={17} /> : <AlertCircle size={17} />}
                 {toast.message}
-                <button type="button" onClick={onClose} className="cursor-pointer ml-1 h-6 w-6 rounded-lg hover:bg-white/20 flex items-center justify-center">
+                <button type="button" onClick={onClose} className="cursor-pointer ml-1 h-6 w-6 rounded-lg hover:bg-white/10 flex items-center justify-center transition">
                     <X size={14} />
                 </button>
             </div>
@@ -47,11 +48,11 @@ const Toast = ({ toast, onClose }) => {
 const SidebarSkeleton = () => (
     <div className="animate-pulse space-y-3">
         {[...Array(5)].map((_, i) => (
-            <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl">
-                <div className="h-9 w-9 bg-gray-200 rounded-xl shrink-0" />
+            <div key={i} className="flex items-center gap-3 p-3 bg-zinc-900/40 border border-white/5 rounded-2xl">
+                <div className="h-9 w-9 bg-zinc-900 rounded-xl shrink-0" />
                 <div className="flex-1 space-y-1.5">
-                    <div className="h-3 w-3/4 bg-gray-200 rounded-full" />
-                    <div className="h-2.5 w-1/2 bg-gray-100 rounded-full" />
+                    <div className="h-3 w-3/4 bg-zinc-900 rounded-full" />
+                    <div className="h-2.5 w-1/2 bg-zinc-900/60 rounded-full" />
                 </div>
             </div>
         ))}
@@ -175,78 +176,93 @@ const AddExpense = () => {
         }
     };
 
-    const inputCls = (field) => `w-full h-11 px-4 rounded-2xl border text-sm focus:outline-none focus:ring-2 transition
-        ${errors[field] ? "border-red-300 focus:ring-red-400 bg-red-50/40" : "border-gray-200 focus:ring-blue-500"}`;
+    const inputCls = (field) => `w-full h-12 px-4 rounded-2xl border text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 transition [color-scheme:dark]
+        ${errors[field] ? "border-rose-500/50 focus:ring-rose-500/50 bg-rose-500/5 text-white" : "border-white/10 bg-zinc-900/80 focus:ring-cyan-500/50 focus:border-cyan-400 text-white placeholder-zinc-600 shadow-inner"}`;
 
     const selectedCategoryStyle = form.category ? CATEGORY_STYLE[form.category] : null;
     const totalRecent = useMemo(() => recent.reduce((s, r) => s + (r.amount || 0), 0), [recent]);
 
+    // Style injections for scrollbars and animations
+    useEffect(() => {
+        const style = document.createElement("style");
+        style.innerHTML = `
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            .animate-fadeIn { animation: fadeIn .2s ease; }
+            .custom-scrollbar::-webkit-scrollbar { width:4px; height:4px; }
+            .custom-scrollbar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:999px; }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.2); }
+            .custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
+        `;
+        document.head.appendChild(style);
+        return () => document.head.removeChild(style);
+    }, []);
+
     return (
         <DashboardLayout activeMenu="Add Expense">
-            <div className="space-y-5">
+            <div className="space-y-6">
 
                 {/* HEADER */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex items-center gap-3">
                         {isEditMode && (
                             <button type="button" onClick={() => navigate("/admin/expenses")}
-                                className="cursor-pointer h-11 w-11 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center transition shrink-0">
-                                <ArrowLeft size={18} className="text-gray-600" />
+                                className="cursor-pointer h-11 w-11 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-cyan-400 flex items-center justify-center transition shrink-0 shadow-inner">
+                                <ArrowLeft size={18} />
                             </button>
                         )}
                         <div>
-                            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{isEditMode ? "Edit Expense" : "Add Expense"}</h1>
-                            <p className="text-sm text-gray-500 mt-1">
+                            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{isEditMode ? "Edit Expense" : "Add Expense"}</h1>
+                            <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-1">
                                 {isEditMode ? "Update the details of this expense" : "Log a new business expense"}
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-5 items-start">
+                <div className="flex flex-col lg:flex-row gap-6 items-start">
 
                     {/* FORM */}
-                    <div className="flex-1 w-full bg-white border border-gray-200 rounded-3xl p-5 sm:p-7 min-w-0">
+                    <div className="flex-1 w-full bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-5 sm:p-7 min-w-0 shadow-[0_15px_50px_rgba(0,0,0,0.6)]">
                         {loadingEdit ? (
                             <div className="animate-pulse space-y-4">
-                                {[...Array(6)].map((_, i) => <div key={i} className="h-11 bg-gray-100 rounded-2xl" />)}
+                                {[...Array(6)].map((_, i) => <div key={i} className="h-12 bg-zinc-900 rounded-2xl" />)}
                             </div>
                         ) : (
                             <form onSubmit={handleSubmit} className="space-y-5">
 
                                 {/* Title */}
                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">Expense Title <span className="text-red-500">*</span></label>
+                                    <label className="block text-xs font-mono font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">Expense Title <span className="text-rose-400">*</span></label>
                                     <input type="text" value={form.title} onChange={set("title")} placeholder="e.g. AWS hosting bill"
                                         className={inputCls("title")} />
-                                    {errors.title && <p className="text-[11px] text-red-500 mt-1">{errors.title}</p>}
+                                    {errors.title && <p className="text-[11px] font-mono text-rose-400 mt-1">&gt; {errors.title}</p>}
                                 </div>
 
                                 {/* Amount + Date */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-xs font-semibold text-gray-600 mb-1.5">Amount (₹) <span className="text-red-500">*</span></label>
+                                        <label className="block text-xs font-mono font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">Amount (₹) <span className="text-rose-400">*</span></label>
                                         <div className="relative">
-                                            <Wallet size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                                            <Wallet size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none" />
                                             <input type="number" min="0" step="0.01" value={form.amount} onChange={set("amount")} placeholder="0.00"
-                                                className={`${inputCls("amount")} pl-10`} />
+                                                className={`${inputCls("amount")} pl-11`} />
                                         </div>
-                                        {errors.amount && <p className="text-[11px] text-red-500 mt-1">{errors.amount}</p>}
+                                        {errors.amount && <p className="text-[11px] font-mono text-rose-400 mt-1">&gt; {errors.amount}</p>}
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-semibold text-gray-600 mb-1.5">Date <span className="text-red-500">*</span></label>
+                                        <label className="block text-xs font-mono font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">Date <span className="text-rose-400">*</span></label>
                                         <div className="relative">
-                                            <Calendar size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                            <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none" />
                                             <input type="date" value={form.date} onChange={set("date")}
-                                                className={`${inputCls("date")} pl-10 cursor-pointer`} />
+                                                className={`${inputCls("date")} pl-11 cursor-pointer [color-scheme:dark]`} />
                                         </div>
-                                        {errors.date && <p className="text-[11px] text-red-500 mt-1">{errors.date}</p>}
+                                        {errors.date && <p className="text-[11px] font-mono text-rose-400 mt-1">&gt; {errors.date}</p>}
                                     </div>
                                 </div>
 
                                 {/* Category quick-picks */}
                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-600 mb-2">Category <span className="text-red-500">*</span></label>
+                                    <label className="block text-xs font-mono font-bold text-zinc-300 mb-2 uppercase tracking-wider">Category <span className="text-rose-400">*</span></label>
                                     <div className="flex flex-wrap gap-2">
                                         {EXPENSE_CATEGORIES.map(cat => {
                                             const style = CATEGORY_STYLE[cat];
@@ -254,97 +270,108 @@ const AddExpense = () => {
                                             const active = form.category === cat;
                                             return (
                                                 <button key={cat} type="button" onClick={() => set("category")(cat)}
-                                                    className={`cursor-pointer flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-2xl border transition-all
-                                                        ${active ? `${style.solid} text-white border-transparent` : `bg-white ${style.badge} hover:brightness-95`}`}>
-                                                    <Icon size={13} />
+                                                    className={`cursor-pointer flex items-center gap-1.5 text-xs font-mono font-bold px-3.5 py-2 rounded-xl border transition-all shadow-inner
+                                                        ${active ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-zinc-950 border-transparent shadow-[0_0_15px_rgba(56,189,248,0.3)]" : `bg-zinc-900/80 ${style.badge} border-white/10 hover:border-white/20`}`}>
+                                                    <Icon size={14} className={active ? "text-zinc-950 stroke-[3]" : ""} />
                                                     {cat}
                                                 </button>
                                             );
                                         })}
                                     </div>
-                                    {errors.category && <p className="text-[11px] text-red-500 mt-1.5">{errors.category}</p>}
+                                    {errors.category && <p className="text-[11px] font-mono text-rose-400 mt-1.5">&gt; {errors.category}</p>}
                                 </div>
 
                                 {/* Payment mode */}
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">Payment Mode <span className="text-red-500">*</span></label>
+                                <div className="relative">
+                                    <label className="block text-xs font-mono font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">Payment Mode <span className="text-rose-400">*</span></label>
                                     <div className="relative">
-                                        <CreditCard size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                        <CreditCard size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none" />
                                         <select value={form.paymentMode} onChange={set("paymentMode")}
-                                            className={`${inputCls("paymentMode")} pl-10 cursor-pointer bg-white appearance-none`}>
-                                            <option value="">Select payment mode</option>
-                                            {PAYMENT_MODES.map(pm => <option key={pm} value={pm}>{pm}</option>)}
+                                            className={`${inputCls("paymentMode")} appearance-none pl-11 pr-11 cursor-pointer bg-zinc-950/80`}>
+                                            <option value="" className="bg-zinc-900 text-zinc-500">Select payment mode</option>
+                                            {PAYMENT_MODES.map(pm => <option key={pm} value={pm} className="bg-zinc-900 text-white">{pm}</option>)}
                                         </select>
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-cyan-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                        </div>
                                     </div>
-                                    {errors.paymentMode && <p className="text-[11px] text-red-500 mt-1">{errors.paymentMode}</p>}
+                                    {errors.paymentMode && <p className="text-[11px] font-mono text-rose-400 mt-1">&gt; {errors.paymentMode}</p>}
                                 </div>
 
                                 {/* Vendor */}
                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">Paid To / Vendor <span className="text-gray-400 font-normal">(optional)</span></label>
+                                    <label className="block text-xs font-mono font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">Paid To / Vendor <span className="text-zinc-500 font-normal">(optional)</span></label>
                                     <div className="relative">
-                                        <Store size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                                        <Store size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none" />
                                         <input type="text" value={form.vendor} onChange={set("vendor")} placeholder="e.g. Amazon Web Services"
-                                            className={`${inputCls("vendor")} pl-10`} />
+                                            className={`${inputCls("vendor")} pl-11`} />
                                     </div>
                                 </div>
 
                                 {/* Notes */}
                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">Notes <span className="text-gray-400 font-normal">(optional)</span></label>
+                                    <label className="block text-xs font-mono font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">Notes <span className="text-zinc-500 font-normal">(optional)</span></label>
                                     <div className="relative">
-                                        <StickyNote size={15} className="absolute left-4 top-3.5 text-gray-400" />
+                                        <StickyNote size={16} className="absolute left-4 top-3.5 text-cyan-400 z-10 pointer-events-none" />
                                         <textarea rows={3} value={form.notes} onChange={set("notes")} placeholder="Any extra detail about this expense..."
-                                            className={`${inputCls("notes")} !h-auto py-3 pl-10 resize-none`} />
+                                            className={`${inputCls("notes")} !h-auto py-3 pl-11 resize-none`} />
                                     </div>
                                 </div>
 
                                 {/* Recurring */}
-                                <div className="rounded-2xl border border-gray-200 p-4">
+                                <div className="rounded-2xl border border-white/10 bg-zinc-900/40 p-4 shadow-inner">
                                     <label className="flex items-center gap-3 cursor-pointer select-none">
                                         <input type="checkbox" checked={form.isRecurring} onChange={set("isRecurring")}
-                                            className="cursor-pointer h-5 w-5 rounded-md accent-blue-600" />
-                                        <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                                            <Repeat size={15} className="text-indigo-600" /> This is a recurring expense
+                                            className="cursor-pointer h-5 w-5 rounded-md accent-cyan-400 bg-zinc-900 border-white/10" />
+                                        <span className="flex items-center gap-2 text-xs sm:text-sm font-mono font-bold text-white">
+                                            <Repeat size={15} className="text-cyan-400" /> This is a recurring expense
                                         </span>
                                     </label>
                                     {form.isRecurring && (
-                                        <div className="mt-3 pl-8">
-                                            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Frequency <span className="text-red-500">*</span></label>
-                                            <select value={form.recurringFrequency} onChange={set("recurringFrequency")}
-                                                className={`${inputCls("recurringFrequency")} cursor-pointer bg-white max-w-[220px]`}>
-                                                <option value="">Select frequency</option>
-                                                {RECURRING_FREQUENCIES.map(f => <option key={f} value={f}>{f}</option>)}
-                                            </select>
-                                            {errors.recurringFrequency && <p className="text-[11px] text-red-500 mt-1">{errors.recurringFrequency}</p>}
+                                        <div className="mt-4 pl-8">
+                                            <label className="block text-xs font-mono font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">Frequency <span className="text-rose-400">*</span></label>
+                                            <div className="relative max-w-[240px]">
+                                                <select value={form.recurringFrequency} onChange={set("recurringFrequency")}
+                                                    className={`${inputCls("recurringFrequency")} appearance-none pl-4 pr-10 cursor-pointer bg-zinc-900`}>
+                                                    <option value="" className="bg-zinc-900 text-zinc-500">Select frequency</option>
+                                                    {RECURRING_FREQUENCIES.map(f => <option key={f} value={f} className="bg-zinc-900 text-white">{f}</option>)}
+                                                </select>
+                                                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-cyan-400">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                                </div>
+                                            </div>
+                                            {errors.recurringFrequency && <p className="text-[11px] font-mono text-rose-400 mt-1">&gt; {errors.recurringFrequency}</p>}
                                         </div>
                                     )}
                                 </div>
 
                                 {/* Live preview */}
                                 {form.category && form.amount > 0 && (
-                                    <div className="flex items-center gap-3 rounded-2xl border border-blue-100 bg-blue-50 p-4">
-                                        <div className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 ${selectedCategoryStyle.badge} border`}>
-                                            {React.createElement(selectedCategoryStyle.icon, { size: 18 })}
+                                    <div className="flex items-center gap-3 rounded-2xl border border-cyan-500/25 bg-cyan-500/10 p-4 shadow-inner">
+                                        <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${selectedCategoryStyle.badge} border shadow-inner`}>
+                                            {React.createElement(selectedCategoryStyle.icon, { size: 18, className: "stroke-[2.5]" })}
                                         </div>
                                         <div className="min-w-0">
-                                            <p className="text-sm font-semibold text-gray-900 truncate">{form.title || "Untitled expense"}</p>
-                                            <p className="text-xs text-blue-700">{form.category} · {formatCurrency(Number(form.amount) || 0)}</p>
+                                            <p className="text-sm font-mono font-bold text-white truncate tracking-wide">{form.title || "Untitled expense"}</p>
+                                            <p className="text-xs font-mono text-cyan-300 mt-0.5">{form.category} · {formatCurrency(Number(form.amount) || 0)}</p>
                                         </div>
                                     </div>
                                 )}
 
                                 {/* Actions */}
-                                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-                                    <button type="submit" disabled={submitting}
-                                        className="cursor-pointer h-12 px-6 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition disabled:opacity-60 flex items-center justify-center gap-2">
-                                        {submitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                                        {isEditMode ? "Save Changes" : "Save Expense"}
-                                    </button>
+                                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-3 border-t border-white/5">
+                                    <div className="relative group cursor-pointer flex-1 sm:flex-none">
+                                        <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
+                                        <button type="submit" disabled={submitting}
+                                            className="relative cursor-pointer w-full sm:w-auto h-12 px-7 rounded-2xl bg-zinc-950 text-white text-xs sm:text-sm font-mono font-bold border border-white/10 transition-all shadow-lg active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2">
+                                            {submitting ? <Loader2 size={16} className="animate-spin text-cyan-400" /> : <Save size={16} className="text-cyan-400 stroke-[3]" />}
+                                            <span>{isEditMode ? "Save Changes" : "Save Expense"}</span>
+                                        </button>
+                                    </div>
                                     <button type="button" onClick={isEditMode ? () => navigate("/admin/expenses") : resetForm} disabled={submitting}
-                                        className="cursor-pointer h-12 px-6 rounded-2xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition disabled:opacity-60 flex items-center justify-center gap-2">
+                                        className="cursor-pointer h-12 px-6 rounded-2xl border border-white/10 bg-zinc-900/80 text-zinc-300 text-xs sm:text-sm font-mono font-bold hover:bg-zinc-800 hover:text-white transition shadow-inner disabled:opacity-60 flex items-center justify-center gap-2">
                                         {isEditMode ? <X size={16} /> : <RotateCcw size={16} />}
-                                        {isEditMode ? "Cancel" : "Reset"}
+                                        <span>{isEditMode ? "Cancel" : "Reset"}</span>
                                     </button>
                                 </div>
                             </form>
@@ -353,37 +380,37 @@ const AddExpense = () => {
 
                     {/* SIDEBAR — Recent Expenses */}
                     <div className="w-full lg:w-72 xl:w-80 flex flex-col gap-5 shrink-0">
-                        <div className="bg-white border border-gray-200 rounded-3xl p-5">
-                            <div className="flex items-center gap-2.5 mb-4">
-                                <div className="h-9 w-9 rounded-2xl bg-blue-100 flex items-center justify-center shrink-0">
-                                    <Receipt size={16} className="text-blue-600" />
+                        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-5 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0 shadow-inner">
+                                    <Receipt size={18} className="text-cyan-400" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-gray-900">Recently Added</h3>
-                                    <p className="text-xs text-gray-400">{recentLoading ? "Loading…" : `${formatCurrency(totalRecent)} across last ${recent.length}`}</p>
+                                    <h3 className="text-sm font-mono font-bold text-white tracking-wide">Recently Added</h3>
+                                    <p className="text-[11px] font-mono text-zinc-400 mt-0.5">{recentLoading ? "Loading…" : `${formatCurrency(totalRecent)} across last ${recent.length}`}</p>
                                 </div>
                             </div>
                             {recentLoading ? <SidebarSkeleton /> : recent.length === 0 ? (
-                                <div className="border border-dashed border-gray-200 rounded-2xl py-8 text-center">
-                                    <Receipt size={24} className="mx-auto text-gray-300 mb-2" />
-                                    <p className="text-sm font-medium text-gray-600">No expenses yet</p>
-                                    <p className="text-xs text-gray-400 mt-0.5">Your first one will show up here</p>
+                                <div className="border border-dashed border-white/10 rounded-2xl py-8 text-center bg-zinc-900/20">
+                                    <Receipt size={26} className="mx-auto text-zinc-600 mb-2" />
+                                    <p className="text-xs font-mono text-zinc-400">No expenses yet</p>
+                                    <p className="text-[11px] font-mono text-zinc-500 mt-0.5">Your first one will show up here</p>
                                 </div>
                             ) : (
-                                <div className="space-y-2 max-h-[480px] overflow-y-auto custom-scrollbar pr-1">
+                                <div className="space-y-2.5 max-h-[480px] overflow-y-auto custom-scrollbar pr-1">
                                     {recent.map(exp => {
                                         const style = CATEGORY_STYLE[exp.category] || CATEGORY_STYLE.Miscellaneous;
                                         const Icon = style.icon;
                                         return (
-                                            <div key={exp._id} className="flex items-center gap-2.5 px-3 py-2.5 rounded-2xl border border-gray-100 bg-gray-50/60">
-                                                <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 border ${style.badge}`}>
-                                                    <Icon size={13} />
+                                            <div key={exp._id} className="flex items-center gap-2.5 px-3 py-2.5 rounded-2xl border border-white/5 bg-zinc-900/40 hover:bg-zinc-900/80 transition shadow-inner">
+                                                <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 border shadow-inner ${style.badge}`}>
+                                                    <Icon size={14} className="stroke-[2.5]" />
                                                 </div>
                                                 <div className="min-w-0 flex-1">
-                                                    <p className="text-sm font-medium text-gray-900 truncate">{exp.title}</p>
-                                                    <p className="text-xs text-gray-500 mt-0.5">{fmtDate(exp.date)} · {exp.paymentMode}</p>
+                                                    <p className="text-xs sm:text-sm font-mono font-bold text-white truncate">{exp.title}</p>
+                                                    <p className="text-[11px] font-mono text-zinc-400 mt-0.5">{fmtDate(exp.date)} · {exp.paymentMode}</p>
                                                 </div>
-                                                <p className="text-sm font-bold text-gray-900 shrink-0">{formatCurrency(exp.amount)}</p>
+                                                <p className="text-xs sm:text-sm font-mono font-black text-cyan-400 shrink-0">{formatCurrency(exp.amount)}</p>
                                             </div>
                                         );
                                     })}
@@ -395,12 +422,6 @@ const AddExpense = () => {
             </div>
 
             <Toast toast={toast} onClose={() => setToast(null)} />
-
-            <style>{`
-                .custom-scrollbar::-webkit-scrollbar { width:4px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:999px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
-            `}</style>
         </DashboardLayout>
     );
 };

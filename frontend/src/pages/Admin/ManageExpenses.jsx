@@ -1,29 +1,40 @@
+// src/pages/Admin/ManageExpenses.jsx
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
 import axiosInstance from "../../utils/axiosInstance.js";
 import { API_PATHS } from "../../utils/apiPaths.js";
-import { EXPENSE_CATEGORIES, CATEGORY_STYLE, formatCurrency, fmtDate } from "../../utils/expenseConstants.js";
 import {
-    Plus, RefreshCcw, Search, Pencil, Trash2, X, ChevronDown, ChevronUp,
-    Receipt, Layers, CheckCircle2, AlertCircle, Loader2, FolderOpen,
+    EXPENSE_CATEGORIES, CATEGORY_STYLE, PAYMENT_MODES,
+    formatCurrency, fmtDate,
+} from "../../utils/expenseConstants.js";
+import {
+    Plus, RefreshCcw, Search, Download, Pencil, Trash2, X,
+    ChevronLeft, ChevronRight, Wallet, TrendingUp, TrendingDown,
+    Receipt, ArrowUpDown, CheckCircle2, AlertCircle, Loader2, Filter,
+    FolderOpen, Layers, ChevronDown, ChevronUp
 } from "lucide-react";
+import ExpenseNavDropdown from "../../components/ExpenseNavbarDropdown.jsx"
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SKELETON
+// SKELETONS (Dark Mode Cyber Pulse)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const Skeleton = () => (
-    <div className="space-y-4 animate-pulse">
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {[...Array(3)].map((_, i) => <div key={i} className="h-[68px] bg-gray-100 rounded-2xl" />)}
-        </div>
-        {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-white border border-gray-200 rounded-3xl p-5 space-y-3">
-                <div className="h-6 w-40 bg-gray-200 rounded-lg" />
-                {[...Array(2)].map((_, j) => <div key={j} className="h-16 bg-gray-100 rounded-2xl" />)}
-            </div>
-        ))}
+const SkeletonBlock = ({ className }) => (
+    <div
+        className={`bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 bg-[length:200%_100%] animate-shimmer rounded-xl border border-white/5 ${className}`}
+    />
+);
+
+const StatSkeleton = () => (
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 animate-pulse">
+        {[...Array(3)].map((_, i) => <SkeletonBlock key={i} className="h-[76px] rounded-2xl" />)}
+    </div>
+);
+
+const TableSkeleton = () => (
+    <div className="animate-pulse space-y-4 mt-4">
+        {[...Array(4)].map((_, i) => <SkeletonBlock key={i} className="h-[72px] rounded-[2rem]" />)}
     </div>
 );
 
@@ -41,11 +52,11 @@ const Toast = ({ toast, onClose }) => {
     const ok = toast.type === "success";
     return (
         <div className="fixed top-5 right-5 z-[10001] animate-[toastIn_.25s_ease]">
-            <div className={`flex items-center gap-2.5 pl-4 pr-3 py-3 rounded-2xl shadow-xl border text-sm font-medium
-                ${ok ? "bg-blue-600 border-blue-700 text-white" : "bg-red-600 border-red-700 text-white"}`}>
+            <div className={`flex items-center gap-2.5 pl-4 pr-3 py-3 rounded-2xl shadow-xl border text-sm font-mono font-bold backdrop-blur-xl
+                ${ok ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" : "bg-rose-500/10 border-rose-500/30 text-rose-400"}`}>
                 {ok ? <CheckCircle2 size={17} /> : <AlertCircle size={17} />}
                 {toast.message}
-                <button type="button" onClick={onClose} className="cursor-pointer ml-1 h-6 w-6 rounded-lg hover:bg-white/20 flex items-center justify-center">
+                <button type="button" onClick={onClose} className="cursor-pointer ml-1 h-6 w-6 rounded-lg hover:bg-white/10 flex items-center justify-center transition">
                     <X size={14} />
                 </button>
             </div>
@@ -60,22 +71,26 @@ const Toast = ({ toast, onClose }) => {
 const ConfirmDeleteModal = ({ expense, onClose, onConfirm, deleting }) => {
     if (!expense) return null;
     return (
-        <div className="fixed inset-0 z-[10000] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-            <div className="w-full max-w-sm bg-white rounded-[26px] shadow-2xl p-6 animate-[modalPop_.2s_ease]" onClick={e => e.stopPropagation()}>
-                <div className="h-12 w-12 rounded-2xl bg-red-100 flex items-center justify-center mx-auto mb-4">
-                    <Trash2 size={20} className="text-red-600" />
+        <div className="fixed inset-0 z-[10000] bg-zinc-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn" onClick={onClose}>
+            <div className="w-full max-w-sm bg-zinc-950/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_25px_70px_rgba(0,0,0,0.95)] p-6 animate-[modalPop_.2s_ease] relative overflow-hidden" onClick={e => e.stopPropagation()}>
+
+                {/* Top Ambient Glow Line */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-transparent via-rose-500 to-transparent shadow-[0_0_10px_rgba(244,63,94,0.8)]"></div>
+
+                <div className="h-12 w-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-4 shadow-inner">
+                    <Trash2 size={20} className="text-rose-400" />
                 </div>
-                <h3 className="text-base font-bold text-gray-900 text-center">Delete this expense?</h3>
-                <p className="text-sm text-gray-500 text-center mt-1.5">
+                <h3 className="text-base font-mono font-black text-white text-center tracking-wide">Delete this expense?</h3>
+                <p className="text-xs sm:text-sm font-mono text-zinc-400 text-center mt-1.5 leading-relaxed">
                     "{expense.title}" ({formatCurrency(expense.amount)}) will be permanently removed.
                 </p>
-                <div className="flex items-center gap-3 mt-6">
+                <div className="flex items-center gap-3 mt-6 pt-4 border-t border-white/5">
                     <button type="button" onClick={onClose} disabled={deleting}
-                        className="cursor-pointer flex-1 h-11 rounded-2xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition disabled:opacity-60">
+                        className="cursor-pointer flex-1 h-11 rounded-2xl border border-white/10 bg-zinc-900/80 text-zinc-300 text-xs sm:text-sm font-mono font-bold hover:bg-zinc-800 hover:text-white transition shadow-inner disabled:opacity-60">
                         Cancel
                     </button>
                     <button type="button" onClick={onConfirm} disabled={deleting}
-                        className="cursor-pointer flex-1 h-11 rounded-2xl bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition disabled:opacity-60 flex items-center justify-center gap-2">
+                        className="cursor-pointer flex-1 h-11 rounded-2xl bg-rose-500/20 border border-rose-500/30 hover:bg-rose-500/30 text-rose-400 text-xs sm:text-sm font-mono font-bold transition disabled:opacity-60 flex items-center justify-center gap-2 shadow-lg active:scale-95">
                         {deleting && <Loader2 size={15} className="animate-spin" />}
                         Delete
                     </button>
@@ -90,23 +105,23 @@ const ConfirmDeleteModal = ({ expense, onClose, onConfirm, deleting }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ExpenseRow = ({ exp, onEdit, onDelete }) => (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-2xl border border-gray-100 bg-gray-50/60 hover:bg-white hover:border-gray-200 transition px-4 py-3">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-2xl border border-white/5 bg-zinc-900/40 hover:bg-zinc-900/80 transition px-4 py-3 shadow-inner">
         <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-gray-900 truncate">{exp.title}</p>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs sm:text-sm font-mono font-bold text-white truncate">{exp.title}</p>
+            <p className="text-[11px] font-mono text-zinc-400 mt-0.5">
                 {fmtDate(exp.date)} · {exp.paymentMode}{exp.vendor ? ` · ${exp.vendor}` : ""}
             </p>
         </div>
         <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 shrink-0">
-            <p className="text-sm font-bold text-gray-900 whitespace-nowrap">{formatCurrency(exp.amount)}</p>
+            <p className="text-sm font-mono font-black text-white whitespace-nowrap">{formatCurrency(exp.amount)}</p>
             <div className="flex items-center gap-1.5">
                 <button type="button" onClick={() => onEdit(exp)} title="Edit expense" aria-label="Edit expense"
-                    className="cursor-pointer h-9 w-9 rounded-2xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 active:bg-blue-100 flex items-center justify-center transition">
-                    <Pencil size={14} className="text-blue-600" />
+                    className="cursor-pointer h-8 w-8 rounded-xl border border-white/10 bg-zinc-900 hover:bg-zinc-800 text-cyan-400 flex items-center justify-center shrink-0 transition shadow-inner active:scale-95">
+                    <Pencil size={13} />
                 </button>
                 <button type="button" onClick={() => onDelete(exp)} title="Delete expense" aria-label="Delete expense"
-                    className="cursor-pointer h-9 w-9 rounded-2xl border border-gray-200 bg-white hover:bg-red-50 hover:border-red-300 active:bg-red-100 flex items-center justify-center transition">
-                    <Trash2 size={14} className="text-red-600" />
+                    className="cursor-pointer h-8 w-8 rounded-xl border border-white/10 bg-zinc-900 hover:bg-zinc-800 text-rose-400 flex items-center justify-center shrink-0 transition shadow-inner active:scale-95">
+                    <Trash2 size={13} />
                 </button>
             </div>
         </div>
@@ -123,26 +138,28 @@ const CategoryGroup = ({ category, items, collapsed, onToggle, onEdit, onDelete 
     const total = items.reduce((s, e) => s + (e.amount || 0), 0);
 
     return (
-        <div className="bg-white border border-gray-200 rounded-3xl overflow-hidden">
+        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
             <button type="button" onClick={onToggle}
-                className="cursor-pointer w-full flex items-center justify-between gap-3 px-5 py-4 hover:bg-gray-50/80 transition text-left">
+                className="cursor-pointer w-full flex items-center justify-between gap-3 px-5 py-4 hover:bg-zinc-900/40 transition text-left outline-none">
                 <div className="flex items-center gap-3 min-w-0">
-                    <div className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 border ${style.badge}`}>
-                        <Icon size={17} />
+                    <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 border shadow-inner ${style.badge}`}>
+                        <Icon size={16} className="stroke-[2.5]" />
                     </div>
                     <div className="min-w-0">
-                        <p className="text-sm font-bold text-gray-900 truncate">{category}</p>
-                        <p className="text-xs text-gray-400">{items.length} expense{items.length !== 1 ? "s" : ""}</p>
+                        <p className="text-sm font-mono font-bold text-white truncate tracking-wide">{category}</p>
+                        <p className="text-[11px] font-mono text-zinc-400">{items.length} expense{items.length !== 1 ? "s" : ""}</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-3 shrink-0">
-                    <p className="text-sm sm:text-base font-extrabold text-gray-900 whitespace-nowrap">{formatCurrency(total)}</p>
-                    {collapsed ? <ChevronDown size={18} className="text-gray-400" /> : <ChevronUp size={18} className="text-gray-400" />}
+                <div className="flex items-center gap-4 shrink-0">
+                    <p className="text-sm sm:text-base font-mono font-black text-cyan-400 whitespace-nowrap">{formatCurrency(total)}</p>
+                    <div className="h-8 w-8 rounded-lg bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0 shadow-inner">
+                        {collapsed ? <ChevronDown size={16} className="text-zinc-500" /> : <ChevronUp size={16} className="text-cyan-400" />}
+                    </div>
                 </div>
             </button>
 
             {!collapsed && (
-                <div className="px-4 sm:px-5 pb-4 sm:pb-5 space-y-2 border-t border-gray-100 pt-4">
+                <div className="px-4 sm:px-5 pb-4 sm:pb-5 space-y-2 border-t border-white/5 pt-4 bg-zinc-950/40">
                     {items.map(exp => (
                         <ExpenseRow key={exp._id} exp={exp} onEdit={onEdit} onDelete={onDelete} />
                     ))}
@@ -249,54 +266,74 @@ const ManageExpenses = () => {
 
     const hasData = expenses.length > 0;
 
+    // Inline style injections for animations
+    useEffect(() => {
+        const style = document.createElement("style");
+        style.innerHTML = `
+            @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+            .animate-shimmer { animation: shimmer 2s infinite linear; }
+            @keyframes modalPop { from { opacity:0; transform:scale(.96) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+            @keyframes toastIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            .animate-fadeIn { animation: fadeIn .2s ease; }
+            .scrollbar-hide::-webkit-scrollbar { display: none; }
+            .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        `;
+        document.head.appendChild(style);
+        return () => document.head.removeChild(style);
+    }, []);
+
     return (
         <DashboardLayout activeMenu="Manage Expenses">
-            <div className="space-y-5">
+            <div className="space-y-6">
 
                 {/* HEADER */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Manage Expenses</h1>
-                        <p className="text-sm text-gray-500 mt-1">All expenses grouped by category — edit or remove anything</p>
+                        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Manage Expenses</h1>
+                        <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-1">All expenses grouped by category — edit or remove anything</p>
                     </div>
-                    <div className="flex items-center gap-2 self-start sm:self-auto">
+                    <div className="flex items-center gap-3 self-start sm:self-auto">
                         <button type="button" onClick={() => fetchExpenses({ isRefresh: true })} disabled={loading || refreshing}
-                            className="cursor-pointer h-11 w-11 sm:w-auto sm:px-4 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-60 text-gray-700 flex items-center justify-center gap-2 text-sm font-medium transition-all">
-                            <RefreshCcw size={16} className={refreshing ? "animate-spin" : ""} />
+                            className="cursor-pointer h-11 px-4 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 disabled:opacity-60 text-zinc-300 hover:text-white flex items-center justify-center gap-2 text-xs sm:text-sm font-mono font-bold transition-all shadow-inner">
+                            <RefreshCcw size={16} className={refreshing ? "animate-spin text-cyan-400" : "text-cyan-400"} />
                             <span className="hidden sm:inline">Refresh</span>
                         </button>
-                        <button type="button" onClick={() => navigate("/admin/add-expense")}
-                            className="cursor-pointer h-11 px-4 sm:px-5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 text-sm font-semibold transition-all shadow-sm shadow-blue-200">
-                            <Plus size={17} />
-                            Create Expense
-                        </button>
+                        <div className="relative group cursor-pointer">
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
+                            <button type="button" onClick={() => navigate("/admin/add-expense")}
+                                className="relative cursor-pointer h-11 px-5 rounded-2xl bg-zinc-950 text-white flex items-center gap-2 text-xs sm:text-sm font-mono font-bold border border-white/10 transition-all shadow-lg active:scale-95">
+                                <Plus size={16} className="text-cyan-400 stroke-[3]" />
+                                Create Expense
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                {loading ? <Skeleton /> : (
+                {/* STAT CARDS */}
+                {loading ? <StatSkeleton /> : (
                     <>
-                        {/* STAT PILLS */}
                         {hasData && (
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                                    <div className="h-9 w-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><Receipt size={16} /></div>
+                                <div className="bg-zinc-950/60 backdrop-blur-3xl border border-blue-500/20 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 shadow-inner relative overflow-hidden">
+                                    <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-400 border border-white/5 flex items-center justify-center shrink-0 shadow-inner"><Receipt size={16} /></div>
                                     <div className="min-w-0">
-                                        <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Expenses</p>
-                                        <p className="text-base font-bold text-gray-900 mt-0.5 truncate">{stats.totalExpenses}</p>
+                                        <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate">Expenses</p>
+                                        <p className="text-xl font-mono font-black text-white mt-0.5 truncate">{stats.totalExpenses}</p>
                                     </div>
                                 </div>
-                                <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                                    <div className="h-9 w-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><FolderOpen size={16} /></div>
+                                <div className="bg-zinc-950/60 backdrop-blur-3xl border border-indigo-500/20 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 shadow-inner relative overflow-hidden">
+                                    <div className="h-10 w-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-white/5 flex items-center justify-center shrink-0 shadow-inner"><FolderOpen size={16} /></div>
                                     <div className="min-w-0">
-                                        <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Categories</p>
-                                        <p className="text-base font-bold text-gray-900 mt-0.5 truncate">{stats.totalCategories}</p>
+                                        <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate">Categories</p>
+                                        <p className="text-xl font-mono font-black text-white mt-0.5 truncate">{stats.totalCategories}</p>
                                     </div>
                                 </div>
-                                <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3 col-span-2 sm:col-span-1">
-                                    <div className="h-9 w-9 rounded-xl bg-green-100 text-green-600 flex items-center justify-center shrink-0"><Layers size={16} /></div>
+                                <div className="bg-zinc-950/60 backdrop-blur-3xl border border-emerald-500/20 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 shadow-inner relative overflow-hidden col-span-2 sm:col-span-1">
+                                    <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-white/5 flex items-center justify-center shrink-0 shadow-inner"><Layers size={16} /></div>
                                     <div className="min-w-0">
-                                        <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Total Amount</p>
-                                        <p className="text-base font-bold text-gray-900 mt-0.5 truncate">{formatCurrency(stats.totalAmount)}</p>
+                                        <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate">Total Amount</p>
+                                        <p className="text-xl font-mono font-black text-white mt-0.5 truncate">{formatCurrency(stats.totalAmount)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -304,22 +341,22 @@ const ManageExpenses = () => {
 
                         {/* SEARCH + EXPAND/COLLAPSE ALL */}
                         {hasData && (
-                            <div className="bg-white border border-gray-200 rounded-3xl p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                            <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-center py-2">
                                 <div className="relative flex-1 min-w-[180px]">
-                                    <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                                    <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none" />
                                     <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                                         placeholder="Search by title, vendor, category or payment mode..."
-                                        className="w-full h-10 pl-10 pr-10 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+                                        className="w-full h-12 pl-11 pr-10 rounded-2xl border border-white/10 bg-zinc-950/80 backdrop-blur-xl outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-xs sm:text-sm font-mono text-white placeholder-zinc-500 transition-all shadow-inner" />
                                     {searchQuery && (
                                         <button type="button" onClick={() => setSearchQuery("")}
-                                            className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 rounded-lg hover:bg-gray-100 flex items-center justify-center">
-                                            <X size={14} className="text-gray-400" />
+                                            className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 h-7 w-7 rounded-xl hover:bg-zinc-800 flex items-center justify-center transition">
+                                            <X size={14} className="text-zinc-400 hover:text-white" />
                                         </button>
                                     )}
                                 </div>
                                 <button type="button" onClick={toggleAll} disabled={grouped.length === 0}
-                                    className="cursor-pointer h-10 px-4 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-50 text-gray-600 text-sm font-medium transition-all flex items-center gap-2 self-start sm:self-auto">
-                                    {allCollapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+                                    className="cursor-pointer h-12 px-5 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 disabled:opacity-50 text-zinc-300 hover:text-white text-xs sm:text-sm font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-inner shrink-0 sm:w-auto w-full">
+                                    {allCollapsed ? <ChevronDown size={16} className="text-cyan-400" /> : <ChevronUp size={16} className="text-cyan-400" />}
                                     {allCollapsed ? "Expand All" : "Collapse All"}
                                 </button>
                             </div>
@@ -327,32 +364,37 @@ const ManageExpenses = () => {
 
                         {/* RESULTS COUNT */}
                         {hasData && (
-                            <p className="text-sm text-gray-500 px-1">
-                                {filtered.length} expense{filtered.length !== 1 ? "s" : ""} across {grouped.length} categor{grouped.length !== 1 ? "ies" : "y"}
-                                {searchQuery && <span> matching "<span className="font-medium text-gray-700">{searchQuery}</span>"</span>}
+                            <p className="text-xs sm:text-sm font-mono text-zinc-400 px-1">
+                                {filtered.length} expense{filtered.length !== 1 ? "s" : ""} across <span className="font-bold text-white">{grouped.length}</span> categor{grouped.length !== 1 ? "ies" : "y"}
+                                {searchQuery && <span> matching "<span className="font-bold text-cyan-400">{searchQuery}</span>"</span>}
                             </p>
                         )}
 
                         {/* GROUPED LIST */}
                         {!hasData ? (
-                            <div className="bg-white border border-dashed border-gray-300 rounded-3xl py-16 text-center">
-                                <div className="h-16 w-16 rounded-3xl bg-blue-50 flex items-center justify-center mx-auto mb-4">
-                                    <Receipt size={28} className="text-blue-400" />
+                            <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center backdrop-blur-xl mt-6">
+                                <div className="w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 mx-auto flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(56,189,248,0.15)]">
+                                    <Receipt size={36} className="text-cyan-400" />
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-800">No expenses yet</h3>
-                                <p className="text-sm text-gray-500 mt-2 max-w-sm mx-auto">
+                                <h3 className="text-xl md:text-2xl font-mono font-black text-white tracking-tight">No expenses yet</h3>
+                                <p className="text-zinc-400 max-w-md mt-2 leading-relaxed font-mono text-xs sm:text-sm">
                                     Add your first expense to start tracking and organizing spend by category.
                                 </p>
-                                <button type="button" onClick={() => navigate("/admin/add-expense")}
-                                    className="cursor-pointer mt-5 h-11 px-5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-all inline-flex items-center gap-2">
-                                    <Plus size={16} /> Create Expense
-                                </button>
+                                <div className="relative group cursor-pointer mt-6">
+                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
+                                    <button type="button" onClick={() => navigate("/admin/add-expense")}
+                                        className="relative cursor-pointer h-12 px-8 rounded-2xl bg-zinc-950 text-white font-mono font-bold flex items-center gap-2 border border-white/10 transition-all active:scale-95 shadow-lg">
+                                        <Plus size={16} className="text-cyan-400 stroke-[3]" /> Create Expense
+                                    </button>
+                                </div>
                             </div>
                         ) : grouped.length === 0 ? (
-                            <div className="bg-white border border-dashed border-gray-300 rounded-3xl py-16 text-center">
-                                <Search size={28} className="mx-auto text-gray-300 mb-3" />
-                                <h3 className="text-lg font-bold text-gray-800">No matching expenses</h3>
-                                <p className="text-sm text-gray-500 mt-2 max-w-sm mx-auto">Try a different search term.</p>
+                            <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-16 flex flex-col items-center justify-center text-center backdrop-blur-xl mt-6">
+                                <div className="w-16 h-16 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center mb-4">
+                                    <Search size={26} className="text-zinc-500" />
+                                </div>
+                                <h3 className="text-base sm:text-lg font-mono font-bold text-white">No matching expenses</h3>
+                                <p className="text-xs font-mono text-zinc-500 mt-1">Try a different search term.</p>
                             </div>
                         ) : (
                             <div className="space-y-4">
@@ -376,10 +418,6 @@ const ManageExpenses = () => {
             <ConfirmDeleteModal expense={deleteTarget} deleting={deleting} onClose={() => setDeleteTarget(null)} onConfirm={handleDeleteConfirm} />
             <Toast toast={toast} onClose={() => setToast(null)} />
 
-            <style>{`
-                @keyframes modalPop { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
-                @keyframes toastIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
-            `}</style>
         </DashboardLayout>
     );
 };

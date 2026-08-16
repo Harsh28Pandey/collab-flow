@@ -15,18 +15,28 @@ import {
 import ExpenseNavDropdown from "../../components/ExpenseNavbarDropdown.jsx"
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SKELETONS
+// SKELETONS (Dark Mode Cyber Pulse)
 // ─────────────────────────────────────────────────────────────────────────────
 
+const SkeletonBlock = ({ className }) => (
+    <div
+        className={`bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 bg-[length:200%_100%] animate-shimmer rounded-xl border border-white/5 ${className}`}
+    />
+);
+
 const StatSkeleton = () => (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 animate-pulse">
-        {[...Array(5)].map((_, i) => <div key={i} className="h-[68px] bg-gray-100 rounded-2xl" />)}
+    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3 animate-pulse">
+        <SkeletonBlock className="h-[76px] rounded-2xl flex" />
+        <SkeletonBlock className="h-[76px] rounded-2xl hidden sm:flex" />
+        <SkeletonBlock className="h-[76px] rounded-2xl hidden sm:flex" />
+        <SkeletonBlock className="h-[76px] rounded-2xl flex" />
+        <SkeletonBlock className="h-[76px] rounded-2xl flex" />
     </div>
 );
 
 const TableSkeleton = () => (
-    <div className="animate-pulse space-y-2">
-        {[...Array(8)].map((_, i) => <div key={i} className="h-14 bg-gray-100 rounded-2xl" />)}
+    <div className="animate-pulse space-y-3 mt-4">
+        {[...Array(8)].map((_, i) => <SkeletonBlock key={i} className="h-16 rounded-2xl" />)}
     </div>
 );
 
@@ -44,11 +54,11 @@ const Toast = ({ toast, onClose }) => {
     const ok = toast.type === "success";
     return (
         <div className="fixed top-5 right-5 z-[10001] animate-[toastIn_.25s_ease]">
-            <div className={`flex items-center gap-2.5 pl-4 pr-3 py-3 rounded-2xl shadow-xl border text-sm font-medium
-                ${ok ? "bg-blue-600 border-blue-700 text-white" : "bg-red-600 border-red-700 text-white"}`}>
+            <div className={`flex items-center gap-2.5 pl-4 pr-3 py-3 rounded-2xl shadow-xl border text-sm font-mono font-bold backdrop-blur-xl
+                ${ok ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-400" : "bg-rose-500/10 border-rose-500/30 text-rose-400"}`}>
                 {ok ? <CheckCircle2 size={17} /> : <AlertCircle size={17} />}
                 {toast.message}
-                <button type="button" onClick={onClose} className="cursor-pointer ml-1 h-6 w-6 rounded-lg hover:bg-white/20 flex items-center justify-center">
+                <button type="button" onClick={onClose} className="cursor-pointer ml-1 h-6 w-6 rounded-lg hover:bg-white/10 flex items-center justify-center transition">
                     <X size={14} />
                 </button>
             </div>
@@ -63,22 +73,26 @@ const Toast = ({ toast, onClose }) => {
 const ConfirmDeleteModal = ({ expense, onClose, onConfirm, deleting }) => {
     if (!expense) return null;
     return (
-        <div className="fixed inset-0 z-[10000] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-            <div className="w-full max-w-sm bg-white rounded-[26px] shadow-2xl p-6 animate-[modalPop_.2s_ease]" onClick={e => e.stopPropagation()}>
-                <div className="h-12 w-12 rounded-2xl bg-red-100 flex items-center justify-center mx-auto mb-4">
-                    <Trash2 size={20} className="text-red-600" />
+        <div className="fixed inset-0 z-[10000] bg-zinc-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn" onClick={onClose}>
+            <div className="w-full max-w-sm bg-zinc-950/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_25px_70px_rgba(0,0,0,0.95)] p-6 animate-[modalPop_.2s_ease]" onClick={e => e.stopPropagation()}>
+                
+                {/* Top Ambient Glow Line */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-transparent via-rose-500 to-transparent shadow-[0_0_10px_rgba(244,63,94,0.8)]"></div>
+
+                <div className="h-12 w-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-4 shadow-inner">
+                    <Trash2 size={20} className="text-rose-400" />
                 </div>
-                <h3 className="text-base font-bold text-gray-900 text-center">Delete this expense?</h3>
-                <p className="text-sm text-gray-500 text-center mt-1.5">
+                <h3 className="text-base font-mono font-black text-white text-center tracking-wide">Delete this expense?</h3>
+                <p className="text-xs sm:text-sm font-mono text-zinc-400 text-center mt-1.5 leading-relaxed">
                     "{expense.title}" ({formatCurrency(expense.amount)}) will be permanently removed.
                 </p>
-                <div className="flex items-center gap-3 mt-6">
+                <div className="flex items-center gap-3 mt-6 pt-4 border-t border-white/5">
                     <button type="button" onClick={onClose} disabled={deleting}
-                        className="cursor-pointer flex-1 h-11 rounded-2xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition disabled:opacity-60">
+                        className="cursor-pointer flex-1 h-11 rounded-2xl border border-white/10 bg-zinc-900/80 text-zinc-300 text-xs sm:text-sm font-mono font-bold hover:bg-zinc-800 hover:text-white transition shadow-inner disabled:opacity-60">
                         Cancel
                     </button>
                     <button type="button" onClick={onConfirm} disabled={deleting}
-                        className="cursor-pointer flex-1 h-11 rounded-2xl bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition disabled:opacity-60 flex items-center justify-center gap-2">
+                        className="cursor-pointer flex-1 h-11 rounded-2xl bg-rose-500/20 border border-rose-500/30 hover:bg-rose-500/30 text-rose-400 text-xs sm:text-sm font-mono font-bold transition disabled:opacity-60 flex items-center justify-center gap-2 shadow-lg active:scale-95">
                         {deleting && <Loader2 size={15} className="animate-spin" />}
                         Delete
                     </button>
@@ -96,33 +110,33 @@ const ExpenseTableRow = ({ exp, onEdit, onDelete }) => {
     const style = CATEGORY_STYLE[exp.category] || CATEGORY_STYLE.Miscellaneous;
     const Icon = style.icon;
     return (
-        <tr className="hover:bg-gray-50/80 transition">
-            <td className="py-3 px-4 text-sm text-gray-600 whitespace-nowrap">{fmtDate(exp.date)}</td>
+        <tr className="hover:bg-zinc-900/40 transition-all duration-200 border-b border-white/5 last:border-0">
+            <td className="py-3 px-4 text-xs font-mono text-zinc-400 whitespace-nowrap">{fmtDate(exp.date)}</td>
             <td className="py-3 px-4">
-                <div className="flex items-center gap-2.5 min-w-0">
-                    <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 border ${style.badge}`}>
-                        <Icon size={13} />
+                <div className="flex items-center gap-3 min-w-0">
+                    <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 border shadow-inner ${style.badge}`}>
+                        <Icon size={14} className="stroke-[2.5]" />
                     </div>
                     <div className="min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate max-w-[220px]">{exp.title}</p>
-                        {exp.vendor && <p className="text-xs text-gray-400 truncate max-w-[220px]">{exp.vendor}</p>}
+                        <p className="text-sm font-mono font-bold text-white truncate max-w-[220px] tracking-wide">{exp.title}</p>
+                        {exp.vendor && <p className="text-[11px] font-mono text-zinc-500 truncate max-w-[220px] mt-0.5">{exp.vendor}</p>}
                     </div>
                 </div>
             </td>
             <td className="py-3 px-4">
-                <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full border ${style.badge} whitespace-nowrap`}>{exp.category}</span>
+                <span className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg border shadow-inner whitespace-nowrap ${style.badge}`}>{exp.category}</span>
             </td>
-            <td className="py-3 px-4 text-sm text-gray-600 whitespace-nowrap">{exp.paymentMode}</td>
-            <td className="py-3 px-4 text-sm font-bold text-gray-900 whitespace-nowrap text-right">{formatCurrency(exp.amount)}</td>
+            <td className="py-3 px-4 text-xs font-mono text-zinc-400 whitespace-nowrap">{exp.paymentMode}</td>
+            <td className="py-3 px-4 text-sm font-mono font-black text-white whitespace-nowrap text-right">{formatCurrency(exp.amount)}</td>
             <td className="py-3 px-4">
                 <div className="flex items-center justify-end gap-1.5">
                     <button type="button" onClick={() => onEdit(exp)} title="Edit expense" aria-label="Edit expense"
-                        className="cursor-pointer h-9 w-9 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 active:bg-blue-100 flex items-center justify-center transition">
-                        <Pencil size={14} className="text-blue-600" />
+                        className="cursor-pointer h-8 w-8 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-cyan-400 flex items-center justify-center transition shadow-inner active:scale-95">
+                        <Pencil size={13} />
                     </button>
                     <button type="button" onClick={() => onDelete(exp)} title="Delete expense" aria-label="Delete expense"
-                        className="cursor-pointer h-9 w-9 rounded-xl border border-gray-200 bg-white hover:bg-red-50 hover:border-red-300 active:bg-red-100 flex items-center justify-center transition">
-                        <Trash2 size={14} className="text-red-600" />
+                        className="cursor-pointer h-8 w-8 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-rose-400 flex items-center justify-center transition shadow-inner active:scale-95">
+                        <Trash2 size={13} />
                     </button>
                 </div>
             </td>
@@ -138,29 +152,29 @@ const ExpenseCard = ({ exp, onEdit, onDelete }) => {
     const style = CATEGORY_STYLE[exp.category] || CATEGORY_STYLE.Miscellaneous;
     const Icon = style.icon;
     return (
-        <div className="rounded-2xl border border-gray-200 p-4 bg-white">
-            <div className="flex items-start justify-between gap-2">
-                <div className="flex items-start gap-2.5 min-w-0">
-                    <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 border ${style.badge}`}>
-                        <Icon size={15} />
+        <div className="rounded-[2rem] border border-white/10 p-5 bg-zinc-950/60 backdrop-blur-3xl shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+            <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-3 min-w-0">
+                    <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 border shadow-inner ${style.badge}`}>
+                        <Icon size={16} className="stroke-[2.5]" />
                     </div>
                     <div className="min-w-0">
-                        <p className="text-sm font-semibold text-gray-900 truncate">{exp.title}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{fmtDate(exp.date)} · {exp.paymentMode}</p>
+                        <p className="text-sm font-mono font-bold text-white truncate tracking-wide">{exp.title}</p>
+                        <p className="text-[11px] font-mono text-zinc-500 mt-0.5">{fmtDate(exp.date)} · {exp.paymentMode}</p>
                     </div>
                 </div>
-                <p className="text-base font-bold text-gray-900 shrink-0">{formatCurrency(exp.amount)}</p>
+                <p className="text-base font-mono font-black text-white shrink-0">{formatCurrency(exp.amount)}</p>
             </div>
-            <div className="flex items-center justify-between gap-2 mt-3">
-                <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full border ${style.badge}`}>{exp.category}</span>
-                <div className="flex items-center gap-1.5">
+            <div className="flex items-center justify-between gap-2 mt-4 pt-4 border-t border-white/5">
+                <span className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg border shadow-inner ${style.badge}`}>{exp.category}</span>
+                <div className="flex items-center gap-2">
                     <button type="button" onClick={() => onEdit(exp)} title="Edit expense" aria-label="Edit expense"
-                        className="cursor-pointer h-9 w-9 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 active:bg-blue-100 flex items-center justify-center transition">
-                        <Pencil size={14} className="text-blue-600" />
+                        className="cursor-pointer h-8 w-8 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-cyan-400 flex items-center justify-center transition shadow-inner active:scale-95">
+                        <Pencil size={13} />
                     </button>
                     <button type="button" onClick={() => onDelete(exp)} title="Delete expense" aria-label="Delete expense"
-                        className="cursor-pointer h-9 w-9 rounded-xl border border-gray-200 bg-white hover:bg-red-50 hover:border-red-300 active:bg-red-100 flex items-center justify-center transition">
-                        <Trash2 size={14} className="text-red-600" />
+                        className="cursor-pointer h-8 w-8 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-rose-400 flex items-center justify-center transition shadow-inner active:scale-95">
+                        <Trash2 size={13} />
                     </button>
                 </div>
             </div>
@@ -304,124 +318,165 @@ const Expenses = () => {
 
     const hasData = expenses.length > 0;
 
+    // Inline style injections for animations
+    useEffect(() => {
+        const style = document.createElement("style");
+        style.innerHTML = `
+            @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+            .animate-shimmer { animation: shimmer 2s infinite linear; }
+            @keyframes modalPop { from { opacity:0; transform:scale(.96) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+            @keyframes toastIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            .animate-fadeIn { animation: fadeIn .2s ease; }
+            .scrollbar-hide::-webkit-scrollbar { display: none; }
+            .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        `;
+        document.head.appendChild(style);
+        return () => document.head.removeChild(style);
+    }, []);
+
     return (
         <DashboardLayout activeMenu="Expenses">
-            <div className="space-y-5">
+            <div className="space-y-6">
 
                 {/* HEADER */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Expenses</h1>
-                        <p className="text-sm text-gray-500 mt-1">Track, filter and manage every business expense</p>
+                        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Expenses</h1>
+                        <p className="text-xs sm:text-sm font-mono text-zinc-400 mt-1">Track, filter and manage every business expense</p>
                     </div>
-                    <div className="flex items-center gap-2 self-start sm:self-auto">
+                    <div className="flex items-center gap-3 self-start sm:self-auto">
                         <button type="button" onClick={() => fetchData({ isRefresh: true })} disabled={loading || refreshing}
-                            className="cursor-pointer h-11 w-11 sm:w-auto sm:px-4 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-60 text-gray-700 flex items-center justify-center gap-2 text-sm font-medium transition-all">
-                            <RefreshCcw size={16} className={refreshing ? "animate-spin" : ""} />
+                            className="cursor-pointer h-11 px-4 rounded-2xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 disabled:opacity-60 text-zinc-300 hover:text-white flex items-center justify-center gap-2 text-xs sm:text-sm font-mono font-bold transition-all shadow-inner">
+                            <RefreshCcw size={16} className={refreshing ? "animate-spin text-cyan-400" : "text-cyan-400"} />
                             <span className="hidden sm:inline">Refresh</span>
                         </button>
-                        <button type="button" onClick={() => navigate("/admin/add-expense")}
-                            className="cursor-pointer h-11 px-4 sm:px-5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 text-sm font-semibold transition-all shadow-sm shadow-blue-200">
-                            <Plus size={17} />
-                            Add Expense
-                        </button>
+                        <div className="relative group cursor-pointer">
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
+                            <button type="button" onClick={() => navigate("/admin/add-expense")}
+                                className="relative cursor-pointer h-11 px-5 rounded-2xl bg-zinc-950 text-white flex items-center gap-2 text-xs sm:text-sm font-mono font-bold border border-white/10 transition-all shadow-lg active:scale-95">
+                                <Plus size={16} className="text-cyan-400 stroke-[3]" />
+                                Add Expense
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 {/* STAT CARDS */}
                 {loading ? <StatSkeleton /> : summary && (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                        <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                            <div className="h-9 w-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><Wallet size={16} /></div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-blue-500/20 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 shadow-inner relative overflow-hidden">
+                            <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-400 border border-white/5 flex items-center justify-center shrink-0 shadow-inner"><Wallet size={16} /></div>
                             <div className="min-w-0">
-                                <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Total Spent</p>
-                                <p className="text-base font-bold text-gray-900 mt-0.5 truncate">{formatCurrency(summary.total)}</p>
+                                <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate">Total Spent</p>
+                                <p className="text-xl font-mono font-black text-white mt-0.5 truncate">{formatCurrency(summary.total)}</p>
                             </div>
                         </div>
-                        <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                            <div className="h-9 w-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><Receipt size={16} /></div>
+                        <div className="hidden sm:flex bg-zinc-950/60 backdrop-blur-3xl border border-indigo-500/20 rounded-2xl px-4 py-3.5 items-center gap-3.5 shadow-inner relative overflow-hidden">
+                            <div className="h-10 w-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-white/5 flex items-center justify-center shrink-0 shadow-inner"><Receipt size={16} /></div>
                             <div className="min-w-0">
-                                <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">This Month</p>
-                                <p className="text-base font-bold text-gray-900 mt-0.5 truncate">{formatCurrency(summary.thisMonth)}</p>
+                                <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate">This Month</p>
+                                <p className="text-xl font-mono font-black text-white mt-0.5 truncate">{formatCurrency(summary.thisMonth)}</p>
                             </div>
                         </div>
-                        <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                            <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 ${monthChange > 0 ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
+                        <div className="hidden sm:flex bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-2xl px-4 py-3.5 items-center gap-3.5 shadow-inner relative overflow-hidden">
+                            <div className={`h-10 w-10 rounded-xl border border-white/5 flex items-center justify-center shrink-0 shadow-inner ${monthChange > 0 ? "bg-rose-500/10 text-rose-400" : "bg-emerald-500/10 text-emerald-400"}`}>
                                 {monthChange > 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
                             </div>
                             <div className="min-w-0">
-                                <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">vs Last Month</p>
-                                <p className="text-base font-bold text-gray-900 mt-0.5 truncate">{monthChange === null ? "—" : `${monthChange > 0 ? "+" : ""}${monthChange}%`}</p>
+                                <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate">vs Last Month</p>
+                                <p className="text-xl font-mono font-black text-white mt-0.5 truncate">{monthChange === null ? "—" : `${monthChange > 0 ? "+" : ""}${monthChange}%`}</p>
                             </div>
                         </div>
-                        <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                            <div className="h-9 w-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0"><ArrowUpDown size={16} /></div>
+                        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-amber-500/20 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 shadow-inner relative overflow-hidden">
+                            <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-400 border border-white/5 flex items-center justify-center shrink-0 shadow-inner"><ArrowUpDown size={16} /></div>
                             <div className="min-w-0">
-                                <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Avg / Expense</p>
-                                <p className="text-base font-bold text-gray-900 mt-0.5 truncate">{formatCurrency(summary.avg)}</p>
+                                <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate">Avg / Expense</p>
+                                <p className="text-xl font-mono font-black text-white mt-0.5 truncate">{formatCurrency(summary.avg)}</p>
                             </div>
                         </div>
-                        <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                            <div className="h-9 w-9 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center shrink-0"><Receipt size={16} /></div>
+                        <div className="bg-zinc-950/60 backdrop-blur-3xl border border-purple-500/20 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 shadow-inner relative overflow-hidden">
+                            <div className="h-10 w-10 rounded-xl bg-purple-500/10 text-purple-400 border border-white/5 flex items-center justify-center shrink-0 shadow-inner"><Receipt size={16} /></div>
                             <div className="min-w-0">
-                                <p className="text-[10px] text-gray-400 uppercase tracking-wide leading-none">Transactions</p>
-                                <p className="text-base font-bold text-gray-900 mt-0.5 truncate">{summary.count}</p>
+                                <p className="text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider truncate">Transactions</p>
+                                <p className="text-xl font-mono font-black text-white mt-0.5 truncate">{summary.count}</p>
                             </div>
                         </div>
                     </div>
                 )}
 
-                {/* FILTERS */}
+                {/* FILTERS CONTAINER */}
                 {!loading && (
-                    <div className="bg-white border border-gray-200 rounded-3xl p-4 space-y-3">
+                    <div className="space-y-4 py-2">
                         <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-center">
+                            
+                            {/* Search */}
                             <div className="relative flex-1 min-w-[180px]">
-                                <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                                <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none" />
                                 <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                                     placeholder="Search title, vendor or notes..."
-                                    className="w-full h-10 pl-10 pr-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+                                    className="w-full h-12 pl-11 pr-4 rounded-2xl border border-white/10 bg-zinc-950/80 backdrop-blur-xl outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-xs sm:text-sm font-mono text-white placeholder-zinc-500 transition-all shadow-inner" />
                             </div>
 
+                            {/* Filter Toggle */}
                             <button type="button" onClick={() => setShowFilters(v => !v)}
-                                className={`cursor-pointer h-10 px-4 rounded-2xl text-sm font-medium transition-all flex items-center gap-2 border
-                                    ${showFilters || hasActiveFilters ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"}`}>
-                                <Filter size={14} /> Filters
+                                className={`cursor-pointer h-12 px-5 rounded-2xl text-xs sm:text-sm font-mono font-bold transition-all flex items-center justify-center gap-2 border shadow-inner shrink-0
+                                    ${showFilters || hasActiveFilters ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" : "bg-zinc-900/80 text-zinc-300 border-white/10 hover:bg-zinc-800 hover:text-white"}`}>
+                                <Filter size={16} /> Filters
                             </button>
 
-                            <select value={sortBy} onChange={e => setSortBy(e.target.value)}
-                                className="h-10 px-3 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white cursor-pointer">
-                                <option value="date-desc">Newest First</option>
-                                <option value="date-asc">Oldest First</option>
-                                <option value="amount-desc">Amount: High to Low</option>
-                                <option value="amount-asc">Amount: Low to High</option>
-                            </select>
+                            {/* Sort */}
+                            <div className="relative w-full sm:w-auto shrink-0">
+                                <select value={sortBy} onChange={e => setSortBy(e.target.value)}
+                                    className="appearance-none w-full sm:w-auto h-12 pl-4 pr-11 rounded-2xl border border-white/10 bg-zinc-950/80 backdrop-blur-xl outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-xs sm:text-sm font-mono text-white cursor-pointer shadow-inner">
+                                    <option value="date-desc" className="bg-zinc-900 text-white">Newest First</option>
+                                    <option value="date-asc" className="bg-zinc-900 text-white">Oldest First</option>
+                                    <option value="amount-desc" className="bg-zinc-900 text-white">Amount: High to Low</option>
+                                    <option value="amount-asc" className="bg-zinc-900 text-white">Amount: Low to High</option>
+                                </select>
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-cyan-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                </div>
+                            </div>
 
+                            {/* Export */}
                             <button type="button" onClick={exportCSV} disabled={filtered.length === 0}
-                                className="cursor-pointer h-10 px-4 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-50 text-gray-600 flex items-center gap-2 text-sm font-medium transition-all">
-                                <Download size={14} /> Export CSV
+                                className="cursor-pointer h-12 px-5 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 hover:bg-emerald-500/20 disabled:opacity-50 text-emerald-400 flex items-center justify-center gap-2 text-xs sm:text-sm font-mono font-bold transition-all shadow-inner shrink-0">
+                                <Download size={16} className="stroke-[2.5]" /> <span className="hidden sm:inline">Export</span> CSV
                             </button>
                         </div>
 
+                        {/* Expanded Filters */}
                         {showFilters && (
-                            <div className="flex flex-col sm:flex-row flex-wrap gap-3 pt-3 border-t border-gray-100">
-                                <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)}
-                                    className="h-10 px-3 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white cursor-pointer flex-1 min-w-[160px]">
-                                    <option value="All">All Categories</option>
-                                    {EXPENSE_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                                </select>
-                                <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)}
-                                    className="h-10 px-3 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white cursor-pointer flex-1 min-w-[160px]">
-                                    <option value="All">All Payment Modes</option>
-                                    {PAYMENT_MODES.map(p => <option key={p} value={p}>{p}</option>)}
-                                </select>
+                            <div className="flex flex-col sm:flex-row flex-wrap gap-3 pt-4 border-t border-white/5">
+                                
+                                <div className="relative flex-1 min-w-[160px]">
+                                    <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)}
+                                        className="appearance-none w-full h-11 pl-4 pr-11 rounded-xl border border-white/10 bg-zinc-900/80 outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-xs sm:text-sm font-mono text-white cursor-pointer shadow-inner">
+                                        <option value="All" className="bg-zinc-900 text-white">All Categories</option>
+                                        {EXPENSE_CATEGORIES.map(c => <option key={c} value={c} className="bg-zinc-900 text-white">{c}</option>)}
+                                    </select>
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-cyan-400"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+                                </div>
+
+                                <div className="relative flex-1 min-w-[160px]">
+                                    <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)}
+                                        className="appearance-none w-full h-11 pl-4 pr-11 rounded-xl border border-white/10 bg-zinc-900/80 outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-xs sm:text-sm font-mono text-white cursor-pointer shadow-inner">
+                                        <option value="All" className="bg-zinc-900 text-white">All Payment Modes</option>
+                                        {PAYMENT_MODES.map(p => <option key={p} value={p} className="bg-zinc-900 text-white">{p}</option>)}
+                                    </select>
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-cyan-400"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+                                </div>
+
                                 <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
-                                    className="h-10 px-3 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer flex-1 min-w-[140px]" />
+                                    className="h-11 px-4 rounded-xl border border-white/10 bg-zinc-900/80 outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-xs sm:text-sm font-mono text-white cursor-pointer flex-1 min-w-[140px] shadow-inner [color-scheme:dark]" />
                                 <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
-                                    className="h-10 px-3 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer flex-1 min-w-[140px]" />
+                                    className="h-11 px-4 rounded-xl border border-white/10 bg-zinc-900/80 outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 text-xs sm:text-sm font-mono text-white cursor-pointer flex-1 min-w-[140px] shadow-inner [color-scheme:dark]" />
+                                
                                 {hasActiveFilters && (
                                     <button type="button" onClick={clearFilters}
-                                        className="cursor-pointer h-10 px-4 rounded-2xl border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 text-sm font-medium transition-all flex items-center gap-1.5">
-                                        <X size={14} /> Clear
+                                        className="cursor-pointer h-11 px-5 rounded-xl border border-rose-500/20 text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 text-xs sm:text-sm font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-inner shrink-0">
+                                        <X size={14} className="stroke-[3]" /> Clear
                                     </button>
                                 )}
                             </div>
@@ -431,44 +486,47 @@ const Expenses = () => {
 
                 {/* RESULTS SUMMARY */}
                 {!loading && (
-                    <div className="flex items-center justify-between px-1">
-                        <p className="text-sm text-gray-500">
-                            {filtered.length} expense{filtered.length !== 1 ? "s" : ""} · <span className="font-semibold text-gray-800">{formatCurrency(filteredTotal)}</span> total
+                    <div className="flex items-center justify-between px-2">
+                        <p className="text-xs sm:text-sm font-mono text-zinc-400">
+                            Showing <span className="font-bold text-cyan-400">{filtered.length}</span> expense{filtered.length !== 1 ? "s" : ""} · <span className="font-bold text-white">{formatCurrency(filteredTotal)}</span> total
                         </p>
                     </div>
                 )}
 
-                {/* LIST */}
-                <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-6">
+                {/* LIST CONTAINER */}
+                <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-5 sm:p-7 shadow-[0_15px_50px_rgba(0,0,0,0.6)] w-full">
                     {loading ? <TableSkeleton /> : filtered.length === 0 ? (
-                        <div className="py-16 text-center">
-                            <div className="h-16 w-16 rounded-3xl bg-blue-50 flex items-center justify-center mx-auto mb-4">
-                                <Receipt size={28} className="text-blue-400" />
+                        <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center backdrop-blur-xl">
+                            <div className="w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 mx-auto flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(56,189,248,0.15)]">
+                                <Receipt size={36} className="text-cyan-400" />
                             </div>
-                            <h3 className="text-lg font-bold text-gray-800">{hasData ? "No matching expenses" : "No expenses yet"}</h3>
-                            <p className="text-sm text-gray-500 mt-2 max-w-sm mx-auto">
-                                {hasData ? "Try adjusting your filters or search." : "Add your first expense to start tracking spend."}
+                            <h3 className="text-xl md:text-2xl font-mono font-black text-white tracking-tight">{hasData ? "No matching expenses" : "No expenses yet"}</h3>
+                            <p className="text-zinc-400 max-w-md mt-2 leading-relaxed font-mono text-xs sm:text-sm">
+                                {hasData ? "Try adjusting your filters or search query." : "Add your first expense to start tracking spend."}
                             </p>
                             {!hasData && (
-                                <button type="button" onClick={() => navigate("/admin/add-expense")}
-                                    className="cursor-pointer mt-5 h-11 px-5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-all inline-flex items-center gap-2">
-                                    <Plus size={16} /> Add Expense
-                                </button>
+                                <div className="relative group cursor-pointer mt-6">
+                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur opacity-40 group-hover:opacity-100 transition duration-300"></div>
+                                    <button type="button" onClick={() => navigate("/admin/add-expense")}
+                                        className="relative cursor-pointer h-12 px-8 rounded-2xl bg-zinc-950 text-white font-mono font-bold flex items-center gap-2 border border-white/10 transition-all active:scale-95 shadow-lg">
+                                        <Plus size={16} className="text-cyan-400 stroke-[3]" /> Add Expense
+                                    </button>
+                                </div>
                             )}
                         </div>
                     ) : (
                         <>
                             {/* Desktop table */}
-                            <div className="hidden md:block overflow-x-auto">
-                                <table className="w-full">
+                            <div className="hidden md:block overflow-x-auto custom-scrollbar pb-2">
+                                <table className="w-full text-left border-collapse">
                                     <thead>
-                                        <tr className="border-b border-gray-100">
+                                        <tr className="border-b border-white/5">
                                             {["Date", "Expense", "Category", "Payment", "", ""].map((h, i) => (
-                                                <th key={i} className={`py-2 px-4 text-[11px] font-semibold text-gray-400 uppercase tracking-wider ${i === 4 ? "text-right" : "text-left"}`}>{h}</th>
+                                                <th key={i} className={`py-3 px-4 text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest ${i === 4 ? "text-right" : "text-left"}`}>{h}</th>
                                             ))}
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-50">
+                                    <tbody className="divide-y divide-white/5">
                                         {paginated.map(exp => (
                                             <ExpenseTableRow key={exp._id} exp={exp}
                                                 onEdit={(e) => navigate(`/admin/add-expense?id=${e._id}`)}
@@ -479,7 +537,7 @@ const Expenses = () => {
                             </div>
 
                             {/* Mobile cards */}
-                            <div className="md:hidden space-y-3">
+                            <div className="md:hidden space-y-4">
                                 {paginated.map(exp => (
                                     <ExpenseCard key={exp._id} exp={exp}
                                         onEdit={(e) => navigate(`/admin/add-expense?id=${e._id}`)}
@@ -488,24 +546,31 @@ const Expenses = () => {
                             </div>
 
                             {/* Pagination */}
-                            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-5 pt-5 border-t border-gray-100">
-                                <div className="flex items-center gap-2 text-sm text-gray-500">
-                                    <span>Rows per page</span>
-                                    <select value={pageSize} onChange={e => setPageSize(Number(e.target.value))}
-                                        className="h-9 px-2.5 rounded-xl border border-gray-200 text-sm bg-white cursor-pointer">
-                                        {PAGE_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
-                                    </select>
+                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-5 border-t border-white/5">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-xs font-mono font-bold text-zinc-500 uppercase tracking-wider">Rows</span>
+                                    <div className="relative">
+                                        <select value={pageSize} onChange={e => setPageSize(Number(e.target.value))}
+                                            className="appearance-none h-10 pl-3 pr-8 rounded-xl border border-white/10 bg-zinc-900/80 text-xs font-mono font-bold text-white cursor-pointer outline-none focus:border-cyan-400 shadow-inner">
+                                            {PAGE_SIZES.map(s => <option key={s} value={s} className="bg-zinc-900 text-white">{s}</option>)}
+                                        </select>
+                                        <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-cyan-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm text-gray-500">Page {page} of {totalPages}</span>
-                                    <button type="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                                        className="cursor-pointer h-9 w-9 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition">
-                                        <ChevronLeft size={15} className="text-gray-600" />
-                                    </button>
-                                    <button type="button" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                                        className="cursor-pointer h-9 w-9 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition">
-                                        <ChevronRight size={15} className="text-gray-600" />
-                                    </button>
+                                <div className="flex items-center gap-4">
+                                    <span className="text-xs font-mono text-zinc-400">Page <span className="font-bold text-white">{page}</span> of <span className="font-bold text-white">{totalPages}</span></span>
+                                    <div className="flex items-center gap-2">
+                                        <button type="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                                            className="cursor-pointer h-10 w-10 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-cyan-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition shadow-inner">
+                                            <ChevronLeft size={16} className="stroke-[2.5]" />
+                                        </button>
+                                        <button type="button" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                                            className="cursor-pointer h-10 w-10 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-cyan-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition shadow-inner">
+                                            <ChevronRight size={16} className="stroke-[2.5]" />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </>
@@ -516,10 +581,6 @@ const Expenses = () => {
             <ConfirmDeleteModal expense={deleteTarget} deleting={deleting} onClose={() => setDeleteTarget(null)} onConfirm={handleDeleteConfirm} />
             <Toast toast={toast} onClose={() => setToast(null)} />
 
-            <style>{`
-                @keyframes modalPop { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
-                @keyframes toastIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
-            `}</style>
         </DashboardLayout>
     );
 };
