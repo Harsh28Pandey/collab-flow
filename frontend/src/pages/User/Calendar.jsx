@@ -8,6 +8,9 @@ import {
     Search, CalendarRange, LayoutGrid, List, Megaphone, Users, Sparkles,
 } from "lucide-react";
 
+// Import exact TaskStatusTabs component as requested
+import TaskStatusTabs from "../../components/TaskStatusTabs.jsx";
+
 // ─────────────────────────────────────────────────────────────────────────────
 // CONSTANTS & HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -86,6 +89,39 @@ const SidebarSkeleton = () => (
         ))}
     </div>
 );
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FILTER TOGGLE HELPER (Mimicking exactly TaskStatusTabs for Multi-selects)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const FilterToggle = ({ label, active, onClick, icon }) => (
+    <button
+        type="button"
+        onClick={onClick}
+        className={`relative shrink-0 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-mono font-bold whitespace-nowrap transition-all duration-300 cursor-pointer ${
+            active
+                ? 'text-cyan-300 bg-cyan-500/15 border border-cyan-500/30 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
+                : 'text-zinc-400 hover:text-zinc-200 bg-zinc-900/60 hover:bg-zinc-900 border border-white/5'
+        }`}
+    >
+        <div className='flex items-center gap-2'>
+            <span>{label}</span>
+            <span
+                className={`text-[10px] sm:text-xs font-mono font-black px-2 py-0.5 flex items-center justify-center rounded-full ${
+                    active
+                        ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                        : 'bg-zinc-800 text-zinc-400 border border-white/5'
+                }`}
+            >
+                {icon}
+            </span>
+        </div>
+        {active && (
+            <div className='absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-[2px] bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full shadow-[0_0_8px_rgba(56,189,248,0.8)]'></div>
+        )}
+    </button>
+);
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DAY DETAIL MODAL
@@ -344,7 +380,7 @@ const EventItem = ({ event }) => {
         }
     } else if (isEvent) {
         borderBgClass = evStyle.badge;
-        iconBgClass = evStyle.badge.replace('text-', 'border border-').replace('text', 'border'); 
+        iconBgClass = evStyle.badge.replace('text-', 'border border-').replace('text', 'border'); // Simplified approach for icon bg
         iconClass = evStyle.badge.split(' ').find(c => c.startsWith('text-'));
     } else { // timesheet
         borderBgClass = "bg-emerald-500/5 border-emerald-500/20";
@@ -790,57 +826,42 @@ const Calendar = () => {
                             <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 z-10 pointer-events-none stroke-[2.5]" />
                             <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                                 placeholder="Search tasks, projects or events..."
-                                className="w-full h-12 pl-11 pr-4 rounded-2xl border border-white/10 bg-zinc-950/80 text-white font-mono text-xs focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 focus:outline-none placeholder-zinc-500 transition-all shadow-inner" />
+                                className="w-full h-12 pl-11 pr-4 rounded-xl border border-white/10 bg-zinc-950/80 text-white font-mono text-xs focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 focus:outline-none placeholder-zinc-500 transition-all shadow-inner" />
                         </div>
 
                         {/* HORIZONTAL SCROLLABLE FILTERS ON MOBILE */}
                         <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-2 sm:pb-0 w-full xl:w-auto">
                             
-                            {/* EVENT TYPE TABS */}
-                            <div className="flex items-center gap-1.5 bg-zinc-900 border border-white/5 rounded-2xl p-1.5 shadow-inner shrink-0 min-w-max">
-                                <button type="button" onClick={() => setShowTasks(v => !v)}
-                                    className={`cursor-pointer h-9 px-4 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 whitespace-nowrap active:scale-95
-                                        ${showTasks ? "bg-zinc-950 text-cyan-400 border border-white/10 shadow-sm" : "text-zinc-500 hover:text-white hover:bg-zinc-800/50"}`}>
-                                    <ClipboardCheck size={14} className={showTasks ? "stroke-[2.5]" : ""} /> Tasks
-                                </button>
-                                <button type="button" onClick={() => setShowTimesheets(v => !v)}
-                                    className={`cursor-pointer h-9 px-4 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 whitespace-nowrap active:scale-95
-                                        ${showTimesheets ? "bg-zinc-950 text-cyan-400 border border-white/10 shadow-sm" : "text-zinc-500 hover:text-white hover:bg-zinc-800/50"}`}>
-                                    <Clock3 size={14} className={showTimesheets ? "stroke-[2.5]" : ""} /> Timesheets
-                                </button>
-                                <button type="button" onClick={() => setShowEvents(v => !v)}
-                                    className={`cursor-pointer h-9 px-4 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 whitespace-nowrap active:scale-95
-                                        ${showEvents ? "bg-zinc-950 text-cyan-400 border border-white/10 shadow-sm" : "text-zinc-500 hover:text-white hover:bg-zinc-800/50"}`}>
-                                    <Megaphone size={14} className={showEvents ? "stroke-[2.5]" : ""} /> Events
-                                </button>
+                            {/* EVENT TYPE TABS (Exact TaskStatusTabs Styling Inline) */}
+                            <div className='flex overflow-x-auto scrollbar-hide gap-1.5 sm:gap-2 px-1 min-w-max'>
+                                <FilterToggle label="Tasks" active={showTasks} onClick={() => setShowTasks(v => !v)} icon={<ClipboardCheck size={14} />} />
+                                <FilterToggle label="Timesheets" active={showTimesheets} onClick={() => setShowTimesheets(v => !v)} icon={<Clock3 size={14} />} />
+                                <FilterToggle label="Events" active={showEvents} onClick={() => setShowEvents(v => !v)} icon={<Megaphone size={14} />} />
                             </div>
 
                             {/* PRIORITY DROPDOWN */}
                             <div className="relative shrink-0 min-w-[130px]">
                                 <select value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)}
-                                    className="appearance-none w-full h-12 px-4 rounded-2xl border border-white/10 bg-zinc-900/80 text-white font-mono text-xs focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 focus:outline-none cursor-pointer transition-all shadow-inner">
+                                    className="appearance-none w-full h-10 px-4 rounded-xl border border-white/5 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200 font-mono text-xs focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 focus:outline-none cursor-pointer transition-all shadow-inner">
                                     {["All", "High", "Medium", "Low"].map(p => <option className="bg-zinc-900 text-white" key={p} value={p}>{p} Priority</option>)}
                                 </select>
                                 <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                                    <svg className="w-4 h-4 text-cyan-400 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                    <svg className="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
                             </div>
 
-                            {/* VIEW MODE TABS */}
-                            <div className="flex items-center gap-1.5 bg-zinc-900 border border-white/5 rounded-2xl p-1.5 shadow-inner shrink-0 min-w-max">
-                                {[
-                                    { key: "month", icon: <LayoutGrid size={14} />, label: "Month" },
-                                    { key: "week", icon: <CalendarRange size={14} />, label: "Week" },
-                                    { key: "heatmap", icon: <List size={14} />, label: "Heat" },
-                                ].map(({ key, icon, label }) => (
-                                    <button key={key} type="button" onClick={() => setView(key)}
-                                        className={`cursor-pointer flex items-center gap-1.5 px-3 h-9 rounded-xl text-[10px] sm:text-xs font-mono font-bold transition-all uppercase tracking-wider whitespace-nowrap active:scale-95
-                                            ${view === key ? "bg-zinc-950 text-cyan-400 border border-white/10 shadow-sm" : "text-zinc-500 hover:text-white hover:bg-zinc-800/50"}`}>
-                                        {icon}{label}
-                                    </button>
-                                ))}
+                            {/* VIEW MODE TABS (Using Imported TaskStatusTabs component structure) */}
+                            <div className='flex overflow-x-auto scrollbar-hide min-w-max'>
+                                <TaskStatusTabs
+                                    tabs={[
+                                        { label: "Month", count: <LayoutGrid size={14} /> },
+                                        { label: "Week", count: <CalendarRange size={14} /> },
+                                        { label: "Heat", count: <List size={14} /> },
+                                    ]}
+                                    activeTab={view === "heatmap" ? "Heat" : view === "week" ? "Week" : "Month"}
+                                    setActiveTab={(lbl) => setView(lbl === "Heat" ? "heatmap" : lbl.toLowerCase())}
+                                />
                             </div>
-
                         </div>
                     </div>
                 )}
