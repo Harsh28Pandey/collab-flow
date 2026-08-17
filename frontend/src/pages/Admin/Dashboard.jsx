@@ -195,7 +195,7 @@ const Dashboard = () => {
                                     color="bg-purple-500/20 text-purple-400 border border-purple-500/30"
                                 />
                                 <InfoCard
-                                    label="Compiled Tasks"
+                                    label="Compiled Operations"
                                     value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.Completed || 0)}
                                     color="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
                                 />
