@@ -153,4 +153,22 @@ export const API_PATHS = {
         GET_ALL: "/api/holidays",          //* admin — supports ?status=Pending|Approved|Rejected
         REVIEW: (id) => `/api/holidays/${id}/review`, //* admin — approve/reject
     },
+
+    //* PROJECTS
+    PROJECTS: {
+        GET_DASHBOARD_STATS: "/api/projects/dashboard-stats",  //* role-aware project stats for dashboards
+        GET_ALL_PROJECTS: "/api/projects",  //* get all projects (admin: all, user: assigned only) — supports ?status ?priority ?projectLead ?search
+        GET_PROJECT_BY_ID: (projectId) => `/api/projects/${projectId}`,  //* get single project details + task stats
+        CREATE_PROJECT: "/api/projects",  //* create a new project (admin only)
+        UPDATE_PROJECT: (projectId) => `/api/projects/${projectId}`,  //* update project details (admin only)
+        DELETE_PROJECT: (projectId) => `/api/projects/${projectId}`,  //* delete a project (admin only)
+        ARCHIVE_PROJECT: (projectId) => `/api/projects/${projectId}/archive`,  //* archive a project (admin only)
+        UPDATE_PROJECT_STATUS: (projectId) => `/api/projects/${projectId}/status`,  //* change project status (admin only)
+        ADD_MEMBER: (projectId) => `/api/projects/${projectId}/members`,  //* add member to project (admin only)
+        REMOVE_MEMBER: (projectId, memberId) =>
+            `/api/projects/${projectId}/members/${memberId}`,  //* remove member from project (admin only)
+        CHANGE_PROJECT_LEAD: (projectId) => `/api/projects/${projectId}/lead`,  //* change project lead (admin only)
+        GET_PROJECT_ACTIVITY: (projectId) => `/api/projects/${projectId}/activity`,  //* get project activity timeline
+        GET_PROJECT_FILES: (projectId) => `/api/projects/${projectId}/files`,  //* get files linked to a project
+    },
 };

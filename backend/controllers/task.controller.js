@@ -2,6 +2,26 @@ const Task = require("../models/task.model.js");
 const Group = require("../models/group.model.js");
 const File = require("../models/file.model.js");
 const Poll = require("../models/poll.model.js");
+// ✅ NEW — needed only for the optional Project <-> Task activity-log hooks below.
+const Project = require("../models/project.model.js");
+
+// ✅ NEW — safe helper, never throws, never blocks a task response.
+// Pushes an activity entry onto a project's timeline only if the task actually has a project attached.
+const pushProjectActivity = async (projectId, message, type, userId) => {
+    if (!projectId) return;
+    try {
+        await Project.findByIdAndUpdate(projectId, {
+            $push: {
+                activityLog: {
+                    $each: [{ message, type, user: userId, createdAt: new Date() }],
+                    $position: 0
+                }
+            }
+        });
+    } catch (error) {
+        console.log("Project activity log skipped:", error.message);
+    }
+};
 
 /**
  * @desc Get all tasks (Admin: all, User: only assigned tasks)
@@ -11,7 +31,8 @@ const Poll = require("../models/poll.model.js");
 const getTasks = async (req, res) => {
     try {
         // ✅ search, sortBy, sortOrder add karo
-        const { status, search, sortBy, sortOrder } = req.query;
+        // ✅ NEW — optional `project` filter (used by Manage Projects / My Projects "Tasks" tab)
+        const { status, search, sortBy, sortOrder, project } = req.query;
         const teamCode = req.user.teamCode;
         let filter = { teamCode };
 
@@ -22,6 +43,11 @@ const getTasks = async (req, res) => {
         // ✅ Search filter add karo
         if (search) {
             filter.title = { $regex: search, $options: "i" };
+        }
+
+        // ✅ NEW — filter tasks belonging to a specific project (non-breaking, only applied if passed)
+        if (project) {
+            filter.project = project;
         }
 
         // ✅ Sort logic add karo
@@ -136,7 +162,8 @@ const getTaskById = async (req, res) => {
 */
 const createTask = async (req, res) => {
     try {
-        const { title, description, priority, dueDate, assignedTo, attachments, todoChecklist } = req.body;
+        // ✅ NEW — optional `project` field (Manage Projects feature). Everything else unchanged.
+        const { title, description, priority, dueDate, assignedTo, attachments, todoChecklist, project } = req.body;
 
         if (!Array.isArray(assignedTo)) {
             return res.status(400).json({
@@ -153,8 +180,19 @@ const createTask = async (req, res) => {
             createdBy: req.user._id,
             teamCode: req.user.teamCode,
             todoChecklist,
-            attachments
+            attachments,
+            project: project || null
         });
+
+        // ✅ NEW — log this on the project's activity timeline (only if a project was picked)
+        if (project) {
+            await pushProjectActivity(
+                project,
+                `Task "${title}" created by ${req.user.name}`,
+                "task_created",
+                req.user._id
+            );
+        }
 
         res.status(201).json({
             message: "Task created successfully",
@@ -190,6 +228,11 @@ const updateTask = async (req, res) => {
         task.dueDate = req.body.dueDate || task.dueDate;
         task.todoChecklist = req.body.todoChecklist || task.todoChecklist;
         task.attachments = req.body.attachments || task.attachments;
+
+        // ✅ NEW — allow (re)linking a task to a project. Only touched if the key is explicitly sent.
+        if (req.body.project !== undefined) {
+            task.project = req.body.project || null;
+        }
 
         if (req.body.assignedTo) {
             if (!Array.isArray(req.body.assignedTo)) {
@@ -294,6 +337,7 @@ const updateTaskStatus = async (req, res) => {
             });
         }
 
+        const oldStatus = task.status;
         task.status = req.body.status || task.status;
 
         if (task.status === "Completed") {
@@ -302,6 +346,19 @@ const updateTaskStatus = async (req, res) => {
         }
 
         await task.save();
+
+        // ✅ NEW — log status change on the linked project's activity timeline (only if a project is linked)
+        if (task.project && oldStatus !== task.status) {
+            await pushProjectActivity(
+                task.project,
+                task.status === "Completed"
+                    ? `Task "${task.title}" completed by ${req.user.name}`
+                    : `Task "${task.title}" marked as ${task.status} by ${req.user.name}`,
+                task.status === "Completed" ? "task_completed" : "task_status_changed",
+                req.user._id
+            );
+        }
+
         res.json({
             message: "Task status updated successfully",
             task
@@ -361,6 +418,16 @@ const updateTaskChecklist = async (req, res) => {
             "assignedTo",
             "name email profileImageUrl"
         );
+
+        // ✅ NEW — log completion via checklist on the linked project's activity timeline
+        if (task.project && task.status === "Completed") {
+            await pushProjectActivity(
+                task.project,
+                `Task "${task.title}" completed by ${req.user.name}`,
+                "task_completed",
+                req.user._id
+            );
+        }
 
         res.json({
             message: "Task checklist updated successfully",

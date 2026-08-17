@@ -53,6 +53,12 @@ const taskSchema = new mongoose.Schema({
     progress: {
         type: Number,
         default: 0
+    },
+    project: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Project",
+        default: null,
+        index: true
     }
 }, { timestamps: true });
 

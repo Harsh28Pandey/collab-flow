@@ -20,6 +20,7 @@ const timesheetRoutes = require("./routes/timesheet.routes.js");
 const expenseRoutes = require("./routes/expense.routes.js");
 const budgetRoutes = require("./routes/budget.routes.js");
 const holidayRoutes = require("./routes/holiday.routes.js");
+const projectRoutes = require("./routes/project.routes.js");
 
 // const { Server } = require("socket.io");
 // const Message = require("./models/message.model.js");
@@ -62,6 +63,7 @@ app.use("/api/timesheets", timesheetRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/budgets", budgetRoutes);
 app.use("/api/holidays", holidayRoutes);
+app.use("/api/projects", projectRoutes);
 
 // const io = new Server(server, {
 //     cors: {

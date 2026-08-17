@@ -1,4 +1,7 @@
 const File = require("../models/file.model.js");
+const mongoose = require("mongoose");
+// ✅ NEW — only used for the optional, safe project-activity hook below.
+const Project = require("../models/project.model.js");
 
 const imagekit = require("../config/imagekit.js");
 
@@ -88,6 +91,26 @@ exports.uploadFile = async (req, res) => {
                 "uploadedBy",
                 "name email profileImageUrl role"
             );
+
+        // ✅ NEW — non-breaking hook: if this projectId is a real Project (Manage Projects feature),
+        // log the upload on that project's Activity timeline. Wrapped in try/catch so it can NEVER
+        // fail or slow down the existing upload flow (e.g. old File Manager passes an admin's user id
+        // as projectId, which simply won't match any Project and will be silently skipped).
+        try {
+            if (projectId && mongoose.isValidObjectId(projectId)) {
+                const project = await Project.findById(projectId);
+                if (project) {
+                    project.activityLog.unshift({
+                        message: `${req.user.name} uploaded "${req.file.originalname}"`,
+                        type: "file_uploaded",
+                        user: req.user._id
+                    });
+                    await project.save();
+                }
+            }
+        } catch (activityError) {
+            console.log("Project activity log skipped:", activityError.message);
+        }
 
         res.status(201).json({
 

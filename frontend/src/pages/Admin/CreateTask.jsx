@@ -6,7 +6,7 @@ import { API_PATHS } from '../../utils/apiPaths.js';
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import { LuTrash } from 'react-icons/lu';
+import { LuTrash, LuArrowLeft } from 'react-icons/lu'; // ✅ LuArrowLeft import kiya
 import SelectDropdown from '../../components/inputs/SelectDropdown.jsx';
 import SelectUsers from '../../components/inputs/SelectUsers.jsx';
 import TodoListInput from '../../components/inputs/TodoListInput.jsx';
@@ -17,7 +17,8 @@ import DeleteAlert from '../../components/DeleteAlert.jsx';
 const CreateTask = () => {
 
     const location = useLocation();
-    const { taskId } = location.state || {};
+    // ✅ Extract projectId along with taskId from location state
+    const { taskId, projectId } = location.state || {};
     const useNavigateInstance = useNavigate();
 
     const [taskData, setTaskData] = useState({
@@ -28,9 +29,11 @@ const CreateTask = () => {
         assignedTo: [],
         todoChecklist: [],
         attachments: [],
+        project: projectId || "", // ✅ Default set to project id if coming from ProjectDetails
     });
 
     const [currentTask, setCurrentTask] = useState(null);
+    const [projects, setProjects] = useState([]); // ✅ State for projects dropdown
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [openDeleteAlert, setOpenDeleteAlert] = useState(false);
@@ -48,8 +51,24 @@ const CreateTask = () => {
             assignedTo: [],
             todoChecklist: [],
             attachments: [],
+            project: "", // ✅ Clear project
         })
     }
+
+    // ✅ Fetch all projects for the dropdown
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                // Safely accessing the API path
+                const path = API_PATHS.PROJECTS?.GET_ALL_PROJECTS || API_PATHS.PROJECTS?.GET_ALL || "/api/projects";
+                const response = await axiosInstance.get(path);
+                setProjects(response.data?.projects || []);
+            } catch (error) {
+                console.error("Error fetching projects: ", error);
+            }
+        };
+        fetchProjects();
+    }, []);
 
     //* create a task
     const createTask = async () => {
@@ -104,7 +123,7 @@ const CreateTask = () => {
             useNavigateInstance("/admin/tasks");
 
         } catch (error) {
-            console.error("Error creating task: ", error);
+            console.error("Error updating task: ", error);
         } finally {
             setLoading(false);
         }
@@ -165,6 +184,7 @@ const CreateTask = () => {
                     assignedTo: taskInfo?.assignedTo?.map((item) => item?._id) || [],
                     todoChecklist: taskInfo?.todoChecklist?.map((item) => item?.text) || [],
                     attachments: taskInfo?.attachments || [],
+                    project: taskInfo?.project?._id || taskInfo?.project || "", // ✅ Pre-fill project if available
                 }))
             }
         } catch (error) {
@@ -198,6 +218,18 @@ const CreateTask = () => {
             <div className='py-4 md:py-6'>
 
                 <div className='max-w-7xl mx-auto'>
+
+                    {/* ✅ BACK BUTTON ADDED HERE */}
+                    <div className="relative group/btn w-fit mb-5 cursor-pointer">
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full blur opacity-40 group-hover/btn:opacity-100 transition duration-300"></div>
+                        <button
+                            onClick={() => useNavigateInstance("/admin/tasks")}
+                            className="relative flex items-center justify-center gap-2 bg-zinc-950 hover:bg-zinc-900 border border-white/10 text-white text-xs sm:text-sm font-mono font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all duration-300 cursor-pointer active:scale-95 shadow-lg"
+                        >
+                            <LuArrowLeft className="text-sm sm:text-base text-cyan-400 stroke-[3]" />
+                            <span>Back to Tasks</span>
+                        </button>
+                    </div>
 
                     {/* Header */}
 
@@ -270,9 +302,28 @@ const CreateTask = () => {
                             />
                         </div>
 
-                        {/* Grid Fields */}
+                        {/* Grid Fields (Updated to include Project Dropdown) */}
 
-                        <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mt-5'>
+                        <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-5'>
+
+                            {/* ✅ Project Dropdown */}
+                            <div>
+                                <label className='text-xs sm:text-sm font-mono font-bold text-zinc-300 mb-2 block uppercase tracking-wider'>
+                                    Project
+                                </label>
+                                <select
+                                    value={taskData.project}
+                                    onChange={(e) => handleValueChange("project", e.target.value)}
+                                    className='w-full h-12 px-4 rounded-2xl border border-white/10 bg-zinc-950/80 outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm font-mono text-white shadow-inner cursor-pointer appearance-none'
+                                >
+                                    <option value="" className="bg-zinc-900">None (Standalone Task)</option>
+                                    {projects.map((p) => (
+                                        <option key={p._id} value={p._id} className="bg-zinc-900">
+                                            {p.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
                             {/* Priority */}
 
