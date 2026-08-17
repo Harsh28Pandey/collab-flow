@@ -1,4 +1,4 @@
-import { LuLayoutDashboard, LuUsers, LuClipboardCheck, LuSquarePlus, LuLogOut, LuMessageSquare, LuListTodo, LuMegaphone, LuBadgeIndianRupee, LuChartPie, LuClock, LuSettings, LuWallet, LuReceipt, LuHandCoins, LuCreditCard, LuCalendar, LuFolderClosed, LuCircleUser, LuUmbrella, LuCalendarCheck, LuVideo } from "react-icons/lu";
+import { LuLayoutDashboard, LuUsers, LuClipboardCheck, LuSquarePlus, LuLogOut, LuMessageSquare, LuListTodo, LuMegaphone, LuBadgeIndianRupee, LuChartPie, LuClock, LuSettings, LuWallet, LuReceipt, LuHandCoins, LuCreditCard, LuCalendar, LuFolderClosed, LuCircleUser, LuUmbrella, LuCalendarCheck, LuVideo, LuFolderKanban } from "react-icons/lu";
 
 export const SIDE_MENU_DATA = [
     {
@@ -15,24 +15,30 @@ export const SIDE_MENU_DATA = [
     },
     {
         id: "03",
+        label: "Manage Projects",
+        icon: LuFolderKanban,
+        path: "/admin/projects",
+    },
+    {
+        id: "04",
         label: "Create Task",
         icon: LuSquarePlus,
         path: "/admin/create-task",
     },
     {
-        id: "04",
+        id: "05",
         label: "Team Members",
         icon: LuUsers,
         path: "/admin/users",
     },
     {
-        id: "05",
+        id: "06",
         label: "Manage Groups",
         icon: LuMessageSquare,
         path: "/admin/groups",
     },
     {
-        id: "06",
+        id: "07",
         label: "Manage Polls",
         icon: LuListTodo,
         path: "/admin/polls",
@@ -44,49 +50,49 @@ export const SIDE_MENU_DATA = [
     //     path: "/admin/manage-expenses",
     // },
     {
-        id: "07",
+        id: "08",
         label: "Expenses",
         icon: LuWallet,
         path: "/admin/expenses",
     },
     {
-        id: "08",
+        id: "09",
         label: "Manage Holidays",
         icon: LuCalendarCheck,
         path: "/admin/holidays",
     },
     {
-        id: "09",
+        id: "10",
         label: "File Manager",
         icon: LuFolderClosed,
         path: "/admin/file-manager"
     },
     {
-        id: "10",
+        id: "11",
         label: "Meeting Controls",
         icon: LuVideo,
         path: "/admin/meeting-controls",
     },
     {
-        id: "11",
+        id: "12",
         label: "Calendar",
         icon: LuCalendar,
         path: "/admin/calendar"
     },
     {
-        id: "12",
+        id: "13",
         label: "Timesheet",
         icon: LuClock,
         path: "/admin/timesheet"
     },
     {
-        id: "13",
+        id: "14",
         label: "Settings",
         icon: LuSettings,
         path: "/admin/settings"
     },
     {
-        id: "14",
+        id: "15",
         label: "Logout",
         icon: LuLogOut,
         path: "logout",
@@ -108,54 +114,60 @@ export const SIDE_MENU_USER_DATA = [
     },
     {
         id: "03",
+        label: "My Projects",
+        icon: LuFolderKanban,
+        path: "/user/projects",
+    },
+    {
+        id: "04",
         label: "My Groups",
         icon: LuMessageSquare,
         path: "/user/groups",
     },
     {
-        id: "04",
+        id: "05",
         label: "My Polls",
         icon: LuListTodo,
         path: "/user/polls",
     },
     {
-        id: "05",
+        id: "06",
         label: "Holidays",
         icon: LuUmbrella,
         path: "/user/holidays",
     },
     {
-        id: "06",
+        id: "07",
         label: "My Timesheets",
         icon: LuClock,
         path: "/user/timesheet",
     },
     {
-        id: "07",
+        id: "08",
         label: "Calendar",
         icon: LuCalendar,
         path: "/user/calendar"
     },
     {
-        id: "08",
+        id: "09",
         label: "My Meetings",
         icon: LuVideo,
         path: "/user/meetings",
     },
     {
-        id: "09",
+        id: "10",
         label: "Files",
         icon: LuFolderClosed,
         path: "/user/files"
     },
     {
-        id: "10",
+        id: "11",
         label: "Profile Settings",
         icon: LuCircleUser,
         path: "/user/profile-settings"
     },
     {
-        id: "11",
+        id: "12",
         label: "Logout",
         icon: LuLogOut,
         path: "logout",

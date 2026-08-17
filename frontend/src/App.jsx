@@ -46,6 +46,8 @@ import MyHolidays from './pages/User/MyHolidays.jsx'
 import Playground from './pages/Landing/Playground.jsx'
 import MeetingControls from './pages/Admin/MeetingControls.jsx'
 import MyMeetings from './pages/User/MyMeetings.jsx'
+import ManageProjects from './pages/Admin/ManageProjects.jsx'
+import MyProjects from './pages/User/MyProjects.jsx'
 
 
 const App = () => {
@@ -79,6 +81,7 @@ const App = () => {
                         <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
                             <Route path='/admin/dashboard' element={<Dashboard />} />
                             <Route path='/admin/tasks' element={<ManageTasks />} />
+                            <Route path='/admin/projects' element={<ManageProjects />} />
                             <Route path='/admin/create-task' element={<CreateTask />} />
                             <Route path='/admin/users' element={<ManageUsers />} />
                             <Route path='/admin/groups' element={<AdminGroups />} />
@@ -100,6 +103,7 @@ const App = () => {
                         <Route element={<PrivateRoute allowedRoles={["user"]} />}>
                             <Route path='/user/dashboard' element={<UserDashboard />} />
                             <Route path='/user/tasks' element={<MyTasks />} />
+                            <Route path='/user/projects' element={<MyProjects />} />
                             <Route path='/user/task-details/:id' element={<ViewTaskDetails />} />
                             <Route path='/user/groups' element={<MyGroups />} />
                             <Route path='/user/polls' element={<MyPolls />} />

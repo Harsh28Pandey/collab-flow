@@ -140,17 +140,23 @@ const Navbar = () => {
                                                 <DropdownItem label={user.role === "admin" ? "Manage Tasks" : "My Tasks"} onClick={() => handleNavigate(user.role === "admin" ? "/admin/tasks" : "/user/tasks")} />
                                                 {user?.role === "admin" && (
                                                     <>
-                                                        <DropdownItem label="File Manager" onClick={() => handleNavigate("/admin/file-manager")} />
+                                                        <DropdownItem label="Manage Projects" onClick={() => handleNavigate("/admin/projects")} />
+                                                        {/* <DropdownItem label="File Manager" onClick={() => handleNavigate("/admin/file-manager")} /> */}
+                                                        {/* <DropdownItem label="Manage Holidays" onClick={() => handleNavigate("/admin/holidays")} /> */}
+                                                        <DropdownItem label="Meeting Controls" onClick={() => handleNavigate("/admin/meeting-controls")} />
                                                         <DropdownItem label="Timesheet" onClick={() => handleNavigate("/admin/timesheet")} />
-                                                        <DropdownItem label="Budgets" onClick={() => handleNavigate("/admin/budgets")} />
-                                                        <DropdownItem label="Settings" onClick={() => handleNavigate("/admin/settings")} />
+                                                        <DropdownItem label="Expenses" onClick={() => handleNavigate("/admin/expenses")} />
+                                                        <DropdownItem label="Profile & Settings" onClick={() => handleNavigate("/admin/settings")} />
                                                     </>
                                                 )}
                                                 {user?.role !== "admin" && (
                                                     <>
-                                                        <DropdownItem label="Files" onClick={() => handleNavigate("/user/files")} />
-                                                        <DropdownItem label="My Expenses" onClick={() => handleNavigate("/user/my-expenses")} />
-                                                        <DropdownItem label="Profile Settings" onClick={() => handleNavigate("/user/profile-settings")} />
+                                                        <DropdownItem label="My Projects" onClick={() => handleNavigate("/user/projects")} />
+                                                        {/* <DropdownItem label="Files" onClick={() => handleNavigate("/user/files")} /> */}
+                                                        {/* <DropdownItem label="My Holidays" onClick={() => handleNavigate("/user/holidays")} /> */}
+                                                        <DropdownItem label="My Meetings" onClick={() => handleNavigate("/user/meetings")} />
+                                                        <DropdownItem label="Timesheet" onClick={() => handleNavigate("/user/timesheet")} />
+                                                        <DropdownItem label="Profile & Settings" onClick={() => handleNavigate("/user/profile-settings")} />
                                                     </>
                                                 )}
                                                 <DropdownItem label="Change Password" onClick={() => handleNavigate("/forgot-password")} />
@@ -248,8 +254,9 @@ const Navbar = () => {
                                             <DropdownItem label={user.role === "admin" ? "Manage Tasks" : "My Tasks"} onClick={() => handleNavigate(user.role === "admin" ? "/admin/tasks" : "/user/tasks")} />
                                             {user?.role === "admin" && (
                                                 <>
-                                                    <DropdownItem label="File Manager" onClick={() => handleNavigate("/admin/file-manager")} />
-                                                    <DropdownItem label="Manage Holidays" onClick={() => handleNavigate("/admin/holidays")} />
+                                                    <DropdownItem label="Manage Projects" onClick={() => handleNavigate("/admin/projects")} />
+                                                    {/* <DropdownItem label="File Manager" onClick={() => handleNavigate("/admin/file-manager")} /> */}
+                                                    {/* <DropdownItem label="Manage Holidays" onClick={() => handleNavigate("/admin/holidays")} /> */}
                                                     <DropdownItem label="Meeting Controls" onClick={() => handleNavigate("/admin/meeting-controls")} />
                                                     <DropdownItem label="Timesheet" onClick={() => handleNavigate("/admin/timesheet")} />
                                                     <DropdownItem label="Expenses" onClick={() => handleNavigate("/admin/expenses")} />
@@ -258,8 +265,9 @@ const Navbar = () => {
                                             )}
                                             {user?.role !== "admin" && (
                                                 <>
-                                                    <DropdownItem label="Files" onClick={() => handleNavigate("/user/files")} />
-                                                    <DropdownItem label="My Holidays" onClick={() => handleNavigate("/user/holidays")} />
+                                                    <DropdownItem label="My Projects" onClick={() => handleNavigate("/user/projects")} />
+                                                    {/* <DropdownItem label="Files" onClick={() => handleNavigate("/user/files")} /> */}
+                                                    {/* <DropdownItem label="My Holidays" onClick={() => handleNavigate("/user/holidays")} /> */}
                                                     <DropdownItem label="My Meetings" onClick={() => handleNavigate("/user/meetings")} />
                                                     <DropdownItem label="Timesheet" onClick={() => handleNavigate("/user/timesheet")} />
                                                     <DropdownItem label="Profile & Settings" onClick={() => handleNavigate("/user/profile-settings")} />
