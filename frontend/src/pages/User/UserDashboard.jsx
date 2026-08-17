@@ -284,7 +284,7 @@ const UserDashboard = () => {
                                         className='flex items-center gap-1.5 text-xs font-mono font-bold text-cyan-300 hover:text-white bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 px-4 py-2 rounded-xl transition-all cursor-pointer active:scale-95'
                                         onClick={onSeeMore}
                                     >
-                                        Execute.All() <LuArrowRight size={14} />
+                                        See All <LuArrowRight size={14} />
                                     </button>
                                 </div>
 
