@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState, useContext } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
 import axiosInstance from "../../utils/axiosInstance.js";
 import { API_PATHS } from "../../utils/apiPaths.js";
+import { UserContext } from "../../context/userContext.jsx"; // ✅ Import UserContext
 import { EXPENSE_CATEGORIES, CATEGORY_STYLE, PAYMENT_MODE_ICON, formatCurrency, MONTH_NAMES, fmtDate } from "../../utils/expenseConstants.js";
 import {
     Plus, RefreshCcw, ChevronLeft, ChevronRight, X, Pencil, Trash2,
@@ -321,6 +322,7 @@ const RANGE_OPTIONS = [
 
 const ExpenseAnalytics = () => {
     const today = new Date();
+    const { user } = useContext(UserContext); // ✅ UserContext se Admin data lia
 
     const [summary, setSummary] = useState(null);
     const [trend, setTrend] = useState([]);
@@ -341,31 +343,88 @@ const ExpenseAnalytics = () => {
             const month = today.getMonth() + 1;
             const year = today.getFullYear();
 
+            // ✅ URL parameters mein teamCode bhej rahe hain for backend security if supported
+            const params = { teamCode: user?.teamCode, userId: user?._id };
+
             const [sumRes, trendRes, catAllRes, catMonthRes, expRes, budRes] = await Promise.allSettled([
-                axiosInstance.get(API_PATHS.EXPENSES.SUMMARY),
-                axiosInstance.get(`${API_PATHS.EXPENSES.MONTHLY_TREND}?months=${trendMonths}`),
-                axiosInstance.get(API_PATHS.EXPENSES.BY_CATEGORY),
-                axiosInstance.get(`${API_PATHS.EXPENSES.BY_CATEGORY}?month=${month}&year=${year}`),
-                axiosInstance.get(API_PATHS.EXPENSES.GET_ALL),
-                axiosInstance.get(`${API_PATHS.BUDGETS.GET_ALL}?month=${month}&year=${year}`),
+                axiosInstance.get(API_PATHS.EXPENSES.SUMMARY, { params }),
+                axiosInstance.get(`${API_PATHS.EXPENSES.MONTHLY_TREND}?months=${trendMonths}&teamCode=${user?.teamCode || ""}`),
+                axiosInstance.get(API_PATHS.EXPENSES.BY_CATEGORY, { params }),
+                axiosInstance.get(`${API_PATHS.EXPENSES.BY_CATEGORY}?month=${month}&year=${year}&teamCode=${user?.teamCode || ""}`),
+                axiosInstance.get(API_PATHS.EXPENSES.GET_ALL, { params }),
+                axiosInstance.get(`${API_PATHS.BUDGETS.GET_ALL}?month=${month}&year=${year}&teamCode=${user?.teamCode || ""}`),
             ]);
 
-            if (sumRes.status === "fulfilled") setSummary(sumRes.value.data);
-            if (trendRes.status === "fulfilled") setTrend(trendRes.value.data?.trend || []);
-            if (catAllRes.status === "fulfilled") setCategoryAll(catAllRes.value.data?.breakdown || []);
-            if (catMonthRes.status === "fulfilled") setCategoryMonth(catMonthRes.value.data?.breakdown || []);
+            // ✅ Manual Frontend Filtering Function
+            const filterByOwnership = (items) => {
+                if (!Array.isArray(items)) return [];
+                return items.filter(item => {
+                    if (!user) return false;
+                    
+                    const hasOwnershipData = item.teamCode || item.createdBy || item.user || item.adminId || item.userId || item.teamId;
+                    
+                    if (hasOwnershipData) {
+                        const itemStr = JSON.stringify(item);
+                        const uId = user._id ? String(user._id) : "NO_ID";
+                        const tCode = user.teamCode ? String(user.teamCode) : "NO_TEAM";
+                        return itemStr.includes(uId) || itemStr.includes(tCode);
+                    }
+                    
+                    // If no ownership data exists (aggregation issue), bypass
+                    return true;
+                });
+            };
+
+            // ✅ Extracting and Filtering Everything Properly
+            let adminExpenses = [];
             if (expRes.status === "fulfilled") {
                 const raw = expRes.value.data?.expenses || expRes.value.data || [];
-                setExpenses(Array.isArray(raw) ? raw : []);
+                adminExpenses = filterByOwnership(raw);
+                setExpenses(adminExpenses);
             }
-            if (budRes.status === "fulfilled") setBudgets(budRes.value.data?.budgets || []);
+
+            if (budRes.status === "fulfilled") setBudgets(filterByOwnership(budRes.value.data?.budgets || []));
+            if (trendRes.status === "fulfilled") setTrend(filterByOwnership(trendRes.value.data?.trend || []));
+            if (catAllRes.status === "fulfilled") setCategoryAll(filterByOwnership(catAllRes.value.data?.breakdown || []));
+            if (catMonthRes.status === "fulfilled") setCategoryMonth(filterByOwnership(catMonthRes.value.data?.breakdown || []));
+
+            // ✅ Manual Summary Calculation Based on Strict Filtered Data
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            let total = 0;
+            let thisMonthTotal = 0;
+            let lastMonthTotal = 0;
+
+            adminExpenses.forEach(exp => {
+                const amt = exp.amount || 0;
+                total += amt;
+                const d = new Date(exp.date);
+                
+                if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+                    thisMonthTotal += amt;
+                } else if (
+                    (currentMonth === 0 && d.getMonth() === 11 && d.getFullYear() === currentYear - 1) || 
+                    (currentMonth > 0 && d.getMonth() === currentMonth - 1 && d.getFullYear() === currentYear)
+                ) {
+                    lastMonthTotal += amt;
+                }
+            });
+
+            setSummary({
+                total,
+                thisMonth: thisMonthTotal,
+                lastMonth: lastMonthTotal,
+                avg: adminExpenses.length ? total / adminExpenses.length : 0,
+                count: adminExpenses.length
+            });
+
         } catch (e) {
             console.log(e);
         } finally {
             setLoading(false);
             setRefreshing(false);
         }
-    }, [trendMonths]);
+    }, [trendMonths, user]); // ✅ added User Dependency
 
     useEffect(() => { fetchAll(); }, [fetchAll]);
 
@@ -794,13 +853,6 @@ const ExpenseAnalytics = () => {
                     </>
                 )}
             </div>
-
-            <style>{`
-                .custom-scrollbar::-webkit-scrollbar { width:4px; height:4px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:999px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.2); }
-                .custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
-            `}</style>
         </DashboardLayout>
     );
 };

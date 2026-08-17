@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
 import axiosInstance from "../../utils/axiosInstance.js";
 import { API_PATHS } from "../../utils/apiPaths.js";
+import { UserContext } from "../../context/userContext.jsx";
 import {
     EXPENSE_CATEGORIES, CATEGORY_STYLE, PAYMENT_MODES,
     formatCurrency, fmtDate,
@@ -12,7 +13,7 @@ import {
     ChevronLeft, ChevronRight, Wallet, TrendingUp, TrendingDown,
     Receipt, ArrowUpDown, CheckCircle2, AlertCircle, Loader2, Filter,
 } from "lucide-react";
-import ExpenseNavDropdown from "../../components/ExpenseNavbarDropdown.jsx"
+import ExpenseNavDropdown from "../../components/ExpenseNavbarDropdown.jsx";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SKELETONS (Dark Mode Cyber Pulse)
@@ -190,6 +191,7 @@ const PAGE_SIZES = [10, 25, 50];
 
 const Expenses = () => {
     const navigate = useNavigate();
+    const { user } = useContext(UserContext); // ✅ Logged-in user context add kiya
 
     const [expenses, setExpenses] = useState([]);
     const [summary, setSummary] = useState(null);
@@ -216,15 +218,60 @@ const Expenses = () => {
     const fetchData = useCallback(async ({ isRefresh = false } = {}) => {
         try {
             isRefresh ? setRefreshing(true) : setLoading(true);
-            const [expRes, sumRes] = await Promise.allSettled([
-                axiosInstance.get(API_PATHS.EXPENSES.GET_ALL),
-                axiosInstance.get(API_PATHS.EXPENSES.SUMMARY),
-            ]);
-            if (expRes.status === "fulfilled") {
-                const raw = expRes.value.data?.expenses || expRes.value.data || [];
-                setExpenses(Array.isArray(raw) ? raw : []);
+            
+            const params = { teamCode: user?.teamCode };
+
+            // We only need expRes now since we calculate summary locally for accurate team filtering
+            const expRes = await axiosInstance.get(API_PATHS.EXPENSES.GET_ALL, { params });
+            
+            if (expRes.data) {
+                const raw = expRes.data?.expenses || expRes.data || [];
+                
+                // ✅ Frontend Filter: Sirf naye admin ya current team ka data show hoga
+                const adminExpenses = raw.filter(exp => {
+                    if (!user) return false;
+                    return exp.teamCode === user.teamCode || 
+                           exp.createdBy === user._id || 
+                           exp.createdBy?._id === user._id ||
+                           exp.user === user._id ||
+                           exp.user?._id === user._id;
+                });
+
+                setExpenses(adminExpenses);
+
+                // ✅ Local Stat Calculation: Backend summary skip karke yahan strict filter par calculation ho rahi hai
+                const now = new Date();
+                const currentMonth = now.getMonth();
+                const currentYear = now.getFullYear();
+
+                let total = 0;
+                let thisMonthTotal = 0;
+                let lastMonthTotal = 0;
+
+                adminExpenses.forEach(exp => {
+                    const amt = exp.amount || 0;
+                    total += amt;
+                    const d = new Date(exp.date);
+                    
+                    if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+                        thisMonthTotal += amt;
+                    } else if (
+                        (currentMonth === 0 && d.getMonth() === 11 && d.getFullYear() === currentYear - 1) || 
+                        (currentMonth > 0 && d.getMonth() === currentMonth - 1 && d.getFullYear() === currentYear)
+                    ) {
+                        lastMonthTotal += amt;
+                    }
+                });
+
+                setSummary({
+                    total,
+                    thisMonth: thisMonthTotal,
+                    lastMonth: lastMonthTotal,
+                    avg: adminExpenses.length ? total / adminExpenses.length : 0,
+                    count: adminExpenses.length
+                });
             }
-            if (sumRes.status === "fulfilled") setSummary(sumRes.value.data);
+
         } catch (e) {
             console.log(e);
             showToast("Couldn't load expenses. Try refreshing.", "error");
@@ -232,7 +279,7 @@ const Expenses = () => {
             setLoading(false);
             setRefreshing(false);
         }
-    }, []);
+    }, [user]);
 
     useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -496,7 +543,7 @@ const Expenses = () => {
                 {/* LIST CONTAINER */}
                 <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-5 sm:p-7 shadow-[0_15px_50px_rgba(0,0,0,0.6)] w-full">
                     {loading ? <TableSkeleton /> : filtered.length === 0 ? (
-                        <div className="bg-zinc-950/40 border border-dashed border-white/10 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center backdrop-blur-xl">
+                        <div className="py-16 sm:py-24 px-6 flex flex-col items-center justify-center text-center">
                             <div className="w-20 h-20 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 mx-auto flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(56,189,248,0.15)]">
                                 <Receipt size={36} className="text-cyan-400" />
                             </div>

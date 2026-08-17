@@ -1,9 +1,9 @@
-// src/pages/Admin/ManageExpenses.jsx
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
 import axiosInstance from "../../utils/axiosInstance.js";
 import { API_PATHS } from "../../utils/apiPaths.js";
+import { UserContext } from "../../context/userContext.jsx"; // ✅ Import kiya
 import {
     EXPENSE_CATEGORIES, CATEGORY_STYLE, PAYMENT_MODES,
     formatCurrency, fmtDate,
@@ -14,7 +14,7 @@ import {
     Receipt, ArrowUpDown, CheckCircle2, AlertCircle, Loader2, Filter,
     FolderOpen, Layers, ChevronDown, ChevronUp
 } from "lucide-react";
-import ExpenseNavDropdown from "../../components/ExpenseNavbarDropdown.jsx"
+import ExpenseNavDropdown from "../../components/ExpenseNavbarDropdown.jsx";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SKELETONS (Dark Mode Cyber Pulse)
@@ -175,6 +175,7 @@ const CategoryGroup = ({ category, items, collapsed, onToggle, onEdit, onDelete 
 
 const ManageExpenses = () => {
     const navigate = useNavigate();
+    const { user } = useContext(UserContext); // ✅ UserContext se Admin data lia
 
     const [expenses, setExpenses] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -193,7 +194,19 @@ const ManageExpenses = () => {
             isRefresh ? setRefreshing(true) : setLoading(true);
             const res = await axiosInstance.get(API_PATHS.EXPENSES.GET_ALL);
             const raw = res.data?.expenses || res.data || [];
-            setExpenses(Array.isArray(raw) ? raw : []);
+            
+            // ✅ EXACT FILTER: Sirf Current Admin/Team ka Data aayega
+            const adminExpenses = raw.filter(exp => {
+                if (!user) return false;
+                return exp.teamCode === user.teamCode || 
+                       exp.createdBy === user._id || 
+                       exp.createdBy?._id === user._id ||
+                       exp.user === user._id ||
+                       exp.user?._id === user._id;
+            });
+
+            setExpenses(adminExpenses);
+
         } catch (e) {
             console.log(e);
             showToast("Couldn't load expenses. Try refreshing.", "error");
@@ -201,7 +214,7 @@ const ManageExpenses = () => {
             setLoading(false);
             setRefreshing(false);
         }
-    }, []);
+    }, [user]); // User state dependency mein daal di gayi hai
 
     useEffect(() => { fetchExpenses(); }, [fetchExpenses]);
 

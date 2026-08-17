@@ -238,10 +238,10 @@ const Dashboard = () => {
                                     <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur-lg opacity-40 group-hover:opacity-100 transition duration-500"></div>
                                     <button
                                         onClick={() => navigate("/admin/create-task")}
-                                        className='relative flex items-center gap-2 bg-zinc-950 text-white text-sm font-mono font-bold px-6 py-3.5 rounded-xl border border-white/10 hover:border-cyan-500/50 active:scale-95 transition-all duration-300'
+                                        className='relative flex items-center gap-2 bg-zinc-950 text-white text-sm font-mono font-bold px-6 py-3.5 rounded-xl border border-white/10 hover:border-cyan-500/50 active:scale-95 transition-all duration-300 cursor-pointer'
                                     >
                                         Initialize Workspace
-                                        <LuArrowRight className="text-cyan-400" />
+                                        <LuArrowRight className="text-cyan-400 cursor-pointer" />
                                     </button>
                                 </div>
                             </div>

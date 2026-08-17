@@ -1,9 +1,9 @@
-// src/pages/Admin/AddExpense.jsx
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DashboardLayout from "../../components/layouts/DashboardLayout.jsx";
 import axiosInstance from "../../utils/axiosInstance.js";
 import { API_PATHS } from "../../utils/apiPaths.js";
+import { UserContext } from "../../context/userContext.jsx"; // ✅ UserContext import kiya
 import {
     EXPENSE_CATEGORIES, CATEGORY_STYLE, PAYMENT_MODES, PAYMENT_MODE_ICON,
     RECURRING_FREQUENCIES, formatCurrency, fmtDate, toInputDate,
@@ -70,6 +70,8 @@ const EMPTY_FORM = {
 
 const AddExpense = () => {
     const navigate = useNavigate();
+    const { user } = useContext(UserContext); // ✅ UserContext se Admin data lia
+
     const [searchParams] = useSearchParams();
     const editId = searchParams.get("id");
     const isEditMode = !!editId;
@@ -116,15 +118,27 @@ const AddExpense = () => {
     const fetchRecent = useCallback(async () => {
         try {
             setRecentLoading(true);
-            const res = await axiosInstance.get(API_PATHS.EXPENSES.GET_ALL);
+            const params = { teamCode: user?.teamCode };
+            const res = await axiosInstance.get(API_PATHS.EXPENSES.GET_ALL, { params });
             const raw = res.data?.expenses || res.data || [];
-            setRecent(Array.isArray(raw) ? raw.slice(0, 6) : []);
+
+            // ✅ EXACT FILTER: Sirf Current Admin/Team ka Data aayega Sidebar me bhi
+            const adminExpenses = Array.isArray(raw) ? raw.filter(exp => {
+                if (!user) return false;
+                return exp.teamCode === user.teamCode ||
+                    exp.createdBy === user._id ||
+                    exp.createdBy?._id === user._id ||
+                    exp.user === user._id ||
+                    exp.user?._id === user._id;
+            }) : [];
+
+            setRecent(adminExpenses.slice(0, 6)); // Top 6 recent layenge filter karne ke baad
         } catch (e) {
             console.log(e);
         } finally {
             setRecentLoading(false);
         }
-    }, []);
+    }, [user]);
 
     useEffect(() => { fetchRecent(); }, [fetchRecent]);
 
