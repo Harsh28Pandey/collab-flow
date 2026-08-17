@@ -37,12 +37,11 @@ const ProfilePhotoSelector = ({ image, setImage, name }) => {
             />
 
             {!image ? (
-                <div className='relative group'>
+                <div className='relative group w-20 h-20'>
                     {/* Ambient Glow Ring */}
-                    <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full blur opacity-30 group-hover:opacity-75 transition duration-300"></div>
+                    <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full blur opacity-30 group-hover:opacity-75 transition duration-300 pointer-events-none"></div>
 
-                    <div className='relative w-20 h-20 flex items-center justify-center bg-zinc-900/90 border border-white/10 rounded-full cursor-pointer shadow-inner overflow-hidden'>
-
+                    <div className='absolute inset-0 flex items-center justify-center bg-zinc-900 border border-white/10 rounded-full cursor-pointer shadow-inner overflow-hidden z-10'>
                         {firstLetter ? (
                             <span className='text-2xl font-mono font-black text-cyan-400'>
                                 {firstLetter}
@@ -50,34 +49,37 @@ const ProfilePhotoSelector = ({ image, setImage, name }) => {
                         ) : (
                             <LuUser className='text-3xl text-zinc-400' />
                         )}
-
-                        <button
-                            type='button'
-                            className='w-8 h-8 flex items-center justify-center bg-zinc-950 hover:bg-zinc-900 text-cyan-400 border border-white/10 rounded-full absolute -bottom-1 -right-1 cursor-pointer shadow-lg transition-all active:scale-95'
-                            onClick={onChooseFile}
-                        >
-                            <LuUpload size={13} className="stroke-[2.5]" />
-                        </button>
                     </div>
+
+                    {/* Upload Button */}
+                    <button
+                        type='button'
+                        className='w-8 h-8 flex items-center justify-center bg-zinc-950 hover:bg-zinc-900 text-cyan-400 border border-white/10 rounded-full absolute -bottom-1 -right-1 cursor-pointer shadow-lg transition-all active:scale-95 z-20'
+                        onClick={onChooseFile}
+                    >
+                        <LuUpload size={13} className="stroke-[2.5]" />
+                    </button>
                 </div>
             ) : (
-                <div className='relative group'>
+                <div className='relative group w-20 h-20'>
                     {/* Ambient Glow Ring */}
-                    <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full blur opacity-40 group-hover:opacity-75 transition duration-300"></div>
+                    <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full blur opacity-40 group-hover:opacity-75 transition duration-300 pointer-events-none"></div>
 
-                    <div className='relative'>
+                    <div className='absolute inset-0 z-10'>
                         <img src={previewUrl}
                             alt="profile photo"
-                            className='w-20 h-20 rounded-full object-cover border-2 border-zinc-900 shadow-2xl'
+                            className='w-full h-full rounded-full object-cover border-2 border-zinc-900 shadow-2xl'
                         />
-                        <button
-                            type='button'
-                            className='w-8 h-8 flex items-center justify-center bg-zinc-950 hover:bg-zinc-900 text-rose-400 border border-rose-500/30 rounded-full absolute -bottom-1 -right-1 cursor-pointer shadow-lg transition-all active:scale-95'
-                            onClick={handleRemoveImage}
-                        >
-                            <LuTrash size={13} className="stroke-[2.5]" />
-                        </button>
                     </div>
+
+                    {/* Trash Button */}
+                    <button
+                        type='button'
+                        className='w-8 h-8 flex items-center justify-center bg-zinc-950 hover:bg-zinc-900 text-rose-400 border border-rose-500/30 rounded-full absolute -bottom-1 -right-1 cursor-pointer shadow-lg transition-all active:scale-95 z-20'
+                        onClick={handleRemoveImage}
+                    >
+                        <LuTrash size={13} className="stroke-[2.5]" />
+                    </button>
                 </div>
             )}
         </div>
