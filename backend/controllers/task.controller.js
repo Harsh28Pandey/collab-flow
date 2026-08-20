@@ -212,12 +212,12 @@ const createTask = async (req, res) => {
                     sendTaskNotificationEmail({
                         email: u.email,
                         name: u.name,
-                        taskTitle: title, 
+                        taskTitle: title,
                         taskDescription: description,
                         priority: priority,
                         dueDate: dueDate,
                         assignedBy: req.user.name,
-                        projectName: projectName 
+                        projectName: projectName
                     });
                 });
             }
@@ -277,8 +277,8 @@ const updateTask = async (req, res) => {
         const updatedTask = await task.save();
 
         try {
-            if (assignedTo && assignedTo.length > 0) {
-                const assignedUsers = await User.find({ _id: { $in: assignedTo } });
+            if (task.assignedTo && task.assignedTo.length > 0) {
+                const assignedUsers = await User.find({ _id: { $in: task.assignedTo } });
 
                 // Project ka naam nikalne ke liye
                 let projectName = "Standalone Task";
@@ -292,12 +292,12 @@ const updateTask = async (req, res) => {
                     sendTaskNotificationEmail({
                         email: u.email,
                         name: u.name,
-                        taskTitle: title, 
-                        taskDescription: description,
-                        priority: priority,
-                        dueDate: dueDate,
-                        assignedBy: req.user.name, 
-                        projectName: projectName 
+                        taskTitle: task.title,            
+                        taskDescription: task.description, 
+                        priority: task.priority,            
+                        dueDate: task.dueDate,
+                        assignedBy: req.user.name,
+                        projectName: projectName
                     });
                 });
             }
