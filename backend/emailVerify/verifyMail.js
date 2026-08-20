@@ -76,7 +76,56 @@ const verifyMail = async (token, email) => {
 
 };
 
-module.exports = { verifyMail };
+// --- TASK NOTIFICATION EMAIL FUNCTION ---
+const sendTaskNotificationEmail = async ({ email, name, taskTitle, taskDescription, priority, dueDate, assignedBy, projectName }) => {
+    try {
+        const templatePath = path.resolve(__dirname, "taskNotification.hbs");
+        const emailTemplateSource = fs.readFileSync(templatePath, "utf-8");
+        const template = handlebars.compile(emailTemplateSource);
+
+        const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+        // ✅ Direct Login URL
+        const loginUrl = `${clientUrl}/login`;
+
+        const formattedDate = new Date(dueDate).toLocaleDateString("en-IN", {
+            day: 'numeric', month: 'short', year: 'numeric'
+        });
+
+        const htmlToSend = template({
+            userName: name,
+            taskTitle,
+            taskDescription: taskDescription || "No description provided.",
+            priority,
+            dueDate: formattedDate,
+            assignedBy: assignedBy || "Admin",
+            projectName: projectName || "Standalone Task",
+            loginUrl
+        });
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASSWORD
+            }
+        });
+
+        const mailConfigurations = {
+            from: `"Collab Flow" <${process.env.MAIL_USER}>`,
+            to: email,
+            subject: `New Task: ${taskTitle} | Collab Flow`,
+            html: htmlToSend,
+        };
+
+        await transporter.sendMail(mailConfigurations);
+        console.log(`Task notification email sent to ${email}`);
+
+    } catch (error) {
+        console.error("Task Notification Email Failed:", error);
+    }
+};
+
+module.exports = { verifyMail, sendTaskNotificationEmail };
 
 // const nodemailer = require("nodemailer");
 // const dotenv = require("dotenv");

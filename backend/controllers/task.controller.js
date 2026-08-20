@@ -2,8 +2,10 @@ const Task = require("../models/task.model.js");
 const Group = require("../models/group.model.js");
 const File = require("../models/file.model.js");
 const Poll = require("../models/poll.model.js");
+const User = require("../models/user.model.js");
 // ✅ NEW — needed only for the optional Project <-> Task activity-log hooks below.
 const Project = require("../models/project.model.js");
+const { sendTaskNotificationEmail } = require("../emailVerify/verifyMail.js");
 
 // ✅ NEW — safe helper, never throws, never blocks a task response.
 // Pushes an activity entry onto a project's timeline only if the task actually has a project attached.
@@ -194,6 +196,35 @@ const createTask = async (req, res) => {
             );
         }
 
+        try {
+            if (assignedTo && assignedTo.length > 0) {
+                const assignedUsers = await User.find({ _id: { $in: assignedTo } });
+
+                // Project ka naam nikalne ke liye
+                let projectName = "Standalone Task";
+                if (project) {
+                    const projDoc = await Project.findById(project);
+                    if (projDoc) projectName = projDoc.name;
+                }
+
+                // Sabhi assigned members ko mail bhej rahe hain
+                assignedUsers.forEach(u => {
+                    sendTaskNotificationEmail({
+                        email: u.email,
+                        name: u.name,
+                        taskTitle: title, 
+                        taskDescription: description,
+                        priority: priority,
+                        dueDate: dueDate,
+                        assignedBy: req.user.name,
+                        projectName: projectName 
+                    });
+                });
+            }
+        } catch (mailErr) {
+            console.error("Error sending task assignment emails:", mailErr.message);
+        }
+
         res.status(201).json({
             message: "Task created successfully",
             task
@@ -244,6 +275,36 @@ const updateTask = async (req, res) => {
         }
 
         const updatedTask = await task.save();
+
+        try {
+            if (assignedTo && assignedTo.length > 0) {
+                const assignedUsers = await User.find({ _id: { $in: assignedTo } });
+
+                // Project ka naam nikalne ke liye
+                let projectName = "Standalone Task";
+                if (project) {
+                    const projDoc = await Project.findById(project);
+                    if (projDoc) projectName = projDoc.name;
+                }
+
+                // Sabhi assigned members ko mail bhej rahe hain
+                assignedUsers.forEach(u => {
+                    sendTaskNotificationEmail({
+                        email: u.email,
+                        name: u.name,
+                        taskTitle: title, 
+                        taskDescription: description,
+                        priority: priority,
+                        dueDate: dueDate,
+                        assignedBy: req.user.name, 
+                        projectName: projectName 
+                    });
+                });
+            }
+        } catch (mailErr) {
+            console.error("Error sending task assignment emails:", mailErr.message);
+        }
+
         res.json({
             message: "Task updated successfully",
             updatedTask
