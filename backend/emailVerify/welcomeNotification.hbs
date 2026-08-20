@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to the Team</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px 15px;
+            color: #f4f4f5;
+        }
+
+        .wrapper {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .card {
+            background: #09090b;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid #27272a;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9);
+        }
+
+        /* Glassmorphism Header */
+        .top {
+            background: linear-gradient(135deg, #4c1d95 0%, #18181b 100%);
+            padding: 40px 30px;
+            border-bottom: 1px solid #27272a;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(192, 132, 252, 0.1);
+            border: 1px solid rgba(192, 132, 252, 0.2);
+            color: #c084fc;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .top h1 {
+            color: #ffffff;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .content {
+            padding: 35px 30px;
+        }
+
+        .greeting {
+            font-size: 16px;
+            color: #a1a1aa;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .greeting strong {
+            color: #ffffff;
+        }
+
+        /* Bento Box Simulation */
+        .bento-row {
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .bento-box {
+            background: #121214;
+            border: 1px solid #27272a;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .bento-box h3 {
+            color: #71717a;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .bento-box p {
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .bento-box .desc {
+            color: #d4d4d8;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .btn-wrapper {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #c084fc;
+            color: #09090b !important;
+            text-decoration: none;
+            padding: 15px 35px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(192, 132, 252, 0.25);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #27272a;
+            background: #09090b;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: #52525b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="card">
+            <div class="top">
+                <span class="badge">Verification Successful</span>
+                <h1>Welcome to {{teamName}}! 🎉</h1>
+            </div>
+            <div class="content">
+                <div class="greeting">
+                    Hi <strong>{{userName}}</strong>,<br>
+                    Your email has been successfully verified. You are now an official member of the team!
+                </div>
+
+                <div class="bento-row">
+                    <div class="bento-box">
+                        <h3>What's Next?</h3>
+                        <p class="desc">You can now access your team dashboard, view assigned projects, manage your
+                            tasks, and collaborate with your team members seamlessly in Collab Flow.</p>
+                    </div>
+                </div>
+
+                <div class="btn-wrapper">
+                    <a href="{{loginUrl}}" class="btn">Login to Dashboard</a>
+                </div>
+            </div>
+            <div class="footer">
+                <p>&copy; 2026 Collab Flow. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

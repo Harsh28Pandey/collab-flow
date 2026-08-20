@@ -110,6 +110,8 @@ const sendTaskNotificationEmail = async ({ email, name, taskTitle, taskDescripti
             }
         });
 
+        await transporter.verify();
+
         const mailConfigurations = {
             from: `"Collab Flow" <${process.env.MAIL_USER}>`,
             to: email,
@@ -125,7 +127,55 @@ const sendTaskNotificationEmail = async ({ email, name, taskTitle, taskDescripti
     }
 };
 
-module.exports = { verifyMail, sendTaskNotificationEmail };
+// --- NEW FUNCTION FOR WELCOME TEAM EMAIL ---
+const sendWelcomeTeamEmail = async ({ email, name, teamName }) => {
+    try {
+        // ✅ Check if template file exists to prevent crash
+        const templatePath = path.resolve(__dirname, "welcomeNotification.hbs");
+        if (!fs.existsSync(templatePath)) {
+            console.error("WELCOME EMAIL ERROR: welcomeNotification.hbs file not found!");
+            return;
+        }
+
+        const emailTemplateSource = fs.readFileSync(templatePath, "utf-8");
+        const template = handlebars.compile(emailTemplateSource);
+
+        const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+        const loginUrl = `${clientUrl}/login`;
+
+        const htmlToSend = template({
+            userName: name,
+            teamName: teamName || "the Workspace",
+            loginUrl
+        });
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASSWORD
+            }
+        });
+
+        // ✅ Verify transporter before sending
+        await transporter.verify();
+
+        const mailConfigurations = {
+            from: `"Collab Flow" <${process.env.MAIL_USER}>`,
+            to: email,
+            subject: `Welcome to ${teamName || "the Team"}! 🎉`,
+            html: htmlToSend,
+        };
+
+        const info = await transporter.sendMail(mailConfigurations);
+        console.log(`✅ Welcome email sent to ${email}`, info.response);
+
+    } catch (error) {
+        console.error("❌ Welcome Email Failed:", error);
+    }
+};
+
+module.exports = { verifyMail, sendTaskNotificationEmail, sendWelcomeTeamEmail };
 
 // const nodemailer = require("nodemailer");
 // const dotenv = require("dotenv");
