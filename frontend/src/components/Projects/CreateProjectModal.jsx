@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { LuX, LuFolderPlus, LuUsers } from 'react-icons/lu';
+import { LuX, LuFolderPlus, LuUsers, LuChevronDown } from 'react-icons/lu';
 import { Loader2 } from 'lucide-react';
 import axiosInstance from '../../utils/axiosInstance.js';
 import { API_PATHS } from '../../utils/apiPaths.js';
@@ -204,15 +204,18 @@ const CreateProjectModal = ({ isOpen, onClose, onSuccess, editProject = null }) 
 
                         <div>
                             <label className={labelClass}>Status</label>
-                            <select
-                                className={inputClass}
-                                value={form.status}
-                                onChange={(e) => setForm({ ...form, status: e.target.value })}
-                            >
-                                {STATUS_OPTIONS.map((s) => (
-                                    <option key={s} value={s} className="bg-zinc-900">{s}</option>
-                                ))}
-                            </select>
+                            <div className="relative">
+                                <select
+                                    className={`${inputClass} appearance-none pr-10 cursor-pointer`}
+                                    value={form.status}
+                                    onChange={(e) => setForm({ ...form, status: e.target.value })}
+                                >
+                                    {STATUS_OPTIONS.map((s) => (
+                                        <option key={s} value={s} className="bg-zinc-900">{s}</option>
+                                    ))}
+                                </select>
+                                <LuChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={16} />
+                            </div>
                         </div>
                     </div>
 
@@ -241,29 +244,35 @@ const CreateProjectModal = ({ isOpen, onClose, onSuccess, editProject = null }) 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className={labelClass}>Priority</label>
-                            <select
-                                className={inputClass}
-                                value={form.priority}
-                                onChange={(e) => setForm({ ...form, priority: e.target.value })}
-                            >
-                                {PRIORITY_OPTIONS.map((p) => (
-                                    <option key={p} value={p} className="bg-zinc-900">{p}</option>
-                                ))}
-                            </select>
+                            <div className="relative">
+                                <select
+                                    className={`${inputClass} appearance-none pr-10 cursor-pointer`}
+                                    value={form.priority}
+                                    onChange={(e) => setForm({ ...form, priority: e.target.value })}
+                                >
+                                    {PRIORITY_OPTIONS.map((p) => (
+                                        <option key={p} value={p} className="bg-zinc-900">{p}</option>
+                                    ))}
+                                </select>
+                                <LuChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={16} />
+                            </div>
                         </div>
 
                         <div>
                             <label className={labelClass}>Project Lead *</label>
-                            <select
-                                className={inputClass}
-                                value={form.projectLead}
-                                onChange={(e) => setForm({ ...form, projectLead: e.target.value })}
-                            >
-                                <option value="" className="bg-zinc-900">Select lead</option>
-                                {users.map((u) => (
-                                    <option key={u._id} value={u._id} className="bg-zinc-900">{u.name}</option>
-                                ))}
-                            </select>
+                            <div className="relative">
+                                <select
+                                    className={`${inputClass} appearance-none pr-10 cursor-pointer`}
+                                    value={form.projectLead}
+                                    onChange={(e) => setForm({ ...form, projectLead: e.target.value })}
+                                >
+                                    <option value="" className="bg-zinc-900">Select lead</option>
+                                    {users.map((u) => (
+                                        <option key={u._id} value={u._id} className="bg-zinc-900">{u.name}</option>
+                                    ))}
+                                </select>
+                                <LuChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={16} />
+                            </div>
                         </div>
                     </div>
 
@@ -281,13 +290,13 @@ const CreateProjectModal = ({ isOpen, onClose, onSuccess, editProject = null }) 
                             ) : users.length === 0 ? (
                                 <p className="text-xs font-mono text-zinc-500 text-center py-4">No users found</p>
                             ) : (
-                                <div className="grid grid-cols-2 gap-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                     {users
                                         .filter((u) => u._id !== form.projectLead)
                                         .map((u) => (
                                             <label
                                                 key={u._id}
-                                                className={`flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer transition-all text-xs font-mono ${form.members.includes(u._id)
+                                                className={`flex items-center gap-3 px-3 py-2 rounded-xl border cursor-pointer transition-all text-xs font-mono ${form.members.includes(u._id)
                                                     ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-300'
                                                     : 'bg-zinc-900/60 border-white/5 text-zinc-300 hover:bg-zinc-900'
                                                     }`}
@@ -298,7 +307,12 @@ const CreateProjectModal = ({ isOpen, onClose, onSuccess, editProject = null }) 
                                                     checked={form.members.includes(u._id)}
                                                     onChange={() => toggleMember(u._id)}
                                                 />
-                                                <span className="truncate">{u.name}</span>
+                                                <div className="flex flex-col min-w-0 flex-1">
+                                                    <span className="truncate font-bold text-sm">{u.name}</span>
+                                                    <span className={`truncate text-[10px] ${form.members.includes(u._id) ? 'text-cyan-400/80' : 'text-zinc-500'}`}>
+                                                        {u.email}
+                                                    </span>
+                                                </div>
                                             </label>
                                         ))}
                                 </div>

@@ -13,6 +13,7 @@ import {
     Plus,
     Trash2,
     Loader2,
+    ChevronDown, // ✅ Added ChevronDown
 } from "lucide-react";
 
 import axiosInstance from "../../utils/axiosInstance";
@@ -356,22 +357,25 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                                 Employee
                                             </label>
 
-                                            <select
-                                                value={employeeId}
-                                                onChange={handleFieldChange(setEmployeeId, "employeeId")}
-                                                disabled={loadingEmployees}
-                                                className={inputClass(errors.employeeId)}
-                                            >
-                                                <option value="" className="bg-zinc-900 text-zinc-400">
-                                                    {loadingEmployees ? "Loading employees..." : "Select Employee"}
-                                                </option>
-
-                                                {employees.map((emp) => (
-                                                    <option key={emp._id} value={emp._id} className="bg-zinc-900 text-white">
-                                                        {emp.name} {emp.email ? `(${emp.email})` : ""}
+                                            <div className="relative">
+                                                <select
+                                                    value={employeeId}
+                                                    onChange={handleFieldChange(setEmployeeId, "employeeId")}
+                                                    disabled={loadingEmployees}
+                                                    className={`${inputClass(errors.employeeId)} appearance-none pr-10 cursor-pointer`}
+                                                >
+                                                    <option value="" className="bg-zinc-900 text-zinc-400">
+                                                        {loadingEmployees ? "Loading employees..." : "Select Employee"}
                                                     </option>
-                                                ))}
-                                            </select>
+
+                                                    {employees.map((emp) => (
+                                                        <option key={emp._id} value={emp._id} className="bg-zinc-900 text-white">
+                                                            {emp.name} {emp.email ? `(${emp.email})` : ""}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={16} />
+                                            </div>
 
                                             {errors.employeeId && (
                                                 <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">
@@ -430,18 +434,21 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                                 Attendance
                                             </label>
 
-                                            <select
-                                                value={attendance}
-                                                onChange={handleFieldChange(setAttendance, "attendance")}
-                                                className={inputClass(errors.attendance)}
-                                            >
-                                                <option value="" className="bg-zinc-900 text-zinc-400">Select Attendance</option>
-                                                {ATTENDANCE_OPTIONS.map((opt) => (
-                                                    <option key={opt} value={opt} className="bg-zinc-900 text-white">
-                                                        {opt}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                            <div className="relative">
+                                                <select
+                                                    value={attendance}
+                                                    onChange={handleFieldChange(setAttendance, "attendance")}
+                                                    className={`${inputClass(errors.attendance)} appearance-none pr-10 cursor-pointer`}
+                                                >
+                                                    <option value="" className="bg-zinc-900 text-zinc-400">Select Attendance</option>
+                                                    {ATTENDANCE_OPTIONS.map((opt) => (
+                                                        <option key={opt} value={opt} className="bg-zinc-900 text-white">
+                                                            {opt}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={16} />
+                                            </div>
 
                                             {errors.attendance && (
                                                 <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">
@@ -457,18 +464,21 @@ const CreateTimesheetModal = ({ open, onClose, onSuccess }) => {
                                                 Work Mode
                                             </label>
 
-                                            <select
-                                                value={workMode}
-                                                onChange={handleFieldChange(setWorkMode, "workMode")}
-                                                className={inputClass(errors.workMode)}
-                                            >
-                                                <option value="" className="bg-zinc-900 text-zinc-400">Select Work Mode</option>
-                                                {WORK_MODE_OPTIONS.map((opt) => (
-                                                    <option key={opt} value={opt} className="bg-zinc-900 text-white">
-                                                        {opt}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                            <div className="relative">
+                                                <select
+                                                    value={workMode}
+                                                    onChange={handleFieldChange(setWorkMode, "workMode")}
+                                                    className={`${inputClass(errors.workMode)} appearance-none pr-10 cursor-pointer`}
+                                                >
+                                                    <option value="" className="bg-zinc-900 text-zinc-400">Select Work Mode</option>
+                                                    {WORK_MODE_OPTIONS.map((opt) => (
+                                                        <option key={opt} value={opt} className="bg-zinc-900 text-white">
+                                                            {opt}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={16} />
+                                            </div>
 
                                             {errors.workMode && (
                                                 <p className="text-[10px] font-mono text-rose-400 mt-1.5 font-bold">

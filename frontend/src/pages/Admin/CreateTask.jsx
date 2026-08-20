@@ -6,7 +6,7 @@ import { API_PATHS } from '../../utils/apiPaths.js';
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import { LuTrash, LuArrowLeft } from 'react-icons/lu'; // ✅ LuArrowLeft import kiya
+import { LuTrash, LuArrowLeft, LuChevronDown } from 'react-icons/lu'; // ✅ LuChevronDown import kiya
 import SelectDropdown from '../../components/inputs/SelectDropdown.jsx';
 import SelectUsers from '../../components/inputs/SelectUsers.jsx';
 import TodoListInput from '../../components/inputs/TodoListInput.jsx';
@@ -302,27 +302,30 @@ const CreateTask = () => {
                             />
                         </div>
 
-                        {/* Grid Fields (Updated to include Project Dropdown) */}
+                        {/* Grid Fields (Updated to include Project Dropdown with Custom Arrow) */}
 
                         <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-5'>
 
-                            {/* ✅ Project Dropdown */}
+                            {/* ✅ Project Dropdown with custom arrow */}
                             <div>
                                 <label className='text-xs sm:text-sm font-mono font-bold text-zinc-300 mb-2 block uppercase tracking-wider'>
                                     Project
                                 </label>
-                                <select
-                                    value={taskData.project}
-                                    onChange={(e) => handleValueChange("project", e.target.value)}
-                                    className='w-full h-12 px-4 rounded-2xl border border-white/10 bg-zinc-950/80 outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm font-mono text-white shadow-inner cursor-pointer appearance-none'
-                                >
-                                    <option value="" className="bg-zinc-900">None (Standalone Task)</option>
-                                    {projects.map((p) => (
-                                        <option key={p._id} value={p._id} className="bg-zinc-900">
-                                            {p.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                <div className="relative">
+                                    <select
+                                        value={taskData.project}
+                                        onChange={(e) => handleValueChange("project", e.target.value)}
+                                        className='w-full h-12 pl-4 pr-10 rounded-2xl border border-white/10 bg-zinc-950/80 outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm font-mono text-white shadow-inner cursor-pointer appearance-none'
+                                    >
+                                        <option value="" className="bg-zinc-900">None (Standalone Task)</option>
+                                        {projects.map((p) => (
+                                            <option key={p._id} value={p._id} className="bg-zinc-900">
+                                                {p.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <LuChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={16} />
+                                </div>
                             </div>
 
                             {/* Priority */}
