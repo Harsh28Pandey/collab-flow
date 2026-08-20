@@ -360,7 +360,8 @@ const Timesheet = () => {
                 </div>
 
                 {/* ───────────────── FILTER BAR ───────────────── */}
-                <div className="bg-zinc-950/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-4 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-4 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+                {/* ✅ FIXED DOUBLE CARDS ISSUE: Removed outer heavy box styling */}
+                <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-4 py-2">
 
                     {/* DATE RANGE */}
                     <div className="relative flex-1 min-w-[160px]">
