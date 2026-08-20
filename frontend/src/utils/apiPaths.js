@@ -15,6 +15,7 @@ export const API_PATHS = {
 
     USERS: {
         GET_ALL_USERS: "/api/users",  //* get all users (admin only)
+        GET_USERS_COUNT: "/api/users/count",  //* get total users count (all logged-in users)
         GET_USER_BY_ID: (userId) => `/api/users/${userId}`,  //* get user by id
         CREATE_USER: "/api/users",  //* create a new user (admin only)
         UPDATE_USER: (userId) => `/api/users/${userId}`,  //* update user details

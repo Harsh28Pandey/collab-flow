@@ -60,6 +60,25 @@ const getUserById = async (req, res) => {
     }
 }
 
+//* get total users count for the logged-in user's team (members only, matches getUsers)
+const getUsersCount = async (req, res) => {
+    try {
+        const teamCode = req.user?.teamCode;
+
+        if (!teamCode) {
+            return res.json({ count: 0 });
+        }
+
+        const count = await User.countDocuments({ role: "member", teamCode });
+        res.json({ count });
+    } catch (error) {
+        res.status(500).json({
+            message: "Server error",
+            error: error.message
+        });
+    }
+};
+
 /**
  * @desc Delete a user (admin only)
  * @route DELETE /api/users/:id
@@ -76,4 +95,4 @@ const getUserById = async (req, res) => {
 //     }
 // }
 
-module.exports = { getUsers, getUserById };
+module.exports = { getUsers, getUserById, getUsersCount };

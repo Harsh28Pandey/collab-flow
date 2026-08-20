@@ -80,6 +80,7 @@ const UserDashboard = () => {
     const [pieChartData, setPieChartData] = useState([]);
     const [barChartData, setBarChartData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [teamMembersCount, setTeamMembersCount] = useState(0);
 
     //* prepare chart data
     const prepareChartData = (data) => {
@@ -117,12 +118,22 @@ const UserDashboard = () => {
         }
     }
 
+    const getTeamMembersCount = async () => {
+        try {
+            const response = await axiosInstance.get(API_PATHS.USERS.GET_USERS_COUNT);
+            setTeamMembersCount(response.data?.count || 0);
+        } catch (error) {
+            console.error("Error fetching team members count: ", error);
+        }
+    }
+
     const onSeeMore = () => {
         navigate("/user/tasks");
     }
 
     useEffect(() => {
         getDashboardData();
+        getTeamMembersCount();
         return () => { }
     }, [])
 
@@ -206,7 +217,7 @@ const UserDashboard = () => {
 
                                 <InfoCard
                                     label="Total Clusters"
-                                    value={addThousandSeparator(dashboardData?.overview?.totalGroups || 0)}
+                                    value={addThousandSeparator(teamMembersCount || 0)}
                                     color="bg-rose-500/20 text-rose-400 border border-rose-500/30"
                                 />
                                 <InfoCard
