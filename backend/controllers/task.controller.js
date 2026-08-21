@@ -260,7 +260,6 @@ const updateTask = async (req, res) => {
         task.todoChecklist = req.body.todoChecklist || task.todoChecklist;
         task.attachments = req.body.attachments || task.attachments;
 
-        // ✅ NEW — allow (re)linking a task to a project. Only touched if the key is explicitly sent.
         if (req.body.project !== undefined) {
             task.project = req.body.project || null;
         }
@@ -287,24 +286,28 @@ const updateTask = async (req, res) => {
                     if (projDoc) projectName = projDoc.name;
                 }
 
-                // Sabhi assigned members ko mail bhej rahe hain
-                assignedUsers.forEach(u => {
-                    sendTaskNotificationEmail({
-                        email: u.email,
-                        name: u.name,
-                        taskTitle: task.title,
-                        taskDescription: task.description,
-                        priority: task.priority,
-                        dueDate: task.dueDate,
-                        assignedBy: req.user.name,
-                        projectName: projectName
-                    });
-                });
+                for (const u of assignedUsers) {
+                    try {
+                        await sendTaskNotificationEmail({
+                            email: u.email,
+                            name: u.name,
+                            taskTitle: task.title,
+                            taskDescription: task.description,
+                            priority: task.priority,
+                            dueDate: task.dueDate,
+                            assignedBy: req.user.name,
+                            projectName: projectName
+                        });
+                    } catch (singleMailErr) {
+                        console.error(`Email failed for ${u.email}:`, singleMailErr.message);
+                    }
+                }
             }
         } catch (mailErr) {
             console.error("Error sending task assignment emails:", mailErr.message);
         }
 
+        // ✅ Response mail-sending try/catch ke bahar, updateTask ke main try ke andar
         res.json({
             message: "Task updated successfully",
             updatedTask
