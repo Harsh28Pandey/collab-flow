@@ -282,8 +282,8 @@ const updateTask = async (req, res) => {
 
                 // Project ka naam nikalne ke liye
                 let projectName = "Standalone Task";
-                if (project) {
-                    const projDoc = await Project.findById(project);
+                if (task.project) {
+                    const projDoc = await Project.findById(task.project);
                     if (projDoc) projectName = projDoc.name;
                 }
 
@@ -292,9 +292,9 @@ const updateTask = async (req, res) => {
                     sendTaskNotificationEmail({
                         email: u.email,
                         name: u.name,
-                        taskTitle: task.title,            
-                        taskDescription: task.description, 
-                        priority: task.priority,            
+                        taskTitle: task.title,
+                        taskDescription: task.description,
+                        priority: task.priority,
                         dueDate: task.dueDate,
                         assignedBy: req.user.name,
                         projectName: projectName
