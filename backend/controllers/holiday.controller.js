@@ -1,4 +1,6 @@
 const Holiday = require("../models/holiday.model.js");
+const User = require("../models/user.model.js");
+const { sendHolidayRequestEmail } = require("../emailVerify/verifyMail.js");
 
 const daysBetween = (from, to) => {
     const start = new Date(new Date(from).setHours(0, 0, 0, 0));
@@ -27,6 +29,31 @@ const applyHoliday = async (req, res) => {
             totalDays: daysBetween(fromDate, toDate),
             reason,
         });
+
+        try {
+            const admin = await User.findOne({
+                teamCode: req.user.teamCode,
+                role: "admin"
+            });
+
+            if (admin && admin.email) {
+                await sendHolidayRequestEmail({
+                    adminEmail: admin.email,
+                    adminName: admin.name,
+                    userName: req.user.name,
+                    userEmail: req.user.email,
+                    leaveType,
+                    fromDate,
+                    toDate,
+                    totalDays: holiday.totalDays,
+                    reason
+                });
+            } else {
+                console.log("No admin found for teamCode:", req.user.teamCode, "- skipping holiday email");
+            }
+        } catch (mailErr) {
+            console.error("Error sending holiday request email:", mailErr.message);
+        }
 
         res.status(201).json({ message: "Holiday request submitted successfully", holiday });
     } catch (error) {

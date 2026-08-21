@@ -175,7 +175,66 @@ const sendWelcomeTeamEmail = async ({ email, name, teamName }) => {
     }
 };
 
-module.exports = { verifyMail, sendTaskNotificationEmail, sendWelcomeTeamEmail };
+// --- NEW FUNCTION FOR HOLIDAY REQUEST NOTIFICATION (to Admin) ---
+const sendHolidayRequestEmail = async ({ adminEmail, adminName, userName, userEmail, leaveType, fromDate, toDate, totalDays, reason }) => {
+    try {
+        const templatePath = path.resolve(__dirname, "holidayRequest.hbs");
+        if (!fs.existsSync(templatePath)) {
+            console.error("HOLIDAY REQUEST EMAIL ERROR: holidayRequest.hbs file not found!");
+            return;
+        }
+
+        const emailTemplateSource = fs.readFileSync(templatePath, "utf-8");
+        const template = handlebars.compile(emailTemplateSource);
+
+        const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+        const loginUrl = `${clientUrl}/login`;
+
+        const formattedFrom = new Date(fromDate).toLocaleDateString("en-IN", {
+            day: 'numeric', month: 'short', year: 'numeric'
+        });
+        const formattedTo = new Date(toDate).toLocaleDateString("en-IN", {
+            day: 'numeric', month: 'short', year: 'numeric'
+        });
+
+        const htmlToSend = template({
+            adminName: adminName || "Admin",
+            userName,
+            userEmail,
+            leaveType,
+            fromDate: formattedFrom,
+            toDate: formattedTo,
+            totalDays,
+            reason,
+            loginUrl
+        });
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASSWORD
+            }
+        });
+
+        await transporter.verify();
+
+        const mailConfigurations = {
+            from: `"Collab Flow" <${process.env.MAIL_USER}>`,
+            to: adminEmail,
+            subject: `New Holiday Request from ${userName} | Collab Flow`,
+            html: htmlToSend,
+        };
+
+        await transporter.sendMail(mailConfigurations);
+        console.log(`Holiday request email sent to admin: ${adminEmail}`);
+
+    } catch (error) {
+        console.error("Holiday Request Email Failed:", error);
+    }
+};
+
+module.exports = { verifyMail, sendTaskNotificationEmail, sendWelcomeTeamEmail, sendHolidayRequestEmail };
 
 // const nodemailer = require("nodemailer");
 // const dotenv = require("dotenv");
