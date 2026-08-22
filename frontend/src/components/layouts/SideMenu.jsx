@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { UserContext } from '../../context/userContext.jsx';
 
 import {
@@ -53,7 +53,7 @@ const SideMenu = ({ activeMenu }) => {
 
     // ================= AUTO OPEN DROPDOWN =================
 
-    useEffect(() => {
+    useLayoutEffect(() => {
 
         if (isExpenseActive) {
             setExpenseDropdownOpen(true);
@@ -63,7 +63,7 @@ const SideMenu = ({ activeMenu }) => {
 
     // ================= ACTIVE MENU SCROLL FIX =================
 
-    useEffect(() => {
+    useLayoutEffect(() => {
 
         const container = scrollContainerRef.current;
 
@@ -73,34 +73,29 @@ const SideMenu = ({ activeMenu }) => {
             ".active-menu-item"
         );
 
-        if (activeElement) {
+        if (!activeElement) return;
 
-            const containerTop = container.scrollTop;
-            const containerHeight = container.clientHeight;
+        const containerRect = container.getBoundingClientRect();
+        const elementRect = activeElement.getBoundingClientRect();
 
-            const elementTop = activeElement.offsetTop;
-            const elementHeight = activeElement.clientHeight;
+        const isVisible =
+            elementRect.top >= containerRect.top &&
+            elementRect.bottom <= containerRect.bottom;
 
-            const isVisible =
-                elementTop >= containerTop &&
-                elementTop + elementHeight <=
-                containerTop + containerHeight;
+        // ✅ instant, pre-paint positioning — no smooth animation, no visible
+        // "jump to top then correct" flash, works the same on click AND on
+        // full page refresh since it runs before the browser paints anything.
+        if (!isVisible) {
 
-            // ONLY SCROLL IF ITEM IS NOT VISIBLE
-            if (!isVisible) {
+            activeElement.scrollIntoView({
+                block: "nearest",
+                inline: "nearest",
+                behavior: "auto"
+            });
 
-                container.scrollTo({
-                    top:
-                        elementTop -
-                        containerHeight / 2 +
-                        elementHeight / 2,
-                    behavior: "smooth"
-                });
-
-            }
         }
 
-    }, [location.pathname]);
+    }, [location.pathname, expenseDropdownOpen, sideMenuData]);
 
     // ================= HANDLE CLICK =================
 
@@ -127,7 +122,7 @@ const SideMenu = ({ activeMenu }) => {
 
     // ================= MENU DATA =================
 
-    useEffect(() => {
+    useLayoutEffect(() => {
 
         if (user) {
 
