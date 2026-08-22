@@ -36,6 +36,7 @@ const connectDB = async () => {
 
 module.exports = connectDB;
 
+// old collab flow database code (commented out) - used recently
 // const mongoose = require("mongoose");
 
 // const connectDB = async () => {
@@ -62,6 +63,7 @@ module.exports = connectDB;
 
 // module.exports = connectDB;
 
+// old collab flow database code (commented out) - not used currently
 // const mongoose = require("mongoose")
 
 // const connectDB = async () => {
