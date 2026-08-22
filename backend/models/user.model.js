@@ -31,6 +31,27 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    bio: {
+        type: String,
+        default: ""
+    },
+    skills: {
+        type: [String],
+        default: []
+    },
+    experienceLevel: {
+        type: String,
+        enum: ["Beginner", "Intermediate", "Advanced", "Expert"],
+        default: "Beginner"
+    },
+    githubUrl: {
+        type: String,
+        default: ""
+    },
+    linkedinUrl: {
+        type: String,
+        default: ""
+    },
     isVerified: {
         type: Boolean,
         default: false

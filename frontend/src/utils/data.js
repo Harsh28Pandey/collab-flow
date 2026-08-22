@@ -1,4 +1,7 @@
-import { LuLayoutDashboard, LuUsers, LuClipboardCheck, LuSquarePlus, LuLogOut, LuMessageSquare, LuListTodo, LuMegaphone, LuBadgeIndianRupee, LuChartPie, LuClock, LuSettings, LuWallet, LuReceipt, LuHandCoins, LuCreditCard, LuCalendar, LuFolderClosed, LuCircleUser, LuUmbrella, LuCalendarCheck, LuVideo, LuFolderKanban } from "react-icons/lu";
+import {
+    LuLayoutDashboard, LuUsers, LuClipboardCheck, LuSquarePlus, LuLogOut, LuMessageSquare, LuListTodo, LuMegaphone, LuBadgeIndianRupee, LuChartPie, LuClock, LuSettings, LuWallet, LuReceipt, LuHandCoins, LuCreditCard, LuCalendar, LuFolderClosed, LuCircleUser, LuUmbrella, LuCalendarCheck, LuVideo, LuFolderKanban, LuChartNoAxesCombined,
+    LuSparkles
+} from "react-icons/lu";
 
 export const SIDE_MENU_DATA = [
     {
@@ -87,12 +90,24 @@ export const SIDE_MENU_DATA = [
     },
     {
         id: "14",
+        label: "Insights",
+        icon: LuChartNoAxesCombined,
+        path: "/admin/insights"
+    },
+    {
+        id: "15",
+        label: "Collab AI",
+        icon: LuSparkles,
+        path: "/admin/collab-ai"
+    },
+    {
+        id: "16",
         label: "Settings",
         icon: LuSettings,
         path: "/admin/settings"
     },
     {
-        id: "15",
+        id: "17",
         label: "Logout",
         icon: LuLogOut,
         path: "logout",
@@ -162,12 +177,24 @@ export const SIDE_MENU_USER_DATA = [
     },
     {
         id: "11",
+        label: "Insights",
+        icon: LuChartNoAxesCombined,
+        path: "/user/insights"
+    },
+    {
+        id: "12",
+        label: "Collab AI",
+        icon: LuSparkles,
+        path: "/user/collab-ai"
+    },
+    {
+        id: "13",
         label: "Profile Settings",
         icon: LuCircleUser,
         path: "/user/profile-settings"
     },
     {
-        id: "12",
+        id: "14",
         label: "Logout",
         icon: LuLogOut,
         path: "logout",

@@ -31,6 +31,11 @@ const getAdminSettings = async (req, res) => {
                 teamCode: user.teamCode,
                 profileImageUrl:
                     user.profileImageUrl || "",
+                bio: user.bio || "",
+                skills: user.skills || [],
+                experienceLevel: user.experienceLevel || "Beginner",
+                githubUrl: user.githubUrl || "",
+                linkedinUrl: user.linkedinUrl || "",
             },
         });
 
@@ -54,6 +59,11 @@ const updateAdminSettings = async (req, res) => {
             name,
             teamName,
             profileImageUrl,
+            bio,
+            skills,
+            experienceLevel,
+            githubUrl,
+            linkedinUrl,
         } = req.body;
 
         const user = await User.findById(
@@ -76,6 +86,13 @@ const updateAdminSettings = async (req, res) => {
         user.profileImageUrl =
             profileImageUrl ||
             user.profileImageUrl;
+
+        user.bio = bio !== undefined ? bio : user.bio;
+        user.skills = Array.isArray(skills) ? skills : user.skills;
+        user.experienceLevel = experienceLevel || user.experienceLevel;
+        user.githubUrl = githubUrl !== undefined ? githubUrl : user.githubUrl;
+        user.linkedinUrl = linkedinUrl !== undefined ? linkedinUrl : user.linkedinUrl;
+
 
         await user.save();
 
@@ -258,6 +275,11 @@ const getUserProfile = async (req, res) => {
                 teamCode: user.teamCode,
                 profileImageUrl:
                     user.profileImageUrl || "",
+                bio: user.bio || "",
+                skills: user.skills || [],
+                experienceLevel: user.experienceLevel || "Beginner",
+                githubUrl: user.githubUrl || "",
+                linkedinUrl: user.linkedinUrl || "",
             },
         });
 
@@ -280,6 +302,11 @@ const updateUserProfile = async (req, res) => {
         const {
             name,
             profileImageUrl,
+            bio,
+            skills,
+            experienceLevel,
+            githubUrl,
+            linkedinUrl,
         } = req.body;
 
         const user = await User.findById(
@@ -301,6 +328,12 @@ const updateUserProfile = async (req, res) => {
             profileImageUrl ||
             user.profileImageUrl;
 
+        user.bio = bio !== undefined ? bio : user.bio;
+        user.skills = Array.isArray(skills) ? skills : user.skills;
+        user.experienceLevel = experienceLevel || user.experienceLevel;
+        user.githubUrl = githubUrl !== undefined ? githubUrl : user.githubUrl;
+        user.linkedinUrl = linkedinUrl !== undefined ? linkedinUrl : user.linkedinUrl;
+
         await user.save();
 
         return res.status(200).json({
@@ -315,6 +348,11 @@ const updateUserProfile = async (req, res) => {
                 teamCode: user.teamCode,
                 profileImageUrl:
                     user.profileImageUrl || "",
+                bio: user.bio || "",
+                skills: user.skills || [],
+                experienceLevel: user.experienceLevel || "Beginner",
+                githubUrl: user.githubUrl || "",
+                linkedinUrl: user.linkedinUrl || "",
             },
         });
 

@@ -41,6 +41,8 @@ const AdminCalendar = lazy(() => import('./pages/Admin/AdminCalendar.jsx'))
 const TimeSheet = lazy(() => import('./pages/Admin/TimeSheet.jsx'))
 const Settings = lazy(() => import('./pages/Admin/Settings.jsx'))
 const ManageProjects = lazy(() => import('./pages/Admin/ManageProjects.jsx'))
+const AdminInsights = lazy(() => import('./pages/Admin/Insights.jsx'))
+const AdminCollabAI = lazy(() => import('./pages/Admin/CollabAI.jsx'))
 
 // ✅ User — lazy
 const UserDashboard = lazy(() => import('./pages/User/UserDashboard.jsx'))
@@ -55,6 +57,8 @@ const MyTimesheets = lazy(() => import('./pages/User/MyTimesheets.jsx'))
 const MyHolidays = lazy(() => import('./pages/User/MyHolidays.jsx'))
 const MyMeetings = lazy(() => import('./pages/User/MyMeetings.jsx'))
 const MyProjects = lazy(() => import('./pages/User/MyProjects.jsx'))
+const UserInsights = lazy(() => import('./pages/User/Insights.jsx'))
+const UserCollabAI = lazy(() => import('./pages/User/CollabAI.jsx'))
 
 // ✅ Shared — lazy
 const ProjectDetails = lazy(() => import('./components/Projects/ProjectDetails.jsx'))
@@ -115,6 +119,8 @@ const App = () => {
                                 <Route path='/admin/meeting-controls' element={<MeetingControls />} />
                                 <Route path='/admin/calendar' element={<AdminCalendar />} />
                                 <Route path='/admin/timesheet' element={<TimeSheet />} />
+                                <Route path='/admin/insights' element={<AdminInsights />} />
+                                <Route path='/admin/collab-ai' element={<AdminCollabAI />} />
                                 <Route path='/admin/settings' element={<Settings />} />
                             </Route>
 
@@ -132,6 +138,8 @@ const App = () => {
                                 <Route path='/user/meetings' element={<MyMeetings />} />
                                 <Route path='/user/calendar' element={<Calendar />} />
                                 <Route path='/user/files' element={<Files />} />
+                                <Route path='/user/insights' element={<UserInsights />} />
+                                <Route path='/user/collab-ai' element={<UserCollabAI />} />
                                 <Route path='/user/profile-settings' element={<ProfileSettings />} />
                             </Route>
 
