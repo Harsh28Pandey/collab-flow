@@ -1,6 +1,6 @@
 const Holiday = require("../models/holiday.model.js");
 const User = require("../models/user.model.js");
-const { sendHolidayRequestEmail } = require("../emailVerify/verifyMail.js");
+const { sendHolidayRequestEmail, sendHolidayReviewEmail } = require("../emailVerify/verifyMail.js");
 
 const daysBetween = (from, to) => {
     const start = new Date(new Date(from).setHours(0, 0, 0, 0));
@@ -158,7 +158,7 @@ const reviewHoliday = async (req, res) => {
             return res.status(400).json({ message: "Status must be Approved or Rejected" });
         }
 
-        const holiday = await Holiday.findById(req.params.id);
+        const holiday = await Holiday.findById(req.params.id).populate("user", "name email");
         if (!holiday) return res.status(404).json({ message: "Holiday request not found" });
         if (holiday.status !== "Pending") {
             return res.status(400).json({ message: "This request has already been reviewed" });
@@ -170,6 +170,27 @@ const reviewHoliday = async (req, res) => {
         holiday.reviewedAt = new Date();
 
         const updated = await holiday.save();
+
+        try {
+            if (holiday.user && holiday.user.email) {
+                await sendHolidayReviewEmail({
+                    userEmail: holiday.user.email,
+                    userName: holiday.user.name,
+                    leaveType: holiday.leaveType,
+                    fromDate: holiday.fromDate,
+                    toDate: holiday.toDate,
+                    totalDays: holiday.totalDays,
+                    status: holiday.status,
+                    adminRemarks: holiday.adminRemarks,
+                    reviewedBy: req.user.name
+                });
+            } else {
+                console.log("Holiday review email skipped — user not populated or missing email");
+            }
+        } catch (mailErr) {
+            console.error("Error sending holiday review email:", mailErr.message);
+        }
+
         res.status(200).json({ message: `Holiday request ${status.toLowerCase()}`, holiday: updated });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });

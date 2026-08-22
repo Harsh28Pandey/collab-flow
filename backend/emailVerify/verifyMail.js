@@ -234,7 +234,67 @@ const sendHolidayRequestEmail = async ({ adminEmail, adminName, userName, userEm
     }
 };
 
-module.exports = { verifyMail, sendTaskNotificationEmail, sendWelcomeTeamEmail, sendHolidayRequestEmail };
+// --- NEW FUNCTION FOR HOLIDAY REVIEW NOTIFICATION (Approved/Rejected) — to User ---
+const sendHolidayReviewEmail = async ({ userEmail, userName, leaveType, fromDate, toDate, totalDays, status, adminRemarks, reviewedBy }) => {
+    try {
+        const templatePath = path.resolve(__dirname, "holidayReviewed.hbs");
+        if (!fs.existsSync(templatePath)) {
+            console.error("HOLIDAY REVIEW EMAIL ERROR: holidayReviewed.hbs file not found!");
+            return;
+        }
+
+        const emailTemplateSource = fs.readFileSync(templatePath, "utf-8");
+        const template = handlebars.compile(emailTemplateSource);
+
+        const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+        const loginUrl = `${clientUrl}/login`;
+
+        const formattedFrom = new Date(fromDate).toLocaleDateString("en-IN", {
+            day: 'numeric', month: 'short', year: 'numeric'
+        });
+        const formattedTo = new Date(toDate).toLocaleDateString("en-IN", {
+            day: 'numeric', month: 'short', year: 'numeric'
+        });
+
+        const htmlToSend = template({
+            userName,
+            leaveType,
+            fromDate: formattedFrom,
+            toDate: formattedTo,
+            totalDays,
+            status,
+            isApproved: status === "Approved",
+            adminRemarks: adminRemarks || "",
+            reviewedBy: reviewedBy || "Admin",
+            loginUrl
+        });
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASSWORD
+            }
+        });
+
+        await transporter.verify();
+
+        const mailConfigurations = {
+            from: `"Collab Flow" <${process.env.MAIL_USER}>`,
+            to: userEmail,
+            subject: `Holiday Request ${status} | Collab Flow`,
+            html: htmlToSend,
+        };
+
+        await transporter.sendMail(mailConfigurations);
+        console.log(`Holiday ${status} email sent to ${userEmail}`);
+
+    } catch (error) {
+        console.error("Holiday Review Email Failed:", error);
+    }
+};
+
+module.exports = { verifyMail, sendTaskNotificationEmail, sendWelcomeTeamEmail, sendHolidayRequestEmail, sendHolidayReviewEmail };
 
 // const nodemailer = require("nodemailer");
 // const dotenv = require("dotenv");

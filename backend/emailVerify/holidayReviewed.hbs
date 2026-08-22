@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Holiday Request {{status}}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px 15px;
+            color: #f4f4f5;
+        }
+
+        .wrapper {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .card {
+            background: #09090b;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid #27272a;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9);
+        }
+
+        .top-approved {
+            background: linear-gradient(135deg, #064e3b 0%, #18181b 100%);
+            padding: 40px 30px;
+            border-bottom: 1px solid #27272a;
+        }
+
+        .top-rejected {
+            background: linear-gradient(135deg, #4c0519 0%, #18181b 100%);
+            padding: 40px 30px;
+            border-bottom: 1px solid #27272a;
+        }
+
+        .badge-approved {
+            display: inline-block;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            color: #34d399;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .badge-rejected {
+            display: inline-block;
+            background: rgba(251, 113, 133, 0.1);
+            border: 1px solid rgba(251, 113, 133, 0.25);
+            color: #fb7185;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .top-approved h1,
+        .top-rejected h1 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .content {
+            padding: 35px 30px;
+        }
+
+        .greeting {
+            font-size: 16px;
+            color: #a1a1aa;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .greeting strong {
+            color: #ffffff;
+        }
+
+        .bento-row {
+            width: 100%;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .bento-box {
+            background: #121214;
+            border: 1px solid #27272a;
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        .bento-half {
+            width: 47%;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .bento-space {
+            width: 4%;
+            display: inline-block;
+        }
+
+        .bento-box h3 {
+            color: #71717a;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .bento-box p {
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .bento-box .desc {
+            color: #d4d4d8;
+            font-size: 14px;
+            font-weight: 400;
+            white-space: pre-wrap;
+        }
+
+        .status-approved {
+            color: #34d399 !important;
+        }
+
+        .status-rejected {
+            color: #fb7185 !important;
+        }
+
+        .btn-wrapper {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        .btn-approved {
+            display: inline-block;
+            background: #34d399;
+            color: #09090b !important;
+            text-decoration: none;
+            padding: 15px 35px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(52, 211, 153, 0.25);
+        }
+
+        .btn-rejected {
+            display: inline-block;
+            background: #fb7185;
+            color: #09090b !important;
+            text-decoration: none;
+            padding: 15px 35px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(251, 113, 133, 0.25);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #27272a;
+            background: #09090b;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: #52525b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="card">
+
+            {{#if isApproved}}
+            <div class="top-approved">
+                <span class="badge-approved">Request Approved</span>
+                <h1>Your holiday has been approved</h1>
+            </div>
+            {{else}}
+            <div class="top-rejected">
+                <span class="badge-rejected">Request Rejected</span>
+                <h1>Your holiday request was rejected</h1>
+            </div>
+            {{/if}}
+
+            <div class="content">
+                <div class="greeting">
+                    Hi <strong>{{userName}}</strong>,<br>
+                    Your <strong>{{leaveType}}</strong> request has been
+                    {{#if isApproved}}<span class="status-approved">approved</span>{{else}}<span
+                        class="status-rejected">rejected</span>{{/if}}
+                    by <strong>{{reviewedBy}}</strong>.
+                </div>
+
+                <div class="bento-row">
+                    <div class="bento-box bento-half">
+                        <h3>Leave Type</h3>
+                        <p style="color: #22d3ee;">{{leaveType}}</p>
+                    </div>
+                    <div class="bento-space"></div>
+                    <div class="bento-box bento-half">
+                        <h3>Total Days</h3>
+                        <p style="color: #67e8f9;">{{totalDays}} day(s)</p>
+                    </div>
+                </div>
+
+                <div class="bento-row">
+                    <div class="bento-box bento-half">
+                        <h3>From</h3>
+                        <p style="color: #e4e4e7;">{{fromDate}}</p>
+                    </div>
+                    <div class="bento-space"></div>
+                    <div class="bento-box bento-half">
+                        <h3>To</h3>
+                        <p style="color: #e4e4e7;">{{toDate}}</p>
+                    </div>
+                </div>
+
+                {{#if adminRemarks}}
+                <div class="bento-row">
+                    <div class="bento-box">
+                        <h3>Admin Remarks</h3>
+                        <p class="desc">{{adminRemarks}}</p>
+                    </div>
+                </div>
+                {{/if}}
+
+                <div class="bento-row">
+                    <div class="bento-box">
+                        <h3>Status</h3>
+                        {{#if isApproved}}
+                        <p class="status-approved">Approved</p>
+                        {{else}}
+                        <p class="status-rejected">Rejected</p>
+                        {{/if}}
+                    </div>
+                </div>
+
+                <div class="btn-wrapper">
+                    {{#if isApproved}}
+                    <a href="{{loginUrl}}" class="btn-approved">View in Collab Flow</a>
+                    {{else}}
+                    <a href="{{loginUrl}}" class="btn-rejected">View in Collab Flow</a>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="footer">
+                <p>&copy; 2026 Collab Flow. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
