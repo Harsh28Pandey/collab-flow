@@ -11,9 +11,9 @@ const HomeHeroSection = () => {
             {/* Premium Developer Grid Background */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] opacity-80 pointer-events-none" />
 
-            {/* Architectural Ambient Orbs (Deep Dark Mode Neon) */}
-            <div className="absolute top-[10%] left-[15%] w-[500px] h-[500px] bg-gradient-to-br from-blue-600/20 via-indigo-600/10 to-transparent blur-[120px] rounded-full animate-[breathe_8s_ease-in-out_infinite_alternate] pointer-events-none" />
-            <div className="absolute bottom-[-10%] right-[10%] w-[600px] h-[600px] bg-gradient-to-tl from-purple-600/20 via-violet-600/10 to-transparent blur-[150px] rounded-full animate-[breathe_10s_ease-in-out_infinite_alternate-reverse] pointer-events-none" />
+            {/* Architectural Ambient Orbs — mobile par blur kam + chhota, GPU cost bachane ke liye */}
+            <div className="hidden sm:block absolute top-[10%] left-[15%] w-[350px] h-[350px] md:w-[500px] md:h-[500px] bg-gradient-to-br from-blue-600/20 via-indigo-600/10 to-transparent blur-[60px] md:blur-[120px] rounded-full animate-[breathe_8s_ease-in-out_infinite_alternate] pointer-events-none" />
+            <div className="hidden sm:block absolute bottom-[-10%] right-[10%] w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-gradient-to-tl from-purple-600/20 via-violet-600/10 to-transparent blur-[80px] md:blur-[150px] rounded-full animate-[breathe_10s_ease-in-out_infinite_alternate-reverse] pointer-events-none" />
 
             {/* Floating Glassmorphic Chunks (Decorative Developer Nodes) */}
 
