@@ -294,7 +294,58 @@ const sendHolidayReviewEmail = async ({ userEmail, userName, leaveType, fromDate
     }
 };
 
-module.exports = { verifyMail, sendTaskNotificationEmail, sendWelcomeTeamEmail, sendHolidayRequestEmail, sendHolidayReviewEmail };
+// --- NEW FUNCTION FOR PASSWORD CHANGED CONFIRMATION ---
+const sendPasswordChangedEmail = async ({ email, name }) => {
+    try {
+        const templatePath = path.resolve(__dirname, "passwordChanged.hbs");
+        if (!fs.existsSync(templatePath)) {
+            console.error("PASSWORD CHANGED EMAIL ERROR: passwordChanged.hbs file not found!");
+            return;
+        }
+
+        const emailTemplateSource = fs.readFileSync(templatePath, "utf-8");
+        const template = handlebars.compile(emailTemplateSource);
+
+        const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+        const loginUrl = `${clientUrl}/login`;
+
+        const changedAt = new Date().toLocaleString("en-IN", {
+            day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+
+        const htmlToSend = template({
+            userName: name || "there",
+            userEmail: email,
+            changedAt,
+            loginUrl
+        });
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASSWORD
+            }
+        });
+
+        await transporter.verify();
+
+        const mailConfigurations = {
+            from: `"Collab Flow" <${process.env.MAIL_USER}>`,
+            to: email,
+            subject: `Your password was changed | Collab Flow`,
+            html: htmlToSend,
+        };
+
+        await transporter.sendMail(mailConfigurations);
+        console.log(`Password changed email sent to ${email}`);
+
+    } catch (error) {
+        console.error("Password Changed Email Failed:", error);
+    }
+};
+
+module.exports = { verifyMail, sendTaskNotificationEmail, sendWelcomeTeamEmail, sendHolidayRequestEmail, sendHolidayReviewEmail, sendPasswordChangedEmail };
 
 // const nodemailer = require("nodemailer");
 // const dotenv = require("dotenv");

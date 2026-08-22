@@ -1,5 +1,5 @@
 const { sendOtpMail } = require("../emailVerify/sendOtpMail.js");
-const { verifyMail, sendWelcomeTeamEmail } = require("../emailVerify/verifyMail.js");
+const { verifyMail, sendWelcomeTeamEmail, sendPasswordChangedEmail } = require("../emailVerify/verifyMail.js");
 const User = require('../models/user.model.js');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -165,7 +165,7 @@ const verification = async (req, res) => {
             await sendWelcomeTeamEmail({
                 email: user.email,
                 name: user.name,
-                teamName: user.teamName 
+                teamName: user.teamName
             });
         } catch (welcomeMailErr) {
             console.error("Failed to send Welcome Email:", welcomeMailErr.message);
@@ -342,6 +342,14 @@ const updateUserProfile = async (req, res) => {
 
         const updatedUser = await user.save();
 
+        if (req.body.password) {
+            try {
+                await sendPasswordChangedEmail({ email: updatedUser.email, name: updatedUser.name });
+            } catch (mailErr) {
+                console.error("Password changed email failed:", mailErr.message);
+            }
+        }
+
         res.json({
             _id: updatedUser._id,
             name: updatedUser.name,
@@ -477,6 +485,12 @@ const changePassword = async (req, res) => {
         const hashedPassword = await bcrypt.hash(newPassword, 10)
         user.password = hashedPassword
         await user.save()
+
+        try {
+            await sendPasswordChangedEmail({ email: user.email, name: user.name });
+        } catch (mailErr) {
+            console.error("Password changed email failed:", mailErr.message);
+        }
 
         return res.status(200).json({
             success: true,
