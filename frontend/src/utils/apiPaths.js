@@ -172,4 +172,13 @@ export const API_PATHS = {
         GET_PROJECT_ACTIVITY: (projectId) => `/api/projects/${projectId}/activity`,  //* get project activity timeline
         GET_PROJECT_FILES: (projectId) => `/api/projects/${projectId}/files`,  //* get files linked to a project
     },
+
+    // COLLAB AI
+    COLLAB_AI: {
+        ASK: "/api/collab-ai/ask",
+        HISTORY: "/api/collab-ai/history",
+        CLEAR: "/api/collab-ai/clear",
+        UPDATE_MESSAGE: (messageId) => `/api/collab-ai/message/${messageId}`,
+        DELETE_MESSAGE: (messageId) => `/api/collab-ai/message/${messageId}`,
+    },
 };

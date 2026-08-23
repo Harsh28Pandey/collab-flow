@@ -21,6 +21,7 @@ const expenseRoutes = require("./routes/expense.routes.js");
 const budgetRoutes = require("./routes/budget.routes.js");
 const holidayRoutes = require("./routes/holiday.routes.js");
 const projectRoutes = require("./routes/project.routes.js");
+const collabAiRoutes = require("./routes/collabai.routes.js");
 
 // const { Server } = require("socket.io");
 // const Message = require("./models/message.model.js");
@@ -64,6 +65,7 @@ app.use("/api/expenses", expenseRoutes);
 app.use("/api/budgets", budgetRoutes);
 app.use("/api/holidays", holidayRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/collab-ai", collabAiRoutes);
 
 // const io = new Server(server, {
 //     cors: {
