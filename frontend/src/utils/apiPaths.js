@@ -173,6 +173,12 @@ export const API_PATHS = {
         GET_PROJECT_FILES: (projectId) => `/api/projects/${projectId}/files`,  //* get files linked to a project
     },
 
+    // INSIGHTS (admin only)
+    INSIGHTS: {
+        GET_ADMIN_INSIGHTS: (range = 30) => `/api/insights/admin?range=${range}`,
+        GET_AI_SUMMARY: (range = 30) => `/api/insights/admin/ai-summary?range=${range}`,
+    },
+
     // COLLAB AI
     COLLAB_AI: {
         ASK: "/api/collab-ai/ask",

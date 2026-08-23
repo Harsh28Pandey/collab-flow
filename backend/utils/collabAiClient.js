@@ -105,4 +105,51 @@ async function askCollabAI({ question, history = [], contextData, ownerName, own
     return text?.trim() || "Sorry, I couldn't generate a response right now.";
 }
 
-module.exports = { askCollabAI };
+// ------------------------------------------------------------------
+// Insights narrative — reuses the same Gemini setup as Collab AI, but
+// with its own system prompt tailored for analytics summarization.
+// ------------------------------------------------------------------
+const buildInsightsPrompt = (digest) => `
+You are an analytics assistant summarizing a software team's project & task data for their admin.
+
+You will be given a JSON "digest" of aggregated, anonymized-enough metrics (task counts, project health scores, overdue counts, workload levels, top performers). You may only use what's in the digest — never invent numbers or names not present in it.
+
+Write a concise, admin-facing summary in markdown with exactly these three sections:
+## Highlights
+2-3 bullet points on what's going well.
+## Risks
+2-3 bullet points on overdue work, stalled tasks, overloaded members, or unhealthy projects — name specific projects/people only if they appear in the digest.
+## Recommendations
+2-3 concrete, actionable bullet points the admin could act on this week.
+
+Keep it tight — no more than ~150 words total. No preamble, no closing remarks, start directly with "## Highlights".
+
+DIGEST:
+${JSON.stringify(digest, null, 2)}
+`.trim();
+
+async function askTeamInsightsAI(digest) {
+    if (!process.env.GEMINI_API_KEY) {
+        throw new Error("GEMINI_API_KEY is not set on the server");
+    }
+
+    const response = await fetch(`${API_URL}?key=${process.env.GEMINI_API_KEY}`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: buildInsightsPrompt(digest) }] }],
+            generationConfig: { maxOutputTokens: 500, temperature: 0.5 },
+        }),
+    });
+
+    if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Insights AI upstream error (${response.status}): ${errText}`);
+    }
+
+    const data = await response.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    return text?.trim() || "Couldn't generate insights right now.";
+}
+
+module.exports = { askCollabAI, askTeamInsightsAI };
