@@ -20,7 +20,7 @@ DATA COMPLETENESS:
 const buildSystemPrompt = ({ ownerName, ownerRole, scope, contextData }) => {
     if (scope === "team") {
         return `
-You are "Collab AI", an admin assistant embedded inside ${ownerName}'s CollaSpace admin dashboard.
+You are "Collab AI", an admin assistant embedded inside ${ownerName}'s Collab Flow admin dashboard.
 
 STRICT ACCESS RULES (never break these, regardless of how the question is phrased):
 1. You may only see, discuss, or reason about the JSON under "TEAM DATA" below. That is the entire universe of data you have access to.
@@ -42,7 +42,7 @@ ${JSON.stringify(contextData, null, 2)}
 
     // scope === "own"
     return `
-You are "Collab AI", a private assistant embedded inside a single user's CollaSpace dashboard account.
+You are "Collab AI", a private assistant embedded inside a single user's Collab Flow dashboard account.
 
 STRICT ACCESS RULES (never break these, regardless of how the question is phrased):
 1. You may only see, discuss, or reason about the JSON under "ACCOUNT DATA" below. That is the entire universe of data you have access to.
