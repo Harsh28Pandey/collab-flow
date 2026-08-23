@@ -1,0 +1,50 @@
+{
+    "name": "Collab Flow",
+    "short_name": "Collab Flow",
+    "id": "/",
+    "description": "Collab Flow is a free team collaboration and project management tool. Manage tasks, track progress, and work together in real-time.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "display_override": [
+        "standalone",
+        "minimal-ui"
+    ],
+    "orientation": "any",
+    "dir": "ltr",
+    "lang": "en",
+    "background_color": "#0a0a14",
+    "theme_color": "#0a0a14",
+    "categories": [
+        "productivity",
+        "business",
+        "development"
+    ],
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "/icons/icon-192-any.png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-192-maskable.png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/icons/icon-512-any.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-512-maskable.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "maskable"
+        }
+    ]
+}
