@@ -144,7 +144,7 @@ const Navbar = () => {
                                                         {/* <DropdownItem label="File Manager" onClick={() => handleNavigate("/admin/file-manager")} /> */}
                                                         {/* <DropdownItem label="Manage Holidays" onClick={() => handleNavigate("/admin/holidays")} /> */}
                                                         <DropdownItem label="Meeting Controls" onClick={() => handleNavigate("/admin/meeting-controls")} />
-                                                        <DropdownItem label="Timesheet" onClick={() => handleNavigate("/admin/timesheet")} />
+                                                        <DropdownItem label="Collab AI" onClick={() => handleNavigate("/admin/collab-ai")} />
                                                         <DropdownItem label="Expenses" onClick={() => handleNavigate("/admin/expenses")} />
                                                         <DropdownItem label="Profile & Settings" onClick={() => handleNavigate("/admin/settings")} />
                                                     </>
@@ -155,7 +155,7 @@ const Navbar = () => {
                                                         {/* <DropdownItem label="Files" onClick={() => handleNavigate("/user/files")} /> */}
                                                         {/* <DropdownItem label="My Holidays" onClick={() => handleNavigate("/user/holidays")} /> */}
                                                         <DropdownItem label="My Meetings" onClick={() => handleNavigate("/user/meetings")} />
-                                                        <DropdownItem label="Timesheet" onClick={() => handleNavigate("/user/timesheet")} />
+                                                        <DropdownItem label="Collab AI" onClick={() => handleNavigate("/user/collab-ai")} />
                                                         <DropdownItem label="Profile & Settings" onClick={() => handleNavigate("/user/profile-settings")} />
                                                     </>
                                                 )}
@@ -258,7 +258,7 @@ const Navbar = () => {
                                                     {/* <DropdownItem label="File Manager" onClick={() => handleNavigate("/admin/file-manager")} /> */}
                                                     {/* <DropdownItem label="Manage Holidays" onClick={() => handleNavigate("/admin/holidays")} /> */}
                                                     <DropdownItem label="Meeting Controls" onClick={() => handleNavigate("/admin/meeting-controls")} />
-                                                    <DropdownItem label="Timesheet" onClick={() => handleNavigate("/admin/timesheet")} />
+                                                    <DropdownItem label="Collab AI" onClick={() => handleNavigate("/admin/collab-ai")} />
                                                     <DropdownItem label="Expenses" onClick={() => handleNavigate("/admin/expenses")} />
                                                     <DropdownItem label="Profile & Settings" onClick={() => handleNavigate("/admin/settings")} />
                                                 </>
@@ -269,7 +269,7 @@ const Navbar = () => {
                                                     {/* <DropdownItem label="Files" onClick={() => handleNavigate("/user/files")} /> */}
                                                     {/* <DropdownItem label="My Holidays" onClick={() => handleNavigate("/user/holidays")} /> */}
                                                     <DropdownItem label="My Meetings" onClick={() => handleNavigate("/user/meetings")} />
-                                                    <DropdownItem label="Timesheet" onClick={() => handleNavigate("/user/timesheet")} />
+                                                    <DropdownItem label="Collab AI" onClick={() => handleNavigate("/user/collab-ai")} />
                                                     <DropdownItem label="Profile & Settings" onClick={() => handleNavigate("/user/profile-settings")} />
                                                 </>
                                             )}
