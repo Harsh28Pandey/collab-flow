@@ -85,7 +85,7 @@ This project is deployed using modern cloud platforms for scalability and perfor
 
 ### ⚙️ Backend Deployment
 
-- Hosted on **Render**
+- Hosted on **Vercel**
 - Handles API requests and server-side logic
 
 ### 🗄️ Database
