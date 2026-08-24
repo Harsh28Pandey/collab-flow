@@ -452,4 +452,329 @@ const buildAdminInsights = async (teamCode, rangeDays) => {
     };
 };
 
-module.exports = { buildAdminInsights };
+// ====================================================================
+// USER-SCOPED INSIGHTS — everything below is filtered by userId, never
+// by teamCode alone. A member only ever sees rows where they are the
+// assignee (tasks) or a lead/member (projects) — nothing about
+// teammates' individual task loads is aggregated or exposed here.
+// ====================================================================
+
+// ------------------------------------------------------------------
+// Personal task analytics
+// ------------------------------------------------------------------
+const getPersonalTaskAnalytics = async (teamCode, userId, now) => {
+    const [totals, avgAgg] = await Promise.all([
+        Task.aggregate([
+            { $match: { teamCode, assignedTo: userId } },
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: 1 },
+                    pending: { $sum: { $cond: [{ $eq: ["$status", "Pending"] }, 1, 0] } },
+                    inProgress: { $sum: { $cond: [{ $eq: ["$status", "In Progress"] }, 1, 0] } },
+                    completed: { $sum: { $cond: [{ $eq: ["$status", "Completed"] }, 1, 0] } },
+                    overdue: {
+                        $sum: {
+                            $cond: [
+                                { $and: [{ $ne: ["$status", "Completed"] }, { $lt: ["$dueDate", now] }] },
+                                1, 0,
+                            ],
+                        },
+                    },
+                    low: { $sum: { $cond: [{ $eq: ["$priority", "Low"] }, 1, 0] } },
+                    medium: { $sum: { $cond: [{ $eq: ["$priority", "Medium"] }, 1, 0] } },
+                    high: { $sum: { $cond: [{ $eq: ["$priority", "High"] }, 1, 0] } },
+                },
+            },
+        ]),
+        Task.aggregate([
+            { $match: { teamCode, assignedTo: userId, status: "Completed" } },
+            { $project: { hoursTaken: { $divide: [{ $subtract: ["$updatedAt", "$createdAt"] }, 1000 * 60 * 60] } } },
+            { $group: { _id: null, avgHours: { $avg: "$hoursTaken" }, sample: { $sum: 1 } } },
+        ]),
+    ]);
+
+    const t = totals[0] || {};
+    const total = t.total || 0;
+    const completed = t.completed || 0;
+    const avg = avgAgg[0] || {};
+    const active = (t.pending || 0) + (t.inProgress || 0);
+
+    let workloadLevel = "Balanced";
+    if (active >= WORKLOAD_OVERLOADED_MIN) workloadLevel = "Overloaded";
+    else if (active <= WORKLOAD_LIGHT_MAX) workloadLevel = "Light";
+
+    return {
+        total,
+        pending: t.pending || 0,
+        inProgress: t.inProgress || 0,
+        completed,
+        overdue: t.overdue || 0,
+        activeTasks: active,
+        workloadLevel,
+        completionRate: total > 0 ? Math.round((completed / total) * 100) : 0,
+        priorityBreakdown: { Low: t.low || 0, Medium: t.medium || 0, High: t.high || 0 },
+        avgCompletionHoursEstimated: avg.avgHours ? Math.round(avg.avgHours * 10) / 10 : null,
+        avgCompletionSampleSize: avg.sample || 0,
+    };
+};
+
+// ------------------------------------------------------------------
+// Projects the user leads or is a member of — project-level totals
+// (already visible to them via the existing project detail page) plus
+// a personal breakdown of only THEIR tasks inside that project. No
+// other member's individual numbers are included.
+// ------------------------------------------------------------------
+const getMyProjects = async (teamCode, userId, now) => {
+    const projects = await Project.find({
+        teamCode,
+        $or: [{ projectLead: userId }, { "members.user": userId }],
+    })
+        .populate("projectLead", "name email profileImageUrl")
+        .select("name description projectCode status priority startDate dueDate projectLead members createdAt")
+        .lean();
+
+    if (projects.length === 0) return [];
+
+    const projectIds = projects.map((p) => p._id);
+
+    const [overallStats, myStats] = await Promise.all([
+        Task.aggregate([
+            { $match: { teamCode, project: { $in: projectIds } } },
+            {
+                $group: {
+                    _id: "$project",
+                    total: { $sum: 1 },
+                    completed: { $sum: { $cond: [{ $eq: ["$status", "Completed"] }, 1, 0] } },
+                    overdue: {
+                        $sum: {
+                            $cond: [
+                                { $and: [{ $ne: ["$status", "Completed"] }, { $lt: ["$dueDate", now] }] },
+                                1, 0,
+                            ],
+                        },
+                    },
+                },
+            },
+        ]),
+        Task.aggregate([
+            { $match: { teamCode, project: { $in: projectIds }, assignedTo: userId } },
+            {
+                $group: {
+                    _id: "$project",
+                    total: { $sum: 1 },
+                    completed: { $sum: { $cond: [{ $eq: ["$status", "Completed"] }, 1, 0] } },
+                    pending: { $sum: { $cond: [{ $eq: ["$status", "Pending"] }, 1, 0] } },
+                    inProgress: { $sum: { $cond: [{ $eq: ["$status", "In Progress"] }, 1, 0] } },
+                    overdue: {
+                        $sum: {
+                            $cond: [
+                                { $and: [{ $ne: ["$status", "Completed"] }, { $lt: ["$dueDate", now] }] },
+                                1, 0,
+                            ],
+                        },
+                    },
+                },
+            },
+        ]),
+    ]);
+
+    const overallMap = {};
+    overallStats.forEach((r) => { overallMap[r._id.toString()] = r; });
+    const myMap = {};
+    myStats.forEach((r) => { myMap[r._id.toString()] = r; });
+
+    return projects.map((p) => {
+        const o = overallMap[p._id.toString()] || { total: 0, completed: 0, overdue: 0 };
+        const mine = myMap[p._id.toString()] || { total: 0, completed: 0, pending: 0, inProgress: 0, overdue: 0 };
+        const progress = o.total > 0 ? Math.round((o.completed / o.total) * 100) : 0;
+
+        let healthScore = null;
+        if (o.total > 0) {
+            const overdueRatio = o.overdue / o.total;
+            healthScore = Math.round(Math.max(0, Math.min(100, progress * 0.7 + (1 - overdueRatio) * 30)));
+        }
+
+        return {
+            _id: p._id,
+            name: p.name,
+            projectCode: p.projectCode,
+            status: p.status,
+            priority: p.priority,
+            dueDate: p.dueDate,
+            projectLead: p.projectLead,
+            isLead: p.projectLead?._id?.toString() === userId.toString(),
+            overallProgress: progress,
+            overallTotalTasks: o.total,
+            healthScore,
+            myTasks: {
+                total: mine.total,
+                completed: mine.completed,
+                pending: mine.pending,
+                inProgress: mine.inProgress,
+                overdue: mine.overdue,
+            },
+        };
+    });
+};
+
+// ------------------------------------------------------------------
+// My overdue & stalled tasks
+// ------------------------------------------------------------------
+const getPersonalOverdueAndStalled = async (teamCode, userId, now) => {
+    const staleThreshold = new Date(now.getTime() - STALE_DAYS * 24 * 60 * 60 * 1000);
+
+    const [overdue, stalled] = await Promise.all([
+        Task.find({ teamCode, assignedTo: userId, status: { $ne: "Completed" }, dueDate: { $lt: now } })
+            .populate("project", "name projectCode")
+            .select("title priority status dueDate project updatedAt")
+            .sort({ dueDate: 1 })
+            .limit(50)
+            .lean(),
+        Task.find({ teamCode, assignedTo: userId, status: "In Progress", progress: 0, updatedAt: { $lt: staleThreshold } })
+            .populate("project", "name projectCode")
+            .select("title priority status dueDate project updatedAt")
+            .sort({ updatedAt: 1 })
+            .limit(50)
+            .lean(),
+    ]);
+
+    return {
+        overdueTasks: overdue.map((t) => ({ ...t, daysOverdue: daysBetween(now, new Date(t.dueDate)) })),
+        stalledTasks: stalled.map((t) => ({ ...t, daysStalled: daysBetween(now, new Date(t.updatedAt)) })),
+    };
+};
+
+// ------------------------------------------------------------------
+// My deadline risks
+// ------------------------------------------------------------------
+const getPersonalDeadlineRisks = async (teamCode, userId, now) => {
+    const windowEnd = new Date(now.getTime() + RISK_MEDIUM_DAYS * 24 * 60 * 60 * 1000);
+
+    const tasks = await Task.find({
+        teamCode,
+        assignedTo: userId,
+        status: { $ne: "Completed" },
+        dueDate: { $gte: now, $lte: windowEnd },
+    })
+        .populate("project", "name projectCode")
+        .select("title priority status dueDate project")
+        .sort({ dueDate: 1 })
+        .limit(100)
+        .lean();
+
+    return tasks.map((t) => {
+        const daysUntil = daysBetween(new Date(t.dueDate), now);
+        let riskLevel = "Medium";
+        if (daysUntil <= RISK_CRITICAL_DAYS) riskLevel = "Critical";
+        else if (daysUntil <= RISK_HIGH_DAYS) riskLevel = "High";
+        return { ...t, daysUntil, riskLevel };
+    });
+};
+
+// ------------------------------------------------------------------
+// My activity — built only from tasks assigned to this user, never
+// from other members' project activity entries.
+// ------------------------------------------------------------------
+const getPersonalActivity = async (teamCode, userId) => {
+    const tasks = await Task.find({ teamCode, assignedTo: userId })
+        .populate("project", "name")
+        .select("title status project createdAt updatedAt")
+        .sort({ updatedAt: -1 })
+        .limit(30)
+        .lean();
+
+    const events = tasks.flatMap((t) => {
+        const list = [{
+            message: `Task "${t.title}" assigned to you`,
+            type: "task_created",
+            projectName: t.project?.name || "Standalone",
+            createdAt: t.createdAt,
+        }];
+        if (t.status === "Completed") {
+            list.push({
+                message: `You completed "${t.title}"`,
+                type: "task_completed",
+                projectName: t.project?.name || "Standalone",
+                createdAt: t.updatedAt,
+            });
+        }
+        return list;
+    });
+
+    return events.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, ACTIVITY_FEED_LIMIT);
+};
+
+// ------------------------------------------------------------------
+// My completion trend
+// ------------------------------------------------------------------
+const getPersonalCompletionTrends = async (teamCode, userId, rangeDays, now) => {
+    const days = Math.min(rangeDays, TREND_MAX_DAYS);
+    const since = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+    since.setHours(0, 0, 0, 0);
+
+    const [createdRaw, completedRaw] = await Promise.all([
+        Task.aggregate([
+            { $match: { teamCode, assignedTo: userId, createdAt: { $gte: since } } },
+            { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, count: { $sum: 1 } } },
+        ]),
+        Task.aggregate([
+            { $match: { teamCode, assignedTo: userId, status: "Completed", updatedAt: { $gte: since } } },
+            { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$updatedAt" } }, count: { $sum: 1 } } },
+        ]),
+    ]);
+
+    const createdMap = Object.fromEntries(createdRaw.map((r) => [r._id, r.count]));
+    const completedMap = Object.fromEntries(completedRaw.map((r) => [r._id, r.count]));
+
+    const series = [];
+    for (let i = 0; i < days; i++) {
+        const d = new Date(since.getTime() + i * 24 * 60 * 60 * 1000);
+        const key = d.toISOString().slice(0, 10);
+        series.push({ date: key, created: createdMap[key] || 0, completed: completedMap[key] || 0 });
+    }
+    return series;
+};
+
+// ------------------------------------------------------------------
+// MAIN USER AGGREGATOR
+// ------------------------------------------------------------------
+const buildUserInsights = async (teamCode, userId, rangeDays) => {
+    const now = new Date();
+    const trendDays = rangeDays === null ? 30 : rangeDays;
+
+    const me = await User.findById(userId).select("name email skills experienceLevel profileImageUrl").lean();
+
+    const [
+        personalTaskAnalytics,
+        myProjects,
+        overdueAndStalled,
+        deadlineRisks,
+        myActivity,
+        completionTrends,
+    ] = await Promise.all([
+        getPersonalTaskAnalytics(teamCode, userId, now),
+        getMyProjects(teamCode, userId, now),
+        getPersonalOverdueAndStalled(teamCode, userId, now),
+        getPersonalDeadlineRisks(teamCode, userId, now),
+        getPersonalActivity(teamCode, userId),
+        getPersonalCompletionTrends(teamCode, userId, trendDays, now),
+    ]);
+
+    return {
+        generatedAt: now,
+        rangeDays,
+        me: { name: me?.name, email: me?.email, skills: me?.skills || [], experienceLevel: me?.experienceLevel, profileImageUrl: me?.profileImageUrl },
+        personalTaskAnalytics,
+        myProjects,
+        activeProjectsCount: myProjects.filter((p) => p.status === "Active").length,
+        overdueTasks: overdueAndStalled.overdueTasks,
+        stalledTasks: overdueAndStalled.stalledTasks,
+        deadlineRisks,
+        myActivity,
+        completionTrends,
+        meta: { avgCompletionEstimated: true, stalledIsHeuristic: true, staleDaysThreshold: STALE_DAYS },
+    };
+};
+
+module.exports = { buildAdminInsights, buildUserInsights };

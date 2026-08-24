@@ -152,4 +152,47 @@ async function askTeamInsightsAI(digest) {
     return text?.trim() || "Couldn't generate insights right now.";
 }
 
-module.exports = { askCollabAI, askTeamInsightsAI };
+const buildPersonalInsightsPrompt = (digest) => `
+You are an analytics assistant summarizing ONE team member's own task data for themselves.
+
+You will be given a JSON "digest" of this person's own aggregated task/project metrics. Only use what's in the digest — never invent numbers not present in it, and never reference anyone else's data since none is provided.
+
+Write a concise, second-person ("you") summary in markdown with exactly these three sections:
+## Highlights
+1-2 bullet points on what's going well for them.
+## Watch Out For
+1-2 bullet points on overdue work, stalled tasks, or an overloaded workload — only if present in the digest.
+## Suggestions
+1-2 concrete, actionable bullet points for this week.
+
+Keep it under ~120 words total, encouraging in tone. No preamble, start directly with "## Highlights".
+
+DIGEST:
+${JSON.stringify(digest, null, 2)}
+`.trim();
+
+async function askPersonalInsightsAI(digest) {
+    if (!process.env.GEMINI_API_KEY) {
+        throw new Error("GEMINI_API_KEY is not set on the server");
+    }
+
+    const response = await fetch(`${API_URL}?key=${process.env.GEMINI_API_KEY}`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: buildPersonalInsightsPrompt(digest) }] }],
+            generationConfig: { maxOutputTokens: 400, temperature: 0.5 },
+        }),
+    });
+
+    if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Personal insights AI upstream error (${response.status}): ${errText}`);
+    }
+
+    const data = await response.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    return text?.trim() || "Couldn't generate insights right now.";
+}
+
+module.exports = { askCollabAI, askTeamInsightsAI, askPersonalInsightsAI };

@@ -177,6 +177,8 @@ export const API_PATHS = {
     INSIGHTS: {
         GET_ADMIN_INSIGHTS: (range = 30) => `/api/insights/admin?range=${range}`,
         GET_AI_SUMMARY: (range = 30) => `/api/insights/admin/ai-summary?range=${range}`,
+        GET_MY_INSIGHTS: (range = 30) => `/api/insights/me?range=${range}`,
+        GET_MY_AI_SUMMARY: (range = 30) => `/api/insights/me/ai-summary?range=${range}`,
     },
 
     // COLLAB AI
