@@ -1,6 +1,6 @@
 # 🚀 Collab Flow – Task Management & Collaboration Platform
 
-Collab Flow is a powerful **MERN Stack-based task management and team collaboration platform** designed to streamline workflows, improve productivity, and enhance team coordination.
+Collab Flow is a powerful **MERN Stack-based task management and team collaboration platform** designed to streamline workflows, improve productivity, and enhance team coordination. 
 
 ---
 
